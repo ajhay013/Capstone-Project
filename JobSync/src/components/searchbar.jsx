@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../assets/logo3.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,9 +38,10 @@ function JobSyncHeader() {
 
           {/* Actions */}
           <div className="actions d-flex align-items-center">
-          <button className="btn btn-outline-custom me-2 custom-btn" type="button">
+            {/* Link to Registration Form */}
+          <Link to="/regform" className="btn btn-outline-custom me-2 custom-btn">
             Sign In
-          </button>
+          </Link>
           <button className="btn btn-primary custom-btn" type="button">
             Post A Job
           </button>
