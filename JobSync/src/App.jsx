@@ -1,36 +1,60 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+// src/App.js
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import { FaBriefcase, FaBuilding, FaUser, FaPlus } from 'react-icons/fa';
 
-import './App.css'
-
-import SampleUser from './components/SampleUser'
-import CreateUser from './components/CreateUser'
+import MyNavbar from './components/navbar';
+import Searchbar from './components/searchbar';
 
 function App() {
-
   return (
-    <>
-      <div className="App">
-          <h3>EXAMPLE FOR THE DATABASE</h3>
-      
-     <BrowserRouter>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">List</Link>
-            </li>
-            <li>
-              <Link to="user/create">Create</Link>
-            </li>
-          </ul>
-        </nav>
-          <Routes>
-            <Route index element={<SampleUser />} />
-            <Route path="user/create" element={<CreateUser />} />
-          </Routes>
-     </BrowserRouter>
-     </div>
-    </>
-  )
+    <BrowserRouter>
+      <MyNavbar />
+      <Searchbar />
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div>
+              <header className="text-center py-4">
+                <h1>Find a job that suits your interest & skills.</h1>
+              </header>
+              <main className="container">
+                <div className="search-bar d-flex justify-content-center align-items-center my-4">
+                            
+                </div>
+                <div className="suggestions text-center mb-4">
+                  <p>Suggestion: Designer, Programming, Digital Marketing, Video, Animation</p>
+                </div>
+                <div className="statistics d-flex justify-content-between">
+                  <div className="text-center">
+                    <FaBriefcase size={50} className="mb-2" />
+                    <p>1,75,324 Live Jobs</p>
+                  </div>
+                  <div className="text-center">
+                    <FaBuilding size={50} className="mb-2" />
+                    <p>97,354 Companies</p>
+                  </div>
+                  <div className="text-center">
+                    <FaUser size={50} className="mb-2" />
+                    <p>38,47,154 Candidates</p>
+                  </div>
+                  <div className="text-center">
+                    <FaPlus size={50} className="mb-2" />
+                    <p>7,532 New Jobs</p>
+                  </div>
+                </div>
+              </main>
+            </div>
+          }
+        />
+        {/* Add other routes as needed */}
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

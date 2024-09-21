@@ -9,3 +9,28 @@ nav ul li {
   display: inline-block;
   padding: 10px;
 }
+
+/* App.css */
+.App {
+  padding-top: 56px; /* This ensures the content is not hidden under the navbar */
+}
+
+/* JobpilotHeader.css */
+.job-sync-header {
+  position: fixed; /* Fixes the header at the top */
+  top: 55px;
+  left: 0;
+  width: 100%; /* Ensures full width */
+  z-index: 1000; /* Keeps header above other content */
+  background-color: #f8f9fa; /* Ensures background color is set */
+}
+
+.container {
+  padding-left: 15px; /* Adjusts padding to avoid header overlap */
+  padding-right: 15px;
+}
+
+body {
+  padding-top: 80px; /* Adjust based on the header height to avoid content overlap */
+}
+
