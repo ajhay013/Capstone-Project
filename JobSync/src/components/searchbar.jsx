@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../assets/logo3.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-
+import RegistrationForm from '../Pages/Registration';
 
 
 function JobSyncHeader() {
@@ -36,12 +36,14 @@ function JobSyncHeader() {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="actions d-flex align-items-center">
-            {/* Link to Registration Form */}
-          <Link to="/regform" className="btn btn-outline-custom me-2 custom-btn">
+          <Link to="/registration" className="btn btn-outline-custom me-2 custom-btn">
             Sign In
           </Link>
+          <Routes>
+            <Route path="/registration" element={<RegistrationForm />} />
+          </Routes>
+
           <button className="btn btn-primary custom-btn" type="button">
             Post A Job
           </button>
