@@ -25,6 +25,60 @@ nav ul li {
   background-color: #f8f9fa; /* Ensures background color is set */
 }
 
+.input-group {
+  width: 70%;
+}
+
+.input-group .form-control{
+  border-radius: 0px 10px 10px 0px;
+}
+
+.search {
+  background-color: #fff;
+  border-radius: 0px;
+  border-color: #dee2e6;
+  border-right-color: #fff;
+
+}
+.custom-btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600; /* Semi-bold */
+  font-size: 0.850rem; /* Slightly smaller font size (14px) */
+  padding: 0.5rem 1rem; /* Adjust padding if needed */
+}
+
+.btn-outline-custom {
+  border-width: 1px;
+}
+
+
+.seach-input {
+  border-left-color: #fff;
+}
+
+.form-select:disabled {
+  width: 14%;
+  border-radius: 10px 0px 0px 10px;
+  border-right-color: #fff;
+  background-color: #fff;
+}
+
+.btn-outline-custom {
+  border-color: #71a8e7;
+}
+.statistics {
+  display: flex;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+.statistics .border {
+  border: 1px solid #ccc;
+  width: 23%;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
 .container {
   padding-left: 15px; /* Adjusts padding to avoid header overlap */
   padding-right: 15px;
