@@ -33,7 +33,7 @@ export default function Home() {
                 </div>
 
                 <div className="suggestions text-md-start mb-4">
-                  <p>Suggestion: Designer, Programming, Digital Marketing, Video, Animation</p>
+                  <p style={{fontWeight:'600'}}>Suggestion: Designer, Programming, Digital Marketing, Video, Animation</p>
                 </div>
 
                   <div className="statistics d-flex justify-content-between">
