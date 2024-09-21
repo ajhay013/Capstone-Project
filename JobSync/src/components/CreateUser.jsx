@@ -18,7 +18,7 @@ export default function CreateUser() {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        axios.post('http://localhost:80/capstone-project/api/users', inputs)
+        axios.post('http://localhost:80/capstone-project/api/applicants.php', inputs)
             .then(response => {
                 console.log(response.data);
                 navigate('/');
