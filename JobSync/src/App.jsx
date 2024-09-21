@@ -1,9 +1,7 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { FaBriefcase, FaBuilding, FaUser, FaPlus } from 'react-icons/fa';
 import MyNavbar from './components/navbar';
 import SearchJobs from './components/searchbar';
 import FindJob from './Pages/FindJob';

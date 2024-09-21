@@ -22,26 +22,33 @@ nav ul li {
   left: 0;
   width: 100%; /* Ensures full width */
   z-index: 1000; /* Keeps header above other content */
-  background-color: #f8f9fa; /* Ensures background color is set */
+  background-color: #ffffff; /* Ensures background color is set */
 }
 
 .input-group {
   width: 70%;
+  position: relative;
+
 }
 
 .input-group .form-control{
   border-radius: 0px 10px 10px 0px;
 }
 
-.search {
-  background-color: #fff;
-  border-radius: 0px;
-  border-color: #dee2e6;
-  border-right-color: #fff;
 
+.input-group-text {
+  position: absolute;
+  z-index: 999;
+  left: 5px; /* Adjust based on your layout */
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  pointer-events: none; /* Prevent clicks on the icon */
 }
+
+
 .custom-btn {
-  font-family: 'Inter', sans-serif;
   font-weight: 600; /* Semi-bold */
   font-size: 0.850rem; /* Slightly smaller font size (14px) */
   padding: 0.5rem 1rem; /* Adjust padding if needed */
@@ -76,7 +83,7 @@ nav ul li {
   border: 1px solid #ccc;
   width: 23%;
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 .container {
