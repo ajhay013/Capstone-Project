@@ -7,7 +7,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import RegistrationForm from '../Pages/Registration';
 
 
-function JobSyncHeader() {
+function SearchJobs() {
   return (
     <header className="job-sync-header p-3 bg-light border-bottom">
       <div className="container">
@@ -17,7 +17,7 @@ function JobSyncHeader() {
             <img src={logo} alt="JobSync Logo" width="58" height="50" />
             <span className="ms-2 fw-bold fs-4">JobSync</span>
           </div>
-
+    
           {/* Search Bar */}
           <div className="search-bar flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
           <select className="form-select" value="Philippines" disabled>
@@ -40,10 +40,6 @@ function JobSyncHeader() {
           <Link to="/registration" className="btn btn-outline-custom me-2 custom-btn">
             Sign In
           </Link>
-          <Routes>
-            <Route path="/registration" element={<RegistrationForm />} />
-          </Routes>
-
           <button className="btn btn-primary custom-btn" type="button">
             Post A Job
           </button>
@@ -56,4 +52,4 @@ function JobSyncHeader() {
   );
 }
 
-export default JobSyncHeader;
+export default SearchJobs;
