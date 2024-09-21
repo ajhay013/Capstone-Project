@@ -13,7 +13,6 @@ const MyNavbar = () => {
             <Nav.Link href="#home">Home</Nav.Link>
             <Nav.Link href="#link">Find Job</Nav.Link>
             <Nav.Link href="#link">Employers</Nav.Link>
-            <Nav.Link href="#link">Candidates</Nav.Link>
             <Nav.Link href="#link">Customer Support</Nav.Link>
           </Nav>
         </Navbar.Collapse>

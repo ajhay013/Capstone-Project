@@ -1,9 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faBuilding, faUser, faPlus } from '@fortawesome/free-solid-svg-icons';
-
-
 
 function JobSyncHeader() {
   return (
@@ -35,9 +34,10 @@ function JobSyncHeader() {
 
           {/* Actions */}
           <div className="actions d-flex align-items-center">
-            <button className="btn btn-outline-primary me-2" type="button">
+            {/* Link to Registration Form */}
+            <Link to="/regform" className="btn btn-outline-primary me-2">
               Sign In
-            </button>
+            </Link>
             <button className="btn btn-success" type="button">
               Post A Job
             </button>
