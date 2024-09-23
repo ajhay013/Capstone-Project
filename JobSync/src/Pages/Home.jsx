@@ -11,7 +11,7 @@ export default function Home() {
               <header className="container text-center py-4">
                 <div className="row align-items-center">
                   {/* Column for the text */}
-                  <div className="col-md-8 text-md-start text-center">
+                  <div className="col-md-7 text-md-start text-center">
                     <h1>Find a job that suits<br />your interest & skills.</h1>
                   </div>
                   
@@ -21,7 +21,7 @@ export default function Home() {
                       src="https://i0.wp.com/freelancemethod.com/wp-content/uploads/2021/06/blogging.png?resize=768%2C576&ssl=1" 
                       alt="Job search" 
                       className="img-fluid" 
-                      style={{ maxWidth: '100%' }} 
+                      style={{ maxWidth: '120%' }} 
                     />
                   </div>
                 </div>
