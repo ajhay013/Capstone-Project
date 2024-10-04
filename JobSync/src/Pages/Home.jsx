@@ -7,7 +7,7 @@ import { FaBriefcase, FaBuilding, FaUser, FaPlus } from 'react-icons/fa';
 
 export default function Home() {
     return (
-          <div>
+          <div> 
               <header className="container text-center py-4">
                 <div className="row align-items-center">
                   {/* Column for the text */}
