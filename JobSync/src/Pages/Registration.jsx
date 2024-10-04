@@ -13,48 +13,48 @@ function RegistrationForm() {
         <>
             <div className="row mb-3">
                 <div className="col">
-                    <input type="text" className="form-control" placeholder="First Name" />
+                    <input type="text" className="form-control register" placeholder="First Name" />
                 </div>
                 <div className="col">
-                    <input type="text" className="form-control" placeholder="Middle Name" />
+                    <input type="text" className="form-control register" placeholder="Middle Name" />
                 </div>
             </div>
             <div className="row mb-3">
                 <div className="col">
-                    <input type="text" className="form-control" placeholder="Last Name" />
+                    <input type="text" className="form-control register" placeholder="Last Name" />
                 </div>
                 <div className="col">
-                    <input type="text" className="form-control" placeholder="Suffix (Optional)" />
+                    <input type="text" className="form-control register" placeholder="Suffix (Optional)" />
                 </div>
             </div>
             {formType === 'employer' && (
                 <>
                   
                     <div className="mb-3">
-                        <input type="text" className="form-control" placeholder="Contact Number" />
+                        <input type="text" className="form-control register" placeholder="Contact Number" />
                     </div>
                 </>
             )}
             {formType === 'candidate' && (
                 <div className="row mb-3">
                     <div className="col">
-                        <input type="text" className="form-control" placeholder="Gender" />
+                        <input type="text" className="form-control register" placeholder="Gender" />
                     </div>
                     <div className="col">
-                        <input type="text" className="form-control" placeholder="Contact Number" />
+                        <input type="text" className="form-control register" placeholder="Contact Number" />
                     </div>
                 </div>
             )}
             <div className="mb-3">
-                <input type="email" className="form-control" placeholder={formType === 'employer' ? "Position" : "Email"} />
+                <input type="email" className="form-control register" placeholder={formType === 'employer' ? "Position" : "Email"} />
             </div>
             {formType === 'candidate' && (
                 <>
                     <div className="mb-3">
-                        <input type="password" className="form-control" placeholder="Password" />
+                        <input type="password" className="form-control register" placeholder="Password" />
                     </div>
                     <div className="mb-3">
-                        <input type="password" className="form-control" placeholder="Confirm Password" />
+                        <input type="password" className="form-control register" placeholder="Confirm Password" />
                     </div>
                 </>
             )}
@@ -110,13 +110,37 @@ function RegistrationForm() {
                     </form>
                 </div>
                 <div className="col-md-6 d-none d-md-block">
-                    <img 
-                        src="src/assets/our-services.jpg" 
-                        alt="Registration Visual" 
-                        className="img-fluid"
-                        style={{ height: '700px', width: '800px' }}
-                    />
+                    <div 
+                        style={{
+                            position: 'relative',
+                            marginTop: '50px',
+                            width: '130%',
+                        }}
+                    >
+                        <img 
+                            src="src/assets/our-services.jpg" 
+                            alt="Registration Visual" 
+                            className="img-fluid"
+                            style={{ 
+                                height: '100%', 
+                                width: '100%', 
+                                objectFit: 'cover'
+                            }}
+                        />
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                height: '100%',
+                                width: '100%',
+                                background: 'linear-gradient(rgba(10, 22, 101, 0.4), rgba(0, 8, 42, 0.7))',
+                                zIndex: 1
+                            }}
+                        ></div>
+                    </div>
                 </div>
+
             </div>
         </div>
     );
