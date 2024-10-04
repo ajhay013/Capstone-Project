@@ -7,6 +7,7 @@ import SearchJobs from './components/searchbar';
 import FindJob from './Pages/FindJob';
 import Home from './Pages/Home';
 import RegistrationForm from './Pages/Registration';
+import SignInForm from './Pages/SignInForm';
 
 
 
@@ -19,7 +20,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}/>
         <Route path='/findjob' element={<FindJob />} />
-        <Route path="/registration" element={<RegistrationForm />} />
+        <Route path='/signin' element={<SignInForm />} />
+        <Route path='/registration' element={<RegistrationForm />} />
       </Routes>
     </BrowserRouter>
   );
