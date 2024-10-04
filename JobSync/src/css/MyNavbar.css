@@ -1,0 +1,22 @@
+/* MyNavbar.css */
+
+.active-link {
+    color: #0A65CC !important; /* Blue text */
+    position: relative;
+  }
+  
+  .active-link::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px; /* Thickness of the line */
+    background-color: #0A65CC;
+    bottom: -5px; /* Adjust this value to move the line further down */
+    left: 0;
+  }
+  
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+}
+  
