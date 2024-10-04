@@ -50,14 +50,14 @@ function SearchJobs() {
                   type="text"
                   className="form-control search-input"
                   placeholder="Job title, keyword, company"
-                  style={{ paddingLeft: '45px' }} // Adjust padding to make room for the icon
+                  style={{ paddingLeft: '45px' }} 
                 />
               </div>
 
           </div>
 
           <div className="actions d-flex align-items-center">
-          <Link to="/registration" className="btn btn-outline-custom me-2 custom-btn">
+          <Link to="/signin" className="btn btn-outline-custom me-2 custom-btn">
             Sign In
           </Link>
           <button className="btn btn-primary custom-btn" type="button">

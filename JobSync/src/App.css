@@ -95,3 +95,21 @@ body {
   padding-top: 80px; /* Adjust based on the header height to avoid content overlap */
 }
 
+.btn-custom {
+  padding: 12px 25px;
+  background-color: #007bff;
+  border-color: black;
+  font-size: 16px; 
+  border-radius: 5px; 
+  transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #007bff;
+}
+
+.form-control {
+  height: 50px;
+  border-radius: 10px;
+}
+
