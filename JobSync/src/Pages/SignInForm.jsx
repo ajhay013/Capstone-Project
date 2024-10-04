@@ -12,10 +12,10 @@ function SignInForm() {
     const renderFormFields = () => (
         <>
             <div className="mb-3">
-                <input type="email" className="form-control" placeholder="Email" />
+                <input type="email" className="form-control register" placeholder="Email" />
             </div>
             <div className="mb-3">
-                <input type="password" className="form-control" placeholder="Password" />
+                <input type="password" className="form-control register" placeholder="Password" />
             </div>
             <div className="d-flex justify-content-between mb-3">
                 <div className="form-check">
@@ -71,12 +71,35 @@ function SignInForm() {
                     </form>
                 </div>
                 <div className="col-md-6 d-none d-md-block">
-                    <img 
-                        src="src/assets/our-services.jpg" 
-                        alt="Sign In Visual" 
-                        className="img-fluid"
-                        style={{ height: '700px', width: '800px' }}
-                    />
+                    <div 
+                        style={{
+                            position: 'relative',
+                            marginTop: '50px',
+                            width: '130%',
+                        }}
+                    >
+                        <img 
+                            src="src/assets/our-services.jpg" 
+                            alt="Registration Visual" 
+                            className="img-fluid"
+                            style={{ 
+                                height: '100%', 
+                                width: '100%', 
+                                objectFit: 'cover'
+                            }}
+                        />
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                height: '100%',
+                                width: '100%',
+                                background: 'linear-gradient(rgba(10, 22, 101, 0.4), rgba(0, 8, 42, 0.7))',
+                                zIndex: 1
+                            }}
+                        ></div>
+                    </div>
                 </div>
             </div>
         </div>
