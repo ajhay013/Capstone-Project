@@ -7,6 +7,7 @@ const MyNavbar = () => {
   const location = useLocation(); 
 
   return (
+    <div>
     <Navbar style={{ backgroundColor: '#eaeaea', fontWeight: '400'}} expand="lg" fixed="top">
       <Container>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -31,6 +32,9 @@ const MyNavbar = () => {
         </Navbar.Collapse>
       </Container>
     </Navbar>
+    
+   </div>
+    
   );
 };
 

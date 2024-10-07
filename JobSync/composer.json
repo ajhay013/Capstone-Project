@@ -1,0 +1,18 @@
+{
+    "name": "kaneki/job-sync",
+    "autoload": {
+        "psr-4": {
+            "Kaneki\\JobSync\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "kaneki09999",
+            "email": "tanjirowkamado@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.5",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
