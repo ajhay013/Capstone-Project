@@ -38,12 +38,12 @@ function SignInForm() {
     );
 
     return (
-        <div className="container mt-0">
+        <div className="container mt-5">
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-6 mt-5">
                     <h3 className="mb-3 text-start">Sign In</h3>
                     <h4 className="mb-4 text-start" style={{ fontSize: '15px' }}>
-                        Don't have an account? <Link to="/registration" style={{ textDecoration: 'underline', color: '#0A65CC' }}>Create Account</Link>
+                        Don't have an account? <Link to="/registration" style={{ textDecoration: 'none', color: '#0A65CC' }}>Create Account</Link>
                     </h4>
                     <div className="d-flex justify-content-center mb-4">
                         <div className="d-flex flex-column align-items-center mb-4" style={{ backgroundColor: '#F1F2F4', padding: '26px', borderRadius: '10px', width: '580px' }}>
@@ -74,7 +74,7 @@ function SignInForm() {
                     <div 
                         style={{
                             position: 'relative',
-                            marginTop: '50px',
+                            marginTop: '0px',
                             width: '130%',
                         }}
                     >
