@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+import MyNavbar from './components/navbar';
+import SearchJobs from './components/searchbar';
+import FindJob from './Pages/FindJob';
+import Home from './Pages/Home';
+import RegistrationForm from './Pages/Registration';
+import SignInForm from './Pages/SignInForm';
+import EmployerRegistrationForm from './Pages/EmployerRegistration';
+import LogoIcon from './components/LogoIcon';
+import EmailVerification from './Pages/EmailVerification';
 
-function App() {
-  const [count, setCount] = useState(0)
+function Layout() {
+  const location = useLocation();
+  
+  const hideSearchJobs = location.pathname === '/registration' || location.pathname === '/registration_employer' || location.pathname === '/signin' || location.pathname === '/email_verification';
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <MyNavbar />
+      {!hideSearchJobs ? <SearchJobs /> : <LogoIcon />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path='/findjob' element={<FindJob />} />
+        <Route path='/signin' element={<SignInForm />} />
+        <Route path='/registration' element={<RegistrationForm />} />
+        <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
+        <Route path='/email_verification' element={<EmailVerification />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
+    </BrowserRouter>
+  );
+}
+
+export default App;
