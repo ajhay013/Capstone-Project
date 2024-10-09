@@ -136,7 +136,7 @@ function RegistrationForm() {
             <div className="row">
                 <div className="col-md-6">
                     <h3 className="mb-3 text-start">Create Account</h3>
-                    <h4 className="mb-4 text-start" style={{ fontSize: '15px' }}>Already have an account? <Link to="/signin" style={{ textDecoration: 'none', color: '#0A65CC' }}>Log In</Link>
+                    <h4 className="mb-4 text-start" style={{ fontSize: '15px' }}>Already have an account? <Link to="/candidate_login" style={{ textDecoration: 'none', color: '#0A65CC' }}>Log In</Link>
                     </h4>
                     <div className="d-flex justify-content-center mb-1">
                         <div className="d-flex flex-column align-items-center mb-4" style={{ backgroundColor: '#F1F2F4', padding: '26px', borderRadius: '10px', width: '580px' }}>
