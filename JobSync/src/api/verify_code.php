@@ -24,7 +24,7 @@ if ($method == 'POST') {
         $verification_code = $_POST["verification_code"];
 
         // Prepare the SQL statement
-        $sql = "SELECT * FROM applicants WHERE email = :email AND verification_code = :verification_code";
+        $sql = "SELECT * FROM js_applicants WHERE email = :email AND verification_code = :verification_code";
         $stmt = $conn->prepare($sql);
         
         // Bind parameters
@@ -36,7 +36,7 @@ if ($method == 'POST') {
 
         if ($stmt->rowCount() > 0) {
             // Update the email_verified_at field
-            $updateSql = "UPDATE applicants SET email_verified_at = NOW() WHERE email = :email";
+            $updateSql = "UPDATE js_applicants SET email_verified_at = NOW() WHERE email = :email";
             $updateStmt = $conn->prepare($updateSql);
             $updateStmt->bindParam(':email', $email);
 

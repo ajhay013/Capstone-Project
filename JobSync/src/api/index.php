@@ -27,7 +27,7 @@ switch ($method) {
 
             switch ($type) {
                 case 'applicant':
-                    $table = 'applicants';
+                    $table = 'js_applicants';
                     $fields = ['firstname', 'middlename', 'lastname', 'suffix', 'gender', 'contact', 'email', 'password', 'verification_code'];
                     break;
                 
@@ -83,55 +83,68 @@ switch ($method) {
                 $stmt->bindValue(':updated_at', $updated_at);
 
                 if ($stmt->execute()) {
-                    // After successful insertion, send the verification email
-                    $mail = new PHPMailer(true);
-                    try {
-                        $mail->isSMTP();
-                        $mail->Host = $_ENV['SMTP_HOST'];
-                        $mail->SMTPAuth = true;
-                        $mail->Username = $_ENV['SMTP_USER']; 
-                        $mail->Password = $_ENV['SMTP_PASS']; 
-                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                        $mail->Port = $_ENV['SMTP_PORT'];
-                        
-                        $mail->setFrom($_ENV['SMTP_FROM_EMAIL'], $_ENV['SMTP_FROM_NAME']);
-                        $mail->addAddress($email, $lastname);
+                    // Get the last inserted ID (applicant id)
+                    $applicant_id = $conn->lastInsertId();
 
-                        // Attachments (if you have a logo to attach)
-                        // $mail->addEmbeddedImage('path/to/logo.png', 'logo12'); // Ensure the path is correct
+                    // Insert into personal_info table
+                    $sqlPersonalInfo = "INSERT INTO js_personal_info (applicant_id, created_at) VALUES (:applicant_id, :created_at)";
+                    $stmtPersonalInfo = $conn->prepare($sqlPersonalInfo);
+                    $stmtPersonalInfo->bindValue(':applicant_id', $applicant_id);
+                    $stmtPersonalInfo->bindValue(':created_at', $created_at);
 
-                        // Content
-                        $mail->isHTML(true);
-                        $mail->Subject = 'Email Verification for ' . ucfirst($type) . ' Registration';
-                        $mail->Body = '<div class="container" style="display: flex; justify-content: center; text-align: center;">
-                                        <div class="contents" style="border: 1px solid black; width: 100%;">
-                                            <p style="font-size: 20px; padding: 20px;">
-                                                <img src="cid:logo12" style="max-width: 150px;" alt="Jobsync Logo"><br>
-                                                Dear ' . ucfirst($type) . ',<br><br>
-                                                Your Verification code is:<br><br>
-                                                <b style="font-size: 40px;">' . $verification_code . '</b><br><br>
-                                                Please use the provided code to complete your registration.<br>
-                                                If you have not made this request, please disregard this notification.<br><br>
-                                                Thank you,<br>
-                                                JobSync.
-                                            </p>
-                                        </div>
-                                    </div>';
+                    if ($stmtPersonalInfo->execute()) {
+                        // After successful insertion, send the verification email
+                        $mail = new PHPMailer(true);
+                        try {
+                            $mail->isSMTP();
+                            $mail->Host = $_ENV['SMTP_HOST'];
+                            $mail->SMTPAuth = true;
+                            $mail->Username = $_ENV['SMTP_USER']; 
+                            $mail->Password = $_ENV['SMTP_PASS']; 
+                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                            $mail->Port = $_ENV['SMTP_PORT'];
+                            
+                            $mail->setFrom($_ENV['SMTP_FROM_EMAIL'], $_ENV['SMTP_FROM_NAME']);
+                            $mail->addAddress($email, $lastname);
 
-                        // Uncomment the following line if you have an embedded image
-                        // $mail->addEmbeddedImage('path/to/logo.png', 'logo12');
+                            // Attachments (if you have a logo to attach)
+                            // $mail->addEmbeddedImage('path/to/logo.png', 'logo12'); // Ensure the path is correct
 
-                        $mail->send();
+                            // Content
+                            $mail->isHTML(true);
+                            $mail->Subject = 'Email Verification for ' . ucfirst($type) . ' Registration';
+                            $mail->Body = '<div class="container" style="display: flex; justify-content: center; text-align: center;">
+                                            <div class="contents" style="border: 1px solid black; width: 100%;">
+                                                <p style="font-size: 20px; padding: 20px;">
+                                                    <img src="cid:logo12" style="max-width: 150px;" alt="Jobsync Logo"><br>
+                                                    Dear ' . ucfirst($type) . ',<br><br>
+                                                    Your Verification code is:<br><br>
+                                                    <b style="font-size: 40px;">' . $verification_code . '</b><br><br>
+                                                    Please use the provided code to complete your registration.<br>
+                                                    If you have not made this request, please disregard this notification.<br><br>
+                                                    Thank you,<br>
+                                                    JobSync.
+                                                </p>
+                                            </div>
+                                        </div>';
 
-                        // Redirect or respond after successful email sending
-                        $response = ['status' => 1, 'message' => ucfirst($type) . ' registered successfully. Verification email sent.'];
-                        echo json_encode($response);
-                        exit();
-                    } catch (Exception $e) {
-                        // If email sending fails, you might want to delete the inserted user or handle it accordingly
-                        $response = ['status' => 0, 'message' => "Registration successful, but email could not be sent. Mailer Error: {$mail->ErrorInfo}"];
-                        echo json_encode($response);
-                        exit();
+                            // Uncomment the following line if you have an embedded image
+                            // $mail->addEmbeddedImage('path/to/logo.png', 'logo12');
+
+                            $mail->send();
+
+                            // Redirect or respond after successful email sending
+                            $response = ['status' => 1, 'message' => ucfirst($type) . ' registered successfully. Verification email sent.'];
+                            echo json_encode($response);
+                            exit();
+                        } catch (Exception $e) {
+                            // If email sending fails, you might want to delete the inserted user or handle it accordingly
+                            $response = ['status' => 0, 'message' => "Registration successful, but email could not be sent. Mailer Error: {$mail->ErrorInfo}"];
+                            echo json_encode($response);
+                            exit();
+                        }
+                    } else {
+                        $response = ['status' => 0, 'message' => 'Failed to insert personal info.'];
                     }
                 } else {
                     $response = ['status' => 0, 'message' => 'Failed to register ' . $type . '.'];
