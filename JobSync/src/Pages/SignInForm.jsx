@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from '../AuthContext'; // Import useAuth hook
 
-function SignInForm() { // Accept setUserId as a prop
+function SignInForm() { 
     const navigate = useNavigate();
     const { login } = useAuth();
     const [inputs, setInputs] = useState({ email: '', password: '' });
@@ -39,12 +39,15 @@ function SignInForm() { // Accept setUserId as a prop
             }
         })
             .then(response => {
-                console.log(response.data);
                 if (response.data.success) { 
-                    // Login successful, get user data
-                    const userData = { id: response.data.user_id, firstname: response.data.firstname }; // Adjust based on your response
-                    login(userData); // Set user data in context
-                    navigate('/home');
+                    const userData = { 
+                        id: response.data.applicant_id,
+                        firstname: response.data.firstname,
+                        profilePicture: response.data.profile_picture,
+                        userType: response.data.userType
+                    };
+                    login(userData); 
+                    navigate('/dashboard'); 
                 } else {
                     if (response.data.error.includes('email')) {
                         setEmailError("Incorrect email");

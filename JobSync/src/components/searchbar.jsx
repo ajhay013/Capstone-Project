@@ -56,14 +56,13 @@ function SearchJobs() {
 
                     <div className="actions d-flex align-items-center">
                         {user ? (
-                            <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
+                                <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
                                 <img 
-                                    src={user.profilePicture || 'path_to_default_profile_picture.png'} // Add a fallback if no profile picture is available
+                                    src={user.profilePicture || 'path_to_default_profile_picture.png'} // Use profile picture
                                     alt="Profile"
                                     style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
                                 />
-                                <span>{user.firstname}</span>
-                            </div>
+                                </div>
                         ) : (
                             <>
                                 <Link to="/candidate_login" className="btn btn-outline-custom me-2 custom-btn">
