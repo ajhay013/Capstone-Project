@@ -13,6 +13,7 @@ import LogoIcon from './components/LogoIcon';
 import EmailVerification from './Pages/EmailVerification';
 import SignInEmployer from './Pages/SignInEmployer';
 import HomeApplicant from './Pages/Applicants/Home';
+import JobDetails from './Pages/JobDetails';
 import { AuthProvider } from './AuthContext'; 
 
 function Layout({ userId, setUserId }) {
@@ -33,6 +34,7 @@ function Layout({ userId, setUserId }) {
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
         <Route path='/home' element={<HomeApplicant />} />
+        <Route path='/jobdetails' element={<JobDetails />} />
       </Routes>
     </>
   );
