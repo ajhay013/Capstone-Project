@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-export default function DashboardApplicant() {
+export default function HomeApplicant() {
 
     return(
         <>
