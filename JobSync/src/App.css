@@ -135,3 +135,80 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.custom-link {
+  color: #9199A3;
+}
+
+.custom-link:hover {
+  color: #ffffff;
+}
+
+.job-container {
+  transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.job-container:hover {
+  transform: scale(1.05); /* Zoom in */
+}
+
+.custom-job-container {
+  margin-bottom: 30px; /* Adjust this value for desired spacing */
+}
+
+
+.job-posting h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.company-name {
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.job-description {
+  font-size: 1.1rem;
+}
+
+.job-overview h4 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.job-overview ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.job-overview ul li {
+  margin-bottom: 10px;
+}
+
+.job-overview button {
+  margin-top: 20px;
+}
+
+.mt-5 {
+  margin-top: 5rem;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+iframe {
+  border-radius: 10px;
+}
+
+
+.custom-container {
+  max-width: 2000px;
+  margin: 0 auto;
+}
+
+/* Footer */
