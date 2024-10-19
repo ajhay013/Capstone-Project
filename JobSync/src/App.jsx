@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,8 +14,10 @@ import EmployerRegistrationForm from './Pages/EmployerRegistration';
 import LogoIcon from './components/LogoIcon';
 import EmailVerification from './Pages/EmailVerification';
 import SignInEmployer from './Pages/SignInEmployer';
-import HomeApplicant from './Pages/Applicants/Home';
+import JobDetails from './Pages/JobDetails';
 import { AuthProvider } from './AuthContext'; 
+import DashboardApplicant from './Pages/Applicants/Dashboard';
+import Header from './components/header';
 
 function Layout({ userId, setUserId }) {
   const location = useLocation();
@@ -52,7 +55,8 @@ function Layout({ userId, setUserId }) {
         <Route path='/registration' element={<RegistrationForm />} />
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
-        <Route path='/home' element={<HomeApplicant />} />
+        <Route path='/dashboard' element={<DashboardApplicant />} />
+        <Route path='/jobdetails' element={<JobDetails />} />
       </Routes>
       <Footer />
     </>
