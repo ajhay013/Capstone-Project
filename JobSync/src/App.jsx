@@ -13,10 +13,8 @@ import EmployerRegistrationForm from './Pages/EmployerRegistration';
 import LogoIcon from './components/LogoIcon';
 import EmailVerification from './Pages/EmailVerification';
 import SignInEmployer from './Pages/SignInEmployer';
-
-
+import HomeApplicant from './Pages/Applicants/Home';
 import { AuthProvider } from './AuthContext'; 
-
 
 function Layout({ userId, setUserId }) {
   const location = useLocation();
@@ -54,7 +52,7 @@ function Layout({ userId, setUserId }) {
         <Route path='/registration' element={<RegistrationForm />} />
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
-
+        <Route path='/home' element={<HomeApplicant />} />
       </Routes>
       <Footer />
     </>
