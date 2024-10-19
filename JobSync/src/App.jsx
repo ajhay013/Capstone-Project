@@ -13,6 +13,8 @@ import EmployerRegistrationForm from './Pages/EmployerRegistration';
 import LogoIcon from './components/LogoIcon';
 import EmailVerification from './Pages/EmailVerification';
 import SignInEmployer from './Pages/SignInEmployer';
+
+
 import JobDetails from './Pages/JobDetails';
 import { AuthProvider } from './AuthContext'; 
 import DashboardApplicant from './Pages/Applicants/Dashboard';
