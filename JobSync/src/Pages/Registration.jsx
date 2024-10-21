@@ -1,20 +1,26 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
 import axios from "axios";
-// Optional: Import the loader package
-import { Oval } from 'react-loader-spinner'; // If using react-loader-spinner
+import { useAuth } from '../AuthContext'; // Import the useAuth hook
 
 function RegistrationForm() {
     const navigate = useNavigate();
+    const { user, login } = useAuth(); // Get user data
     
     const [inputs, setInputs] = useState({
         type: 'applicant'
     });
     const [isLoading, setIsLoading] = useState(false); // Loader state
+
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard'); // Redirect to dashboard if user is already logged in
+        }
+    }, [user, navigate]);
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -31,7 +37,8 @@ function RegistrationForm() {
                 setIsLoading(false); // Stop loading
                 console.log(response.data);
                 if (response.data.status === 1) { 
-                    navigate('/email_verification', { state: { email: inputs.email } }); 
+                    // DO NOT CALL login() HERE
+                    navigate('/email_verification', { state: { email: inputs.email } }); // Redirect to email verification
                 } else {
                     alert(response.data.message || "Registration failed. Please try again.");
                 }
@@ -43,93 +50,89 @@ function RegistrationForm() {
             });
     }
 
-
     const [formType, setFormType] = useState('candidate');
     const [isAgreed, setIsAgreed] = useState(false);
-    
-        const renderFormFields = () => (
-            <>
-                <input type="hidden" id="type" name="type" value={inputs.type} />
-                <div className="row mb-3">
-                    <div className="col">
-                        <input type="text" className="form-control register" placeholder="First Name *" name='firstname' onChange={handleChange} required  />
-                    </div>
-                    <div className="col">
-                        <input type="text" className="form-control register" placeholder="Middle Name" name='middlename' onChange={handleChange} />
-                    </div>
+
+    const renderFormFields = () => (
+        <>
+            <input type="hidden" id="type" name="type" value={inputs.type} />
+            <div className="row mb-3">
+                <div className="col">
+                    <input type="text" className="form-control register" placeholder="First Name *" name='firstname' onChange={handleChange} required  />
                 </div>
-                <div className="row mb-3">
-                    <div className="col">
-                        <input type="text" className="form-control register" placeholder="Last Name *" name='lastname' onChange={handleChange} required />
-                    </div>
-                    <div className="col">
-                        <input type="text" className="form-control register" placeholder="Suffix (Optional)" name='suffix' onChange={handleChange} />
-                    </div>
+                <div className="col">
+                    <input type="text" className="form-control register" placeholder="Middle Name" name='middlename' onChange={handleChange} />
                 </div>
-                <div className="row mb-3">
-                    <div className="col">
-                        <select 
-                            className="form-control register" 
-                            name='gender' 
-                            onChange={handleChange} 
-                            required 
-                            value={inputs.gender || ''}
-                        >
-                            <option value="" disabled>Select Gender *</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </div>
-                    <div className="col">
-                        <input type="text" className="form-control register" placeholder="Contact Number *" name='contact' onChange={handleChange} required />
-                    </div>
+            </div>
+            <div className="row mb-3">
+                <div className="col">
+                    <input type="text" className="form-control register" placeholder="Last Name *" name='lastname' onChange={handleChange} required />
                 </div>
-                <div className="mb-3">
-                    <input type="email" className="form-control register" placeholder="Email *" name='email' onChange={handleChange} required />
+                <div className="col">
+                    <input type="text" className="form-control register" placeholder="Suffix (Optional)" name='suffix' onChange={handleChange} />
                 </div>
-                <div className="mb-3">
-                    <input type="password" className="form-control register" placeholder="Password *" name='password' onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <input type="password" className="form-control register" placeholder="Confirm Password *" required />
-                </div>
-                <div className="form-check mb-3 d-flex align-items-center">
-                    <input 
-                        type="checkbox" 
-                        className="form-check-input" 
-                        checked={isAgreed} 
-                        onChange={() => setIsAgreed(!isAgreed)} 
-                    />
-                    <label className="form-check-label" style={{ marginLeft: 10 }}>
-                        I've read and agreed with your Terms and Services
-                    </label>
-                </div>
-                <div className="d-flex justify-content-center" style={{ position: 'relative' }}>
-                    {isLoading ? (
-                        <div 
-                            className="loader" 
-                            style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)'
-                            }}
-                        />
-                    ) : null}
-                    <button 
-                        type="submit" 
-                        className="btn btn-success btn-custom" 
-                        style={{ backgroundColor: '#0A65CC', width: '700px', marginTop: '20px', opacity: isLoading ? 0.4 : 1 }} 
-                        disabled={isLoading}
+            </div>
+            <div className="row mb-3">
+                <div className="col">
+                    <select 
+                        className="form-control register" 
+                        name='gender' 
+                        onChange={handleChange} 
+                        required 
+                        value={inputs.gender || ''}
                     >
-                        Create Account <FontAwesomeIcon icon={faArrowRight} />
-                    </button>
+                        <option value="" disabled>Select Gender *</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
                 </div>
-
-
-
-            </>
-        );
+                <div className="col">
+                    <input type="text" className="form-control register" placeholder="Contact Number *" name='contact' onChange={handleChange} required />
+                </div>
+            </div>
+            <div className="mb-3">
+                <input type="email" className="form-control register" placeholder="Email *" name='email' onChange={handleChange} required />
+            </div>
+            <div className="mb-3">
+                <input type="password" className="form-control register" placeholder="Password *" name='password' onChange={handleChange} required />
+            </div>
+            <div className="mb-3">
+                <input type="password" className="form-control register" placeholder="Confirm Password *" required />
+            </div>
+            <div className="form-check mb-3 d-flex align-items-center">
+                <input 
+                    type="checkbox" 
+                    className="form-check-input" 
+                    checked={isAgreed} 
+                    onChange={() => setIsAgreed(!isAgreed)} 
+                />
+                <label className="form-check-label" style={{ marginLeft: 10 }}>
+                    I've read and agreed with your Terms and Services
+                </label>
+            </div>
+            <div className="d-flex justify-content-center" style={{ position: 'relative' }}>
+                {isLoading ? (
+                    <div 
+                        className="loader" 
+                        style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)'
+                        }}
+                    />
+                ) : null}
+                <button 
+                    type="submit" 
+                    className="btn btn-success btn-custom" 
+                    style={{ backgroundColor: '#0A65CC', width: '700px', marginTop: '20px', opacity: isLoading ? 0.4 : 1 }} 
+                    disabled={isLoading}
+                >
+                    Create Account <FontAwesomeIcon icon={faArrowRight} />
+                </button>
+            </div>
+        </>
+    );
 
     return (
         <div className="container mt-5">
@@ -149,12 +152,14 @@ function RegistrationForm() {
                                 >
                                     <FontAwesomeIcon icon={faUser} /> Candidate
                                 </button>
-                                <Link to ="/registration_employer"><button 
-                                    className={`btn btn-primary mx-1 custom-button ${formType === 'employer' ? 'active' : ''}`}
-                                    style={{ backgroundColor: formType === 'employer' ? '#042852' : 'white', color: formType === 'employer' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
-                                >
-                                    <FontAwesomeIcon icon={faBuilding} /> Employer
-                                </button></Link>
+                                <Link to="/registration_employer">
+                                    <button 
+                                        className={`btn btn-primary mx-1 custom-button ${formType === 'employer' ? 'active' : ''}`}
+                                        style={{ backgroundColor: formType === 'employer' ? '#042852' : 'white', color: formType === 'employer' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
+                                    >
+                                        <FontAwesomeIcon icon={faBuilding} /> Employer
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -193,7 +198,6 @@ function RegistrationForm() {
                         ></div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

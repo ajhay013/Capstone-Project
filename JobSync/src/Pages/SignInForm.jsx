@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
@@ -9,12 +9,19 @@ import { useAuth } from '../AuthContext'; // Import useAuth hook
 
 function SignInForm() { 
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { user, login } = useAuth(); // Get user data
     const [inputs, setInputs] = useState({ email: '', password: '' });
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [isEmailCorrect, setIsEmailCorrect] = useState(false);
     const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+
+    // Redirect if user is already logged in
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard'); // Redirect to dashboard if logged in
+        } 
+    }, [user, navigate]);
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -32,27 +39,33 @@ function SignInForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        axios.post('http://localhost:80/capstone-project/jobsync/src/api/login.php', inputs, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        })
+    
+        axios.post('http://localhost:80/capstone-project/jobsync/src/api/login.php',
+            new URLSearchParams({
+                email: inputs.email,
+                password: inputs.password
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
             .then(response => {
-                if (response.data.success) { 
-                    const userData = { 
+                if (response.data.success) {
+                    const userData = {
                         id: response.data.applicant_id,
                         firstname: response.data.firstname,
                         profilePicture: response.data.profile_picture,
                         userType: response.data.userType
                     };
-                    login(userData); 
-                    navigate('/dashboard'); 
+                    login(userData); // Save user data to sessionStorage
+                    navigate('/dashboard'); // Redirect to dashboard
                 } else {
-                    if (response.data.error.includes('email')) {
+                    const errorMessage = response.data.error || '';
+                    
+                    if (typeof errorMessage === 'string' && errorMessage.includes('email')) {
                         setEmailError("Incorrect email");
                         setIsEmailCorrect(false);
-                    } else if (response.data.error.includes('password')) {
+                    } else if (typeof errorMessage === 'string' && errorMessage.includes('password')) {
                         setPasswordError("Incorrect password");
                         setIsPasswordCorrect(false);
                     } else {
@@ -64,7 +77,7 @@ function SignInForm() {
                 console.error("There was an error submitting the form!", error);
                 alert("An error occurred while submitting the form. Please try again.");
             });
-    }
+    };
 
     const [formType, setFormType] = useState('candidate');
     const [isRemembered, setIsRemembered] = useState(false);
@@ -132,12 +145,14 @@ function SignInForm() {
                                 >
                                     <FontAwesomeIcon icon={faUser} /> Candidate
                                 </button>
-                                <Link to ="/employer_login"><button 
-                                    className={`btn btn-primary mx-1 custom-button ${formType === 'employer' ? 'active' : ''}`}
-                                    style={{ backgroundColor: formType === 'employer' ? '#042852' : 'white', color: formType === 'employer' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
-                                >
-                                    <FontAwesomeIcon icon={faBuilding} /> Employer
-                                </button></Link>
+                                <Link to="/employer_login">
+                                    <button 
+                                        className={`btn btn-primary mx-1 custom-button ${formType === 'employer' ? 'active' : ''}`}
+                                        style={{ backgroundColor: formType === 'employer' ? '#042852' : 'white', color: formType === 'employer' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
+                                    >
+                                        <FontAwesomeIcon icon={faBuilding} /> Employer
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

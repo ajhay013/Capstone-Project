@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,6 +17,8 @@ import JobDetails from './Pages/JobDetails';
 import { AuthProvider } from './AuthContext'; 
 import DashboardApplicant from './Pages/Applicants/Dashboard';
 import Header from './components/header';
+import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
+import JobAlerts from './Pages/Applicants/JobAlerts';
 
 function Layout({ userId, setUserId }) {
   const location = useLocation();
@@ -28,17 +29,21 @@ function Layout({ userId, setUserId }) {
                          location.pathname === '/email_verification' || 
                          location.pathname === '/employer_login';
 
-  const showHeader = location.pathname === '/dashboard' || 
+  const showHeader = 
                      location.pathname === '/findjob' || 
+                     location.pathname === '/employers' || 
+                     location.pathname === '/jobAlerts' || 
                      location.pathname === '/jobdetails';
   const getPageTitle = () => {
     switch (location.pathname) {
-      case '/dashboard':
-        return 'Dashboard';
       case '/findjob':
         return 'Find Job';
       case '/jobdetails':
         return 'Job Details';
+      case '/employers':
+        return 'Employers';
+      case '/jobAlerts':
+        return 'Job Alert';
     }
   };
   
@@ -49,13 +54,14 @@ function Layout({ userId, setUserId }) {
       {showHeader && <Header pageTitle={getPageTitle()} />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path='/findjob' element={<FindJob pageTitle="Dashboard" />} />
+        <Route path='/findjob' element={<FindJob/>} />
         <Route path='/candidate_login' element={<SignInForm setUserId={setUserId} />} />
         <Route path='/employer_login' element={<SignInEmployer />} />
         <Route path='/registration' element={<RegistrationForm />} />
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
-        <Route path='/dashboard' element={<DashboardApplicant />} />
+        <Route path='/dashboard' element={<ProtectedRoute> <DashboardApplicant /> </ProtectedRoute> } />
+        <Route path='/jobAlerts' element={<ProtectedRoute> <JobAlerts /> </ProtectedRoute> } />
         <Route path='/jobdetails' element={<JobDetails />} />
       </Routes>
       <Footer />
@@ -64,14 +70,12 @@ function Layout({ userId, setUserId }) {
 }
 
 function App() {
-
   return (
     <AuthProvider>
       <BrowserRouter>
           <Layout />
       </BrowserRouter>
-  </AuthProvider>
-
+    </AuthProvider>
   );
 }
 

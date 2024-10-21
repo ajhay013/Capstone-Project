@@ -45,7 +45,7 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
             if (password_verify($password, $hashed_password)) {
                 $_SESSION['applicant_id'] = $id;
                 $_SESSION['firstname'] = $firstname;
-
+        
                 echo json_encode([
                     "success" => true,
                     "applicant_id" => $id,
@@ -55,12 +55,19 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
                     "message" => "Login successful."
                 ]);
                 exit();
+            } else {
+                // Password is incorrect
+                echo json_encode([
+                    "success" => false, 
+                    "error" => "Incorrect password."
+                ]);
+                exit();
             }
         } else {
             // Email does not exist
             echo json_encode([
                 "success" => false, 
-                "error" => "Invalid email or password."
+                "error" => "Incorrect email."
             ]);
             exit();
         }
