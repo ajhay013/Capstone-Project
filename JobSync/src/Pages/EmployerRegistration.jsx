@@ -1,10 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
+import { useAuth } from '../AuthContext';// Import useAuth hook
 
 export default function EmployerRegistrationForm() {
     const [formType, setFormType] = useState('employer');
@@ -22,6 +23,7 @@ export default function EmployerRegistrationForm() {
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false); // Loader state
+    const { user, login } = useAuth(); // Get user data
 
     const handleNext = (e) => {
         e.preventDefault();
@@ -30,6 +32,11 @@ export default function EmployerRegistrationForm() {
         }
     };
 
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard'); // Redirect to dashboard if user is already logged in
+        }
+    }, [user, navigate]);
     const isFirstStepValid = () => {
         return firstName.trim() !== '' && 
                lastName.trim() !== '' && 
@@ -61,6 +68,13 @@ export default function EmployerRegistrationForm() {
                 setIsLoading(false); // Stop loading
                 console.log(response.data);
                 if (response.data.status === 1) { 
+                    const userData = {
+                        id: response.data.applicant_id,
+                        firstname: response.data.firstname,
+                        profilePicture: response.data.profile_picture,
+                        userType: response.data.userType
+                    };
+                    login(userData);
                     navigate('/email_verification', { state: { email } }); 
                 } else {
                     alert(response.data.message || "Registration failed. Please try again.");
@@ -144,7 +158,7 @@ export default function EmployerRegistrationForm() {
                     className="btn btn-primary btn-custom" 
                     style={{ backgroundColor: '#0A65CC', width: '700px', marginTop: '20px', border: 'none' }}
                     onClick={handleNext}
-                    disabled={!isFirstStepValid()} // Disable if validation fails
+                    disabled={!isFirstStepValid()} 
                 >
                     Next <FontAwesomeIcon icon={faArrowRight} />
                 </button>

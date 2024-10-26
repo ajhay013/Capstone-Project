@@ -42,7 +42,6 @@ switch ($method) {
                     exit;
             }
 
-            // Validate required fields
             $requiredFields = ['email', 'lastname'];
             foreach ($requiredFields as $field) {
                 if (empty($user->$field)) {
@@ -52,14 +51,11 @@ switch ($method) {
                 }
             }
 
-            // Assign email and lastname from user input
             $email = filter_var(trim($user->email), FILTER_SANITIZE_EMAIL);
             $lastname = htmlspecialchars(trim($user->lastname));
 
-            // Generate verification code
             $verification_code = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
 
-            // Insert user into the database first
             try {
                 $sql = "INSERT INTO $table (" . implode(", ", $fields) . ", created_at, updated_at) VALUES (:" . implode(", :", $fields) . ", :created_at, :updated_at)";
                 $stmt = $conn->prepare($sql);
@@ -83,17 +79,14 @@ switch ($method) {
                 $stmt->bindValue(':updated_at', $updated_at);
 
                 if ($stmt->execute()) {
-                    // Get the last inserted ID (applicant id)
                     $applicant_id = $conn->lastInsertId();
 
-                    // Insert into personal_info table
                     $sqlPersonalInfo = "INSERT INTO js_personal_info (applicant_id, created_at) VALUES (:applicant_id, :created_at)";
                     $stmtPersonalInfo = $conn->prepare($sqlPersonalInfo);
                     $stmtPersonalInfo->bindValue(':applicant_id', $applicant_id);
                     $stmtPersonalInfo->bindValue(':created_at', $created_at);
 
                     if ($stmtPersonalInfo->execute()) {
-                        // After successful insertion, send the verification email
                         $mail = new PHPMailer(true);
                         try {
                             $mail->isSMTP();
@@ -110,7 +103,6 @@ switch ($method) {
                             // Attachments (if you have a logo to attach)
                             // $mail->addEmbeddedImage('path/to/logo.png', 'logo12'); // Ensure the path is correct
 
-                            // Content
                             $mail->isHTML(true);
                             $mail->Subject = 'Email Verification for ' . ucfirst($type) . ' Registration';
                             $mail->Body = '<div class="container" style="display: flex; justify-content: center; text-align: center;">
@@ -128,18 +120,15 @@ switch ($method) {
                                             </div>
                                         </div>';
 
-                            // Uncomment the following line if you have an embedded image
                             // $mail->addEmbeddedImage('path/to/logo.png', 'logo12');
 
                             $mail->send();
 
-                            // Redirect or respond after successful email sending
-                            $response = ['status' => 1, 'message' => ucfirst($type) . ' registered successfully. Verification email sent.'];
+                            $response = ['status' => 1, 'message' => ucfirst($type) . 'Verification email sent.'];
                             echo json_encode($response);
                             exit();
                         } catch (Exception $e) {
-                            // If email sending fails, you might want to delete the inserted user or handle it accordingly
-                            $response = ['status' => 0, 'message' => "Registration successful, but email could not be sent. Mailer Error: {$mail->ErrorInfo}"];
+                            $response = ['status' => 0, 'message' => "Something went wrong. Please try again."];
                             echo json_encode($response);
                             exit();
                         }
