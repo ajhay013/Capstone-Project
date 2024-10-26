@@ -41,6 +41,11 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
                 // Password is incorrect
                 echo json_encode(["success" => false, "error" => "Incorrect password."]);
                 exit();
+            }
+             else {
+                // Password is incorrect
+                echo json_encode(["success" => false, "error" => "Incorrect password."]);
+                exit();
             } 
         } else {
             // Email does not exist
