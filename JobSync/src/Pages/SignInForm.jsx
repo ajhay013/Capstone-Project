@@ -5,20 +5,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
 import axios from "axios";
-import { useAuth } from '../AuthContext'; 
+import { useAuth } from '../AuthContext'; // Import useAuth hook
 
-function SignInForm() { // Accept setUserId as a prop
+function SignInForm() { 
     const navigate = useNavigate();
-    const { user, login } = useAuth(); 
+    const { user, login } = useAuth(); // Get user data
     const [inputs, setInputs] = useState({ email: '', password: '' });
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [isEmailCorrect, setIsEmailCorrect] = useState(false);
     const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
 
+    // Redirect if user is already logged in
     useEffect(() => {
         if (user) {
-            navigate('/dashboard'); 
+            navigate('/dashboard'); // Redirect to dashboard if logged in
         } 
     }, [user, navigate]);
 
@@ -49,12 +50,15 @@ function SignInForm() { // Accept setUserId as a prop
                 }
             })
             .then(response => {
-                console.log(response.data);
-                if (response.data.success) { 
-                    // Login successful, get user data
-                    const userData = { id: response.data.user_id, firstname: response.data.firstname }; // Adjust based on your response
-                    login(userData); // Set user data in context
-                    navigate('/home');
+                if (response.data.success) {
+                    const userData = {
+                        id: response.data.applicant_id,
+                        firstname: response.data.firstname,
+                        profilePicture: response.data.profile_picture,
+                        userType: response.data.userType
+                    };
+                    login(userData); // Save user data to sessionStorage
+                    navigate('/dashboard'); // Redirect to dashboard
                 } else {
                     const errorMessage = response.data.error || '';
                     
