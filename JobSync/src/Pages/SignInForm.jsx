@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from '../AuthContext'; 
 
-function SignInForm() { 
+function SignInForm() { // Accept setUserId as a prop
     const navigate = useNavigate();
     const { user, login } = useAuth(); 
     const [inputs, setInputs] = useState({ email: '', password: '' });
