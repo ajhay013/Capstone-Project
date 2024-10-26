@@ -49,15 +49,12 @@ function SignInForm() { // Accept setUserId as a prop
                 }
             })
             .then(response => {
-                if (response.data.success) {
-                    const userData = {
-                        id: response.data.applicant_id,
-                        firstname: response.data.firstname,
-                        profilePicture: response.data.profile_picture,
-                        userType: response.data.userType
-                    };
-                    login(userData); 
-                    navigate('/dashboard'); 
+                console.log(response.data);
+                if (response.data.success) { 
+                    // Login successful, get user data
+                    const userData = { id: response.data.user_id, firstname: response.data.firstname }; // Adjust based on your response
+                    login(userData); // Set user data in context
+                    navigate('/home');
                 } else {
                     const errorMessage = response.data.error || '';
                     

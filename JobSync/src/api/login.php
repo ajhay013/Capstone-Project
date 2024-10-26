@@ -14,20 +14,10 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
     $password = $_POST['password'];
 
     try {
-        $stmt_applicant = $conn->prepare("
-        SELECT 
-            a.applicant_id, 
-            a.firstname, 
-            p.profile_picture,
-            a.password
-        FROM 
-            js_applicants a 
-        JOIN 
-            js_personal_info p ON a.applicant_id = p.applicant_id 
-        WHERE 
-            a.email = :email
-    ");
-    
+        // Prepare the SQL statement with a placeholder
+        $stmt_applicant = $conn->prepare("SELECT applicant_id, firstname, password FROM js_applicants WHERE email = :email");
+        
+        // Bind the parameter
         $stmt_applicant->bindParam(':email', $email, PDO::PARAM_STR);
         
         $stmt_applicant->execute();
@@ -43,28 +33,18 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
                 // Start a session for the user
                 $_SESSION['applicant_id'] = $id;
                 $_SESSION['firstname'] = $firstname;
-        
-                echo json_encode([
-                    "success" => true,
-                    "applicant_id" => $id,
-                    "firstname" => $firstname,
-                    "profile_picture" => $profile_picture, // Include profile picture
-                    "userType" => 'applicant',
-                    "message" => "Login successful."
-                ]);
-                exit();
-            } else {
-                echo json_encode([
-                    "success" => false, 
-                    "error" => "Incorrect password."
-                ]);
+            
+                echo json_encode(["success" => true, "applicant_id" => $id, "message" => "Login successful."]); // Include applicant_id
                 exit();
             }
+             else {
+                // Password is incorrect
+                echo json_encode(["success" => false, "error" => "Incorrect password."]);
+                exit();
+            } 
         } else {
-            echo json_encode([
-                "success" => false, 
-                "error" => "Incorrect email."
-            ]);
+            // Email does not exist
+            echo json_encode(["success" => false, "error" => "Incorrect email."]);
             exit();
         }
 
