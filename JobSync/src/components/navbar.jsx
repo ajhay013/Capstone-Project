@@ -47,12 +47,12 @@ const MyNavbar = () => { // Accept userId as a prop
                                     <Nav.Link>{user.firstname}</Nav.Link>
                                 </>
                             )}
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-        </div>
-    );
+                </Nav>
+            </Navbar.Collapse>
+        </Container>
+    </Navbar>
+</div>
+  );
 };
 
 export default MyNavbar;

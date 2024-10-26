@@ -18,17 +18,18 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
         $stmt_applicant = $conn->prepare("SELECT applicant_id, firstname, password FROM js_applicants WHERE email = :email");
         
         $stmt_applicant->bindParam(':email', $email, PDO::PARAM_STR);
-
+        
         $stmt_applicant->execute();
-
+        
         if ($stmt_applicant->rowCount() > 0) {
             $applicant = $stmt_applicant->fetch(PDO::FETCH_ASSOC);
             $id = $applicant['applicant_id'];
             $firstname = $applicant['firstname'];
-            $profile_picture = $applicant['profile_picture']; 
             $hashed_password = $applicant['password'];
-        
+
+            // Verify the password
             if (password_verify($password, $hashed_password)) {
+                // Start a session for the user
                 $_SESSION['applicant_id'] = $id;
                 $_SESSION['firstname'] = $firstname;
         
@@ -57,9 +58,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
     if (!isset($_POST['email'])) {
         error_log("No email provided in the request.");
     }
-    echo json_encode([
-        "success" => false, 
-        "error" => "Invalid request. Please provide valid credentials."
-    ]);
+    echo json_encode(["success" => false, "error" => "INVALID email or password. Please try again."]);
     exit();
 }
