@@ -5,71 +5,195 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
 import axios from "axios";
-import { useAuth } from '../AuthContext'; // Import the useAuth hook
+import { useAuth } from '../AuthContext';
 
 function RegistrationForm() {
     const navigate = useNavigate();
-    const { user, login } = useAuth(); // Get user data
+    const { user } = useAuth(); // Get user data
     
     const [inputs, setInputs] = useState({
-        type: 'applicant'
+        type: 'applicant',
+        firstname: '',
+        lastname: '',
+        gender: '',
+        contact: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
     });
-    const [isLoading, setIsLoading] = useState(false); // Loader state
+    const [isLoading, setIsLoading] = useState(false); 
+    const [errorMessage, setErrorMessage] = useState(''); 
+    const [passwordError, setPasswordError] = useState(''); 
+    const [nameError, setNameError] = useState({ firstname: '', lastname: '' });
+    const [showErrors, setShowErrors] = useState(false); 
+    const [formCompleted, setFormCompleted] = useState(false);
+    const [contactError, setContactError] = useState(''); // Specific for contact number
+
 
     useEffect(() => {
         if (user) {
-            navigate('/dashboard'); // Redirect to dashboard if user is already logged in
+            navigate('/dashboard');
         }
     }, [user, navigate]);
 
     const handleChange = (event) => {
-        const name = event.target.name;
-        const value = event.target.value;
+        const { name, value } = event.target;
         setInputs(values => ({ ...values, [name]: value }));
-    }
 
+        if (name === 'firstname' || name === 'lastname' || name === 'middlename' || name === 'suffix') {
+            const nameRegex = /^[A-Za-z\s]*$/;
+            if (!nameRegex.test(value) && value !== '') {
+                setNameError(prevErrors => ({ ...prevErrors, [name]: "Name cannot contain numbers." }));
+            } else {
+                setNameError(prevErrors => ({ ...prevErrors, [name]: '' }));
+            }
+        }
+    
+        if (name === 'password') {
+            const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            setPasswordError(passwordRegex.test(value) ? '' : "Password must be at least 8 characters, one uppercase, lowercase, numbers, and a special character.");
+        }
+    
+        if (name === 'confirmPassword') {
+            setErrorMessage(value !== inputs.password ? "Passwords do not match." : '');
+        }
+    
+        if (name === 'contact') {
+            const contactRegex = /^[1-9]\d{0,9}$/; 
+            if (value.length === 10) {
+                setContactError('');
+            } else if (!contactRegex.test(value) && value !== '') {
+                setContactError("Contact number must be 10 digits long and cannot start with 0");
+            } else {
+                setContactError(''); 
+            }
+        }
+    };
+    
+    
+
+    const validateNames = () => {
+        const nameRegex = /^([A-Z][a-zA-Z]*(\s[A-Z][a-zA-Z]*)?)$/;
+        let errors = { firstname: '', lastname: '' };
+    
+        if (!nameRegex.test(inputs.firstname || '')) {
+            errors.firstname = "Must start with a capital letter";
+        }
+        if (!nameRegex.test(inputs.lastname || '')) {
+            errors.lastname = "Must start with a capital letter";
+        }
+    
+        setNameError(errors);
+        return errors.firstname === '' && errors.lastname === '';
+    };
+    
     const handleSubmit = (event) => {
         event.preventDefault();
-        setIsLoading(true); // Start loading
-    
+        setShowErrors(true); 
+
+        if (!validateNames() || inputs.password !== inputs.confirmPassword || passwordError) {
+            setErrorMessage(inputs.password !== inputs.confirmPassword ? "Passwords do not match." : '');
+            return;
+        }
+
+        setIsLoading(true);
+        setErrorMessage('');
+
         axios.post('http://localhost:80/capstone-project/jobsync/src/api/index.php', inputs)
             .then(response => {
-                setIsLoading(false); // Stop loading
-                console.log(response.data);
+                setIsLoading(false); 
                 if (response.data.status === 1) { 
-                    // DO NOT CALL login() HERE
-                    navigate('/email_verification', { state: { email: inputs.email } }); // Redirect to email verification
+                    navigate('/email_verification', { state: { email: inputs.email } });
                 } else {
                     alert(response.data.message || "Registration failed. Please try again.");
                 }
             })
             .catch(error => {
-                setIsLoading(false); // Stop loading
-                console.error("There was an error submitting the form!", error);
+                setIsLoading(false); 
                 alert("An error occurred while submitting the form. Please try again.");
             });
-    }
-
+    };
     const [formType, setFormType] = useState('candidate');
     const [isAgreed, setIsAgreed] = useState(false);
+
+    useEffect(() => {
+        const requiredFieldsFilled = inputs.firstname && inputs.lastname && inputs.gender && inputs.contact && inputs.email && inputs.password && inputs.confirmPassword;
+        setFormCompleted(requiredFieldsFilled && isAgreed);
+    }, [inputs, isAgreed]);
 
     const renderFormFields = () => (
         <>
             <input type="hidden" id="type" name="type" value={inputs.type} />
             <div className="row mb-3">
                 <div className="col">
-                    <input type="text" className="form-control register" placeholder="First Name *" name='firstname' onChange={handleChange} required  />
+                    <input 
+                        type="text" 
+                        className={`form-control register ${showErrors && nameError.firstname ? 'is-invalid' : ''}`} 
+                        placeholder="First Name *" 
+                        name='firstname' 
+                        onChange={handleChange} 
+                        onKeyDown={(e) => {
+                            if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
+                                e.preventDefault(); // Prevent non-letter characters
+                            }
+                        }} 
+                        required  
+                    />
+                    {showErrors && nameError.firstname && (
+                        <div className="text-danger mt-1" style={{ fontSize: '0.8rem' }}>
+                            {nameError.firstname}
+                        </div>
+                    )}
                 </div>
                 <div className="col">
-                    <input type="text" className="form-control register" placeholder="Middle Name" name='middlename' onChange={handleChange} />
+                    <input 
+                        type="text" 
+                        className="form-control register" 
+                        placeholder="Middle Name (Optional)" 
+                        name='middlename' 
+                        onChange={handleChange} 
+                        onKeyDown={(e) => {
+                            if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
+                                e.preventDefault(); // Prevent non-letter characters
+                            }
+                        }} 
+                    />
                 </div>
             </div>
             <div className="row mb-3">
                 <div className="col">
-                    <input type="text" className="form-control register" placeholder="Last Name *" name='lastname' onChange={handleChange} required />
+                    <input 
+                        type="text" 
+                        className={`form-control register ${showErrors && nameError.lastname ? 'is-invalid' : ''}`} 
+                        placeholder="Last Name *" 
+                        name='lastname' 
+                        onChange={handleChange} 
+                        onKeyDown={(e) => {
+                            if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
+                                e.preventDefault(); // Prevent non-letter characters
+                            }
+                        }} 
+                        required 
+                    />
+                    {showErrors && nameError.lastname && (
+                        <div className="text-danger mt-1" style={{ fontSize: '0.8rem' }}>
+                            {nameError.lastname}
+                        </div>
+                    )}
                 </div>
                 <div className="col">
-                    <input type="text" className="form-control register" placeholder="Suffix (Optional)" name='suffix' onChange={handleChange} />
+                    <input 
+                        type="text" 
+                        className="form-control register" 
+                        placeholder="Suffix (Optional)" 
+                        name='suffix' 
+                        onChange={handleChange} 
+                        onKeyDown={(e) => {
+                            if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
+                                e.preventDefault(); // Prevent non-letter characters
+                            }
+                        }} 
+                    />
                 </div>
             </div>
             <div className="row mb-3">
@@ -86,19 +210,77 @@ function RegistrationForm() {
                         <option value="female">Female</option>
                     </select>
                 </div>
-                <div className="col">
-                    <input type="text" className="form-control register" placeholder="Contact Number *" name='contact' onChange={handleChange} required />
+                <div className="col d-flex">
+                    <input 
+                        type="text" 
+                        className="form-control register" 
+                        style={{ backgroundColor: '#e6e6e6', width: '65px', marginRight: '-1px', borderRadius: '10px 0px 0px 10px', textAlign: 'center' }} 
+                        value="+63" 
+                        disabled 
+                    />
+                    <input 
+                        type="text" 
+                        className={`form-control register ${contactError ? 'is-invalid' : ''}`} 
+                        style={{ borderRadius: '0px 10px 10px 0px' }} 
+                        placeholder="Contact Number *" 
+                        name='contact' 
+                        onChange={handleChange} 
+                        onKeyDown={(e) => {
+                            // Prevent '0' as the first character
+                            if (inputs.contact.length === 0 && e.key === '0') {
+                                e.preventDefault();
+                            }
+                            // Only allow number keys and backspace
+                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace') {
+                                e.preventDefault();
+                            }
+                        }} 
+                        maxLength={10} // Set max length to 10
+                        required 
+                    />
                 </div>
+                {contactError && (
+                        <div className="text-danger mt-1" style={{ fontSize: '0.8rem', textAlign: 'end'}}>
+                            {contactError}
+                        </div>
+                    )}
             </div>
+
+
             <div className="mb-3">
                 <input type="email" className="form-control register" placeholder="Email *" name='email' onChange={handleChange} required />
             </div>
             <div className="mb-3">
-                <input type="password" className="form-control register" placeholder="Password *" name='password' onChange={handleChange} required />
+                <input 
+                    type="password" 
+                    className={`form-control register ${passwordError ? 'is-invalid' : ''}`} 
+                    placeholder="Password *" 
+                    name="password" 
+                    onChange={handleChange} 
+                    required 
+                />
+                {passwordError && (
+                    <div className="text-danger mt-1" style={{ fontSize: '0.8rem' }}>
+                        {passwordError}
+                    </div>
+                )}
             </div>
             <div className="mb-3">
-                <input type="password" className="form-control register" placeholder="Confirm Password *" required />
+                <input 
+                    type="password" 
+                    className={`form-control register ${errorMessage ? 'is-invalid' : ''}`} 
+                    placeholder="Confirm Password *" 
+                    name="confirmPassword" 
+                    onChange={handleChange} 
+                    required 
+                />
+                {errorMessage && (
+                    <div className="text-danger mt-1" style={{ fontSize: '0.8rem' }}>
+                        {errorMessage}
+                    </div>
+                )}
             </div>
+
             <div className="form-check mb-3 d-flex align-items-center">
                 <input 
                     type="checkbox" 
@@ -124,9 +306,9 @@ function RegistrationForm() {
                 ) : null}
                 <button 
                     type="submit" 
-                    className="btn btn-success btn-custom" 
-                    style={{ backgroundColor: '#0A65CC', width: '700px', marginTop: '20px', opacity: isLoading ? 0.4 : 1 }} 
-                    disabled={isLoading}
+                    className="btn btn-custom" 
+                    style={{ width: '700px', marginTop: '20px' }} 
+                    disabled={!formCompleted || isLoading} 
                 >
                     Create Account <FontAwesomeIcon icon={faArrowRight} />
                 </button>

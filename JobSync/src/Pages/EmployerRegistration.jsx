@@ -158,7 +158,7 @@ export default function EmployerRegistrationForm() {
                     className="btn btn-primary btn-custom" 
                     style={{ backgroundColor: '#0A65CC', width: '700px', marginTop: '20px', border: 'none' }}
                     onClick={handleNext}
-                    disabled={!isFirstStepValid()} // Disable if validation fails
+                    disabled={!isFirstStepValid()} 
                 >
                     Next <FontAwesomeIcon icon={faArrowRight} />
                 </button>
