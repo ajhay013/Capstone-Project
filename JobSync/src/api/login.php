@@ -15,45 +15,32 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
 
     try {
         // Prepare the SQL statement with a placeholder
-        $stmt_applicant = $conn->prepare("
-        SELECT 
-            a.applicant_id, 
-            a.firstname, 
-            p.profile_picture,
-            a.password
-        FROM 
-            js_applicants a 
-        JOIN 
-            js_personal_info p ON a.applicant_id = p.applicant_id 
-        WHERE 
-            a.email = :email
-    ");
-    
+        $stmt_applicant = $conn->prepare("SELECT applicant_id, firstname, password FROM js_applicants WHERE email = :email");
+        
         // Bind the parameter
         $stmt_applicant->bindParam(':email', $email, PDO::PARAM_STR);
-
+        
         $stmt_applicant->execute();
-
+        
         if ($stmt_applicant->rowCount() > 0) {
             // Fetch the data
             $applicant = $stmt_applicant->fetch(PDO::FETCH_ASSOC);
             $id = $applicant['applicant_id'];
             $firstname = $applicant['firstname'];
-            $profile_picture = $applicant['profile_picture']; 
             $hashed_password = $applicant['password'];
-        
+
+            // Verify the password
             if (password_verify($password, $hashed_password)) {
+                // Start a session for the user
                 $_SESSION['applicant_id'] = $id;
                 $_SESSION['firstname'] = $firstname;
-        
-                echo json_encode([
-                    "success" => true,
-                    "applicant_id" => $id,
-                    "firstname" => $firstname,
-                    "profile_picture" => $profile_picture, // Include profile picture
-                    "userType" => 'applicant',
-                    "message" => "Login successful."
-                ]);
+            
+                echo json_encode(["success" => true, "applicant_id" => $id, "message" => "Login successful."]); // Include applicant_id
+                exit();
+            }
+             else {
+                // Password is incorrect
+                echo json_encode(["success" => false, "error" => "Incorrect password."]);
                 exit();
             } else {
                 // Password is incorrect
@@ -65,10 +52,7 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
             }
         } else {
             // Email does not exist
-            echo json_encode([
-                "success" => false, 
-                "error" => "Incorrect email."
-            ]);
+            echo json_encode(["success" => false, "error" => "Incorrect email."]);
             exit();
         }
 
@@ -83,9 +67,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
     if (!isset($_POST['email'])) {
         error_log("No email provided in the request.");
     }
-    echo json_encode([
-        "success" => false, 
-        "error" => "Invalid request. Please provide valid credentials."
-    ]);
+    echo json_encode(["success" => false, "error" => "INVALID email or password. Please try again."]);
     exit();
 }
