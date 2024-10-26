@@ -17,6 +17,7 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
         // Prepare the SQL statement with a placeholder
         $stmt_applicant = $conn->prepare("SELECT applicant_id, firstname, password FROM js_applicants WHERE email = :email");
         
+        // Bind the parameter
         $stmt_applicant->bindParam(':email', $email, PDO::PARAM_STR);
         
         $stmt_applicant->execute();
@@ -32,8 +33,7 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
                 // Start a session for the user
                 $_SESSION['applicant_id'] = $id;
                 $_SESSION['firstname'] = $firstname;
-        
-               
+            
                 echo json_encode(["success" => true, "applicant_id" => $id, "message" => "Login successful."]); // Include applicant_id
                 exit();
             }
