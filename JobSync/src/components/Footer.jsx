@@ -15,7 +15,7 @@ const Footer = () => {
           {/* Logo and Contact Info */}
           <div className="col-lg-2 col-md-6 mb-2">
             <p>
-              <img src="./src/assets/logo3.png" alt="JobSync Logo" className="mb-2" style={{ width: '50px' }} /> JobSync
+              <img src="../src/assets/logo3.png" alt="JobSync Logo" className="mb-2" style={{ width: '50px' }} /> JobSync
             </p>
             <p className="mb-1"><strong>Call now:</strong> (319) 555-0115</p>
           </div>

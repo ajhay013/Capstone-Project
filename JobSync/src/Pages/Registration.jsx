@@ -38,9 +38,18 @@ function RegistrationForm() {
             })
             .catch(error => {
                 setIsLoading(false); // Stop loading
-                console.error("There was an error submitting the form!", error);
+                console.error("There was an error submitting the form!", error.message);
+                if (error.response) {
+                    console.log("Response data:", error.response.data);
+                    console.log("Response status:", error.response.status);
+                } else if (error.request) {
+                    console.log("Request made but no response:", error.request);
+                } else {
+                    console.log("Error message:", error.message);
+                }
                 alert("An error occurred while submitting the form. Please try again.");
             });
+            
     }
 
 

@@ -19,9 +19,40 @@ export default function EmployerRegistrationForm() {
     const [email, setEmail] = useState(''); // Email state
     const [password, setPassword] = useState(''); // Password state
     const [confirmPassword, setConfirmPassword] = useState(''); // Confirm password state
+    const [idFrontImage, setIdFrontImage] = useState(null); 
+    const [idFrontImagePreview, setIdFrontImagePreview] = useState(null);
+    const [idBackImage, setIdBackImage] = useState(null);
+    const [idBackImagePreview, setIdBackImagePreview] = useState(null); 
+    
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false); // Loader state
+
+    const handleFrontImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setIdFrontImage(file);
+            const previewUrl = URL.createObjectURL(file);
+            setIdFrontImagePreview(previewUrl);
+        } else {
+            setIdFrontImage(null);
+            setIdFrontImagePreview(null);
+        }
+    };
+
+
+    const handleBackImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setIdBackImage(file);
+            const previewUrl = URL.createObjectURL(file);
+            setIdBackImagePreview(previewUrl);
+        } else {
+            setIdBackImage(null);
+            setIdBackImagePreview(null);
+        }
+    };
+
 
     const handleNext = (e) => {
         e.preventDefault();
@@ -54,7 +85,15 @@ export default function EmployerRegistrationForm() {
             contactNumber,
             email,
             password,
+            idFrontImage,
+            idBackImage
         };
+
+
+        const formData = new FormData();
+            for (const key in inputs) {
+                formData.append(key, inputs[key]);
+    }
 
         axios.post('http://localhost:80/capstone-project/jobsync/src/api/index.php', inputs)
             .then(response => {
@@ -144,7 +183,7 @@ export default function EmployerRegistrationForm() {
                     className="btn btn-primary btn-custom" 
                     style={{ backgroundColor: '#0A65CC', width: '700px', marginTop: '20px', border: 'none' }}
                     onClick={handleNext}
-                    disabled={!isFirstStepValid()} // Disable if validation fails
+                    disabled={!isFirstStepValid()} 
                 >
                     Next <FontAwesomeIcon icon={faArrowRight} />
                 </button>
@@ -154,6 +193,52 @@ export default function EmployerRegistrationForm() {
 
     const renderFormFieldsStep2 = () => (
         <>
+             <div className="d-flex gap-3 mb-3">
+    <div style={{ width: '50%' }}>
+        <small className="form-text text-muted">Upload the front of your ID for verification.</small>
+        <input 
+            type="file" 
+            className="form-control register" 
+            accept="image/*" 
+            onChange={handleFrontImageChange} 
+        />
+        <div className="mt-2" style={{ width: '100%', height: '150px', borderRadius: '5px', backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {idFrontImagePreview ? (
+                <img 
+                    src={idFrontImagePreview} 
+                    alt="Uploaded Front ID Preview" 
+                    style={{ width: '100%', height: 'auto', borderRadius: '5px' }} 
+                />
+            ) : (
+                <span className="text-muted">Front ID Preview</span>
+            )}
+        </div>
+    </div>
+
+    <div style={{ width: '50%' }}>
+        <small className="form-text text-muted">Upload the back of your ID for verification.</small>
+        <input 
+            type="file" 
+            className="form-control register" 
+            accept="image/*" 
+            onChange={handleBackImageChange} 
+        />
+        <div className="mt-2" style={{ width: '100%', height: '150px', borderRadius: '5px', backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {idBackImagePreview ? (
+                <img 
+                    src={idBackImagePreview} 
+                    alt="Uploaded Back ID Preview" 
+                    style={{ width: '100%', height: 'auto', borderRadius: '5px' }} 
+                />
+            ) : (
+                <span className="text-muted">Back ID Preview</span>
+            )}
+        </div>
+    </div>
+</div>
+
+
+
             <div className="mb-3">
                 <input 
                     type="email" 
