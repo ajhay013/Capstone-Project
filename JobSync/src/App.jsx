@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import MyNavbar from './components/navbar';
+import MyNavbar1 from './components/navbar1';
 import SearchJobs from './components/searchbar';
 import FindJob from './Pages/FindJob';
 import Home from './Pages/Home';
@@ -63,6 +64,10 @@ function Layout({ userId, setUserId }) {
         <Route path='/dashboard' element={<ProtectedRoute> <DashboardApplicant /> </ProtectedRoute> } />
         <Route path='/jobAlerts' element={<ProtectedRoute> <JobAlerts /> </ProtectedRoute> } />
         <Route path='/jobdetails' element={<JobDetails />} />
+        <Route path='/Employer/companyprofile' element={<CompanyProfile />} />
+        <Route path='/Employer/foundinginfo' element={<FoundingInfo/>} /> 
+        <Route path='/Employer/socialmedia' element={<SocialMedia/>} />
+        <Route path='/Employer/contact' element={<Contact/>} />
       </Routes>
       <Footer />
     </>
