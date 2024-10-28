@@ -63,11 +63,6 @@ nav ul li {
   padding: 0.5rem 1rem; /* Adjust padding if needed */
 }
 
-.btn-outline-custom {
-  border-width: 1px;
-}
-
-
 .seach-input {
   border-left-color: #fff;
 }
@@ -81,6 +76,7 @@ nav ul li {
 
 .btn-outline-custom {
   border-color: #71a8e7;
+  border-width: 1px;
 }
 .statistics {
   display: flex;
@@ -107,7 +103,8 @@ body {
 .btn-custom {
   padding: 12px 25px;
   background-color: #007bff;
-  border-color: black;
+  border-color: rgb(192, 192, 192);
+  color: white;
   font-size: 16px; 
   border-radius: 5px; 
   transition: background-color 0.3s ease;
@@ -115,6 +112,13 @@ body {
 
 .btn-custom:hover {
   background-color: #007bff;
+}
+
+.btn-custom:disabled {
+  background-color:#0A65CC; /* Change the background color to gray */
+  color: white; /* Change text color to white for contrast */
+  opacity: 0.6; /* Optional: Adjust opacity */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
 }
 
 .register{
@@ -212,36 +216,3 @@ iframe {
 }
 
 /* Footer */
-
-
-.custom-navbar {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-}
-
-.custom-nav {
-  display: flex;
-  gap: 30px; /* Space between nav items */
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #888;
-}
-
-.nav-item span {
-  font-size: 14px;
-}
-
-.nav-item:hover {
-  color: #007bff;
-}
-
-.nav-item:last-child span {
-  color: #007bff; /* Highlight the last item */
-}
-
-
-
