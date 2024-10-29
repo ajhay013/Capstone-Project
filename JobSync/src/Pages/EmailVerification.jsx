@@ -1,3 +1,4 @@
+// EmailVerification.js
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -7,7 +8,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 function EmailVerification() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { email } = location.state || {};
+    const { email, formType } = location.state || {};
 
     const [verificationCode, setVerificationCode] = useState('');
     const [message, setMessage] = useState('');
@@ -19,6 +20,7 @@ function EmailVerification() {
         const formData = new URLSearchParams();
         formData.append('email', email);
         formData.append('verification_code', verificationCode);
+        formData.append('formType', formType);
 
         axios.post('http://localhost:80/capstone-project/jobsync/src/api/verify_code.php', formData)
             .then(response => {
@@ -34,23 +36,22 @@ function EmailVerification() {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh', margin: 0, padding: 0 }}>
-            <div className="container" style={{ maxWidth: '400px', margin: 0, padding: 0 }}>
+        <div className="d-flex justify-content-center align-items-center" style={{marginBottom: '6.5rem', padding: 0 }}>
+            <div className="container" style={{ maxWidth: '55%', margin: 0, padding: 0 }}>
                 <h3 className="text-center" style={{ marginTop: 0 }}>Email Verification</h3>
                 <p className="text-center" style={{ marginTop: 0 }}>
-                    We’ve sent a verification email to <b>{email}</b> to verify your email address and activate your account
+                    We’ve sent a verification email to <b>{email}</b> to verify your email address and activate your account.
                 </p>
                 <form onSubmit={handleVerify} style={{ margin: 0, padding: 0 }}>
                     <div className="mb-3">
                         <input
                             type="text"
                             name="verification_code"
-                            className="form-control"
+                            className="form-control register"
                             placeholder="Enter your verification code"
                             value={verificationCode}
                             onChange={(e) => setVerificationCode(e.target.value)}
                             required
-                            // style={{ margin: 0, padding: '10px' }}
                         />
                     </div>
                     <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>

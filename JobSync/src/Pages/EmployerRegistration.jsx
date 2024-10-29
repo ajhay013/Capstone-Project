@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import React, { useState, useEffect } from 'react'; 
+import Webcam from 'react-webcam';
+import React, { useState, useEffect, useRef } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
@@ -20,41 +21,38 @@ export default function EmployerRegistrationForm() {
     const [email, setEmail] = useState(''); // Email state
     const [password, setPassword] = useState(''); // Password state
     const [confirmPassword, setConfirmPassword] = useState(''); // Confirm password state
-    const [idFrontImage, setIdFrontImage] = useState(null); 
-    const [idFrontImagePreview, setIdFrontImagePreview] = useState(null);
-    const [idBackImage, setIdBackImage] = useState(null);
-    const [idBackImagePreview, setIdBackImagePreview] = useState(null); 
-    
-
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false); // Loader state
     const { user, login } = useAuth(); // Get user data
 
-    const handleFrontImageChange = (event) => {
+    const [documentImage, setDocumentImage] = useState(null);
+    const [faceImage, setFaceImage] = useState(null);
+    const [backImage, setBackImage] = useState(null);
+    const [cameraActive, setCameraActive] = useState(false);
+    const webcamRef = useRef(null);
+    const api_url = "http://localhost:80/capstone-project/jobsync/src/api/employer.php";
+
+    const [idFrontImagePreview, setIdFrontImagePreview] = useState(null);
+    const [backImagePreview, setBackImagePreview] = useState(null);
+
+    const handleImageUpload = (event, setImage, setPreview) => {
         const file = event.target.files[0];
         if (file) {
-            setIdFrontImage(file);
-            const previewUrl = URL.createObjectURL(file);
-            setIdFrontImagePreview(previewUrl);
-        } else {
-            setIdFrontImage(null);
-            setIdFrontImagePreview(null);
+            setImage(file); // Sets the actual file
+            setPreview(URL.createObjectURL(file)); 
         }
     };
+    
 
-
-    const handleBackImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setIdBackImage(file);
-            const previewUrl = URL.createObjectURL(file);
-            setIdBackImagePreview(previewUrl);
-        } else {
-            setIdBackImage(null);
-            setIdBackImagePreview(null);
-        }
+    const captureFaceImage = () => {
+        const imageSrc = webcamRef.current.getScreenshot();
+        setFaceImage(imageSrc); // directly saving base64 from Webcam
+        setCameraActive(false);
     };
 
+    const isStep2Valid = () => {
+        return documentImage && backImage && faceImage;
+    };
 
     const handleNext = (e) => {
         e.preventDefault();
@@ -62,7 +60,6 @@ export default function EmployerRegistrationForm() {
             setStep(2); // Move to the next step
         }
     };
-
     useEffect(() => {
         if (user) {
             navigate('/dashboard'); // Redirect to dashboard if user is already logged in
@@ -78,12 +75,21 @@ export default function EmployerRegistrationForm() {
     const handleBack = () => {
         setStep(1); // Move back to the first step
     };
+    const handleBack1 = () => {
+        setStep(2); // Move back to the first step
+    };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true); // Start loading
-    
-        const inputs = {
+
+        const documentBase64 = await convertToBase64(documentImage);
+        const backBase64 = await convertToBase64(backImage);
+
+        const payload = {
+            document: documentBase64,
+            face: faceImage.split(',')[1],  
+            backSideId: backBase64,
             firstName,
             middleName,
             lastName,
@@ -92,42 +98,168 @@ export default function EmployerRegistrationForm() {
             contactNumber,
             email,
             password,
-            idFrontImage,
-            idBackImage
+            type: 'employer'
         };
 
-
-        const formData = new FormData();
-            for (const key in inputs) {
-                formData.append(key, inputs[key]);
-    }
-
-        axios.post('http://localhost:80/capstone-project/jobsync/src/api/index.php', inputs)
-            .then(response => {
-                setIsLoading(false); // Stop loading
-                console.log(response.data);
-                if (response.data.status === 1) { 
-                    const userData = {
-                        id: response.data.applicant_id,
-                        firstname: response.data.firstname,
-                        profilePicture: response.data.profile_picture,
-                        userType: response.data.userType
-                    };
-                    login(userData);
-                    navigate('/email_verification', { state: { email } }); 
-                } else {
-                    alert(response.data.message || "Registration failed. Please try again.");
+        try {
+            const response = await axios.post(api_url, payload, {
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            })
-            .catch(error => {
-                setIsLoading(false); // Stop loading
-                console.error("There was an error submitting the form!", error);
-                alert("An error occurred while submitting the form. Please try again.");
             });
+        
+            if (response.data.decision) {
+                if (response.data.decision !== 'reject') { // Check if the decision is not rejected
+                    navigate('/email_verification', { state: { email, formType } });
+                } else {
+                    alert("Your ID verification has been rejected.");
+                }
+            } else if (response.data.error) {
+                alert(`Error: ${response.data.error}`);
+            } else {
+                alert("Unexpected response from the server.");
+            }
+        
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error verifying ID.");
+        } finally {
+            setIsLoading(false);
+        }
+        
+
+   
     };
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    const renderFormFieldsStep2 = () => (
+        <>
+            <h6 style={{ textAlign: 'left', color: '#505050' }}>ID Verification:</h6>
+            <div className="d-flex gap-3 mb-3">
+                <div style={{ width: '50%' }}>
+                    <small className="form-text text-muted">Upload the front of your Government ID</small>
+                    <input 
+                        type="file" 
+                        className="form-control" 
+                        accept="image/*" 
+                        onChange={(e) => handleImageUpload(e, setDocumentImage, setIdFrontImagePreview)} 
+                        required 
+                    />
+                    <div 
+                        className="mt-2" 
+                        style={{ width: '100%', height: '150px', borderRadius: '5px', backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                        {idFrontImagePreview ? (
+                            <img 
+                                src={idFrontImagePreview} 
+                                alt="Uploaded Front ID Preview" 
+                                style={{ width: '100%', height: '100%', borderRadius: '5px', objectFit: 'cover' }} 
+                            />
+                        ) : (
+                            <span className="text-muted">Front ID Preview</span>
+                        )}
+                    </div>
+                </div>
+
+                <div style={{ width: '50%'}}>
+                <small className="form-text text-muted">Upload the back of your Government ID</small>
+                <input 
+                    type="file" 
+                    className="form-control" 
+                    accept="image/*" 
+                    onChange={(e) => handleImageUpload(e, setBackImage, setBackImagePreview)} 
+                    required 
+                />
+                <div 
+                    className="mt-2" 
+                    style={{ width: '100%', height: '150px', borderRadius: '5px', backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                    {backImagePreview ? (
+                        <img 
+                            src={backImagePreview} 
+                            alt="Uploaded Back ID Preview" 
+                            style={{ width: '100%', height: '100%', borderRadius: '5px', objectFit: 'cover' }} 
+                        />
+                    ) : (
+                        <span className="text-muted">Back ID Preview</span>
+                    )}
+                </div>
+                </div>
+
+            </div>
+            <div className="d-flex justify-content-center mb-3">
+                <div style={{ width: '50%'}}>
+                                    
+                {faceImage && (
+                    <div style={{ marginBottom: '10px' }}>
+                        <p>Captured Face Image Preview:</p>
+                        <img src={faceImage} alt="Face Preview" style={{ width: '100%', height: '100%', borderRadius: '5px', objectFit: 'cover' }}  />
+                    </div>
+                )}
+                <label>Take a selfie:</label>
+                {cameraActive ? (
+                    <div>
+                        <Webcam
+                            audio={false}
+                            ref={webcamRef}
+                            screenshotFormat="image/jpeg"
+                            style={{ width: '100%', borderRadius: '5px' }}
+                        />
+                        <button type="button" onClick={captureFaceImage} style={{ marginTop: '10px' }}>Capture</button>
+                    </div>
+                ) : (
+                    <>
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={(e) => handleImageUpload(e, setFaceImage)} 
+                            style={{ display: 'none' }}
+                            id="face-upload"
+                        />
+                        <button type="button" onClick={() => setCameraActive(true)} style={{ marginLeft: '10px' }}>
+                            Open Camera
+                        </button>
+                    </>
+                )}
+
+                </div>
+            </div>
+
+
+            <div className="d-flex justify-content-center mb-3" style={{ position: 'relative' }}>
+                <button 
+                    type="button" 
+                    className="btn btn-secondary btn-custom" 
+                    style={{ backgroundColor: 'transparent', width: '500px', marginTop: '20px', color: '#000000' }}
+                    onClick={handleBack}
+                >
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back
+                </button>
+
+                <button 
+                    type="button" 
+                    className="btn btn-primary btn-custom" 
+                    style={{ backgroundColor: '#0A65CC', width: '500px', marginTop: '20px', marginLeft: '20px', border: 'none' }}
+                    onClick={() => setStep(3)}
+                    disabled={!isStep2Valid()} 
+                >
+                    Next <FontAwesomeIcon icon={faArrowRight} />
+                </button>
+            </div>    
+        </>
+    );
+
 
     const renderFormFieldsStep1 = () => (
         <>
+            <h6 style={{textAlign: 'left', color: '#505050'}}>Personal Information:</h6>
             <div className="row mb-3">
                 <div className="col">
                     <input 
@@ -204,55 +336,9 @@ export default function EmployerRegistrationForm() {
             </div>
         </>
     );
-
-    const renderFormFieldsStep2 = () => (
+    const renderFormFieldsStep3 = () => (
         <>
-             <div className="d-flex gap-3 mb-3">
-    <div style={{ width: '50%' }}>
-        <small className="form-text text-muted">Upload the front of your ID for verification.</small>
-        <input 
-            type="file" 
-            className="form-control register" 
-            accept="image/*" 
-            onChange={handleFrontImageChange} 
-        />
-        <div className="mt-2" style={{ width: '100%', height: '150px', borderRadius: '5px', backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {idFrontImagePreview ? (
-                <img 
-                    src={idFrontImagePreview} 
-                    alt="Uploaded Front ID Preview" 
-                    style={{ width: '100%', height: 'auto', borderRadius: '5px' }} 
-                />
-            ) : (
-                <span className="text-muted">Front ID Preview</span>
-            )}
-        </div>
-    </div>
-
-    <div style={{ width: '50%' }}>
-        <small className="form-text text-muted">Upload the back of your ID for verification.</small>
-        <input 
-            type="file" 
-            className="form-control register" 
-            accept="image/*" 
-            onChange={handleBackImageChange} 
-        />
-        <div className="mt-2" style={{ width: '100%', height: '150px', borderRadius: '5px', backgroundColor: '#f8f9fa', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {idBackImagePreview ? (
-                <img 
-                    src={idBackImagePreview} 
-                    alt="Uploaded Back ID Preview" 
-                    style={{ width: '100%', height: 'auto', borderRadius: '5px' }} 
-                />
-            ) : (
-                <span className="text-muted">Back ID Preview</span>
-            )}
-        </div>
-    </div>
-</div>
-
-
-
+        <h6 style={{textAlign: 'left', color: '#505050'}}>Account Setup:</h6>
             <div className="mb-3">
                 <input 
                     type="email" 
@@ -280,6 +366,8 @@ export default function EmployerRegistrationForm() {
                     onChange={(e) => setConfirmPassword(e.target.value)} 
                 />
             </div>
+
+            
             <div className="form-check mb-3 d-flex align-items-center">
                 <input 
                     type="checkbox" 
@@ -296,7 +384,8 @@ export default function EmployerRegistrationForm() {
                     type="button" 
                     className="btn btn-secondary btn-custom" 
                     style={{ backgroundColor: 'transparent', width: '500px', marginTop: '20px', color: '#000000' }}
-                    onClick={handleBack}
+                    onClick={handleBack1}
+                    disabled={isLoading}
                 >
                     <FontAwesomeIcon icon={faArrowLeft} /> Back
                 </button>
@@ -323,10 +412,31 @@ export default function EmployerRegistrationForm() {
                     style={{ backgroundColor: '#0A65CC', width: '500px', marginTop: '20px', marginLeft: '20px', opacity: isLoading ? 0.4 : 1 }} 
                     disabled={isLoading}
                 >
-                    Create Account <FontAwesomeIcon icon={faArrowRight} />
+                    {isLoading ? 'Verifying your ID...' : <>Create Account <FontAwesomeIcon icon={faArrowRight} /></>}
+
+                    
                 </button>
             </div>
         </>
+    );
+
+    const renderProgressBar = () => (
+        <div className="progress-bar-container mb-4">
+            <div className="progress-bar-step">
+                <div className={`circle ${step >= 1 ? 'completed' : ''}`}>1</div>
+                <span>Personal Information</span>
+            </div>
+            <div className={`progress-line ${step > 1 ? 'completed' : ''}`}></div>
+            <div className="progress-bar-step">
+                <div className={`circle ${step >= 2 ? 'completed' : ''}`}>2</div>
+                <span>ID Verification</span>
+            </div>
+            <div className={`progress-line ${step > 2 ? 'completed' : ''}`}></div>
+            <div className="progress-bar-step">
+                <div className={`circle ${step === 3 ? 'completed' : ''}`}>3</div>
+                <span>Account Setup</span>
+            </div>
+        </div>
     );
 
     return (
@@ -359,8 +469,11 @@ export default function EmployerRegistrationForm() {
                             </div>
                         </div>
                     </div>
-                    <form onSubmit={handleSubmit}>
-                        {step === 1 ? renderFormFieldsStep1() : renderFormFieldsStep2()}
+                    {renderProgressBar()}
+                     <form onSubmit={handleSubmit}>
+                        {step === 1 ? renderFormFieldsStep1() 
+                        : step === 2 ? renderFormFieldsStep2() 
+                        : renderFormFieldsStep3()}
                     </form>
                 </div>
                 <div className="col-md-6 d-none d-md-block">
