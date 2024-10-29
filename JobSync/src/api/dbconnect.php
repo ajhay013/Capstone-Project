@@ -1,9 +1,9 @@
 <?php 
 // CORS headers
-header("Access-Control-Allow-Origin: *"); // Allow all origins (not recommended for production)
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // Allow specific methods
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow specific headers
-
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-API-KEY");
+header('Content-Type: application/json');
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit; // Exit for preflight requests

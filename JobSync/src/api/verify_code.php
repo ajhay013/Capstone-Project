@@ -16,54 +16,89 @@ $response = ['status' => 0, 'message' => 'Invalid request.'];
 
 header('Content-Type: application/json');
 
-// Ensure that the request is POST
 if ($method == 'POST') {
-    if (isset($_POST["email"]) && isset($_POST["verification_code"])) {
-        // Use prepared statements with PDO
+    if (isset($_POST["email"]) && isset($_POST["verification_code"]) && isset($_POST["formType"])) {
         $email = $_POST["email"];
         $verification_code = $_POST["verification_code"];
+        $formType = $_POST["formType"]; 
 
-        // Prepare the SQL statement
-        $sql = "SELECT * FROM applicants WHERE email = :email AND verification_code = :verification_code";
+        $sql = "SELECT * FROM js_applicants WHERE email = :email AND verification_code = :verification_code";
         $stmt = $conn->prepare($sql);
-        
-        // Bind parameters
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':verification_code', $verification_code);
-
-        // Execute the statement
         $stmt->execute();
 
-        if ($stmt->rowCount() > 0) {
-            // Update the email_verified_at field
-            $updateSql = "UPDATE applicants SET email_verified_at = NOW() WHERE email = :email";
-            $updateStmt = $conn->prepare($updateSql);
-            $updateStmt->bindParam(':email', $email);
+        switch ($formType) {
+            case 'applicant':
+                if ($stmt->rowCount() > 0) {
+                    $updateSql = "UPDATE js_applicants SET email_verified_at = NOW() WHERE email = :email";
+                    $updateStmt = $conn->prepare($updateSql);
+                    $updateStmt->bindParam(':email', $email);
 
-            if ($updateStmt->execute()) {
-                $_SESSION['registration_successful'] = true;
-                $response = [
-                    "status" => 1,
-                    "message" => "Your email has been verified successfully!"
-                ];
-            } else {
+                    if ($updateStmt->execute()) {
+                        $_SESSION['registration_successful'] = true;
+                        $response = [
+                            "status" => 1,
+                            "message" => "Your email has been verified successfully as an applicant!"
+                        ];
+                    } else {
+                        $response = [
+                            "status" => 0,
+                            "message" => "Failed to update verification status."
+                        ];
+                    }
+                } else {
+                    $response = [
+                        "status" => 0,
+                        "message" => "Invalid verification code or email for applicant. Please try again."
+                    ];
+                }
+                break;
+
+            case 'employer':
+
+                $sqlEmployer = "SELECT * FROM js_employer_info WHERE email = :email AND verification_code = :verification_code";
+                $stmtEmployer = $conn->prepare($sqlEmployer);
+                $stmtEmployer->bindParam(':email', $email);
+                $stmtEmployer->bindParam(':verification_code', $verification_code);
+                $stmtEmployer->execute();
+
+                if ($stmtEmployer->rowCount() > 0) {
+                    $updateSqlEmployer = "UPDATE js_employer_info SET email_verified_at = NOW() WHERE email = :email";
+                    $updateStmtEmployer = $conn->prepare($updateSqlEmployer);
+                    $updateStmtEmployer->bindParam(':email', $email);
+
+                    if ($updateStmtEmployer->execute()) {
+                        $_SESSION['registration_successful'] = true;
+                        $response = [
+                            "status" => 1,
+                            "message" => "Your email has been verified successfully as an employer!"
+                        ];
+                    } else {
+                        $response = [
+                            "status" => 0,
+                            "message" => "Failed to update verification status."
+                        ];
+                    }
+                } else {
+                    $response = [
+                        "status" => 0,
+                        "message" => "Invalid verification code or email for employer. Please try again."
+                    ];
+                }
+                break;
+
+            default:
                 $response = [
                     "status" => 0,
-                    "message" => "Failed to update verification status."
+                    "message" => "Invalid form type."
                 ];
-            }
-        } else {
-            // Invalid verification code or email
-            $response = [
-                "status" => 0,
-                "message" => "Invalid verification code or email. Please try again."
-            ];
+                break;
         }
     } else {
-        // Missing email or verification code in POST request
         $response = [
             "status" => 0,
-            "message" => "Email and verification code are required."
+            "message" => "Email, verification code, and form type are required."
         ];
     }
 } else {

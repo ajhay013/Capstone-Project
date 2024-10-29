@@ -1,21 +1,110 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
+import axios from "axios";
+import { useAuth } from '../AuthContext'; // Import useAuth hook
 
-function SignInForm() {
+function SignInForm() { 
+    const navigate = useNavigate();
+    const { user, login } = useAuth(); // Get user data
+    const [inputs, setInputs] = useState({ email: '', password: '' });
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [isEmailCorrect, setIsEmailCorrect] = useState(false);
+    const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+
+    // Redirect if user is already logged in
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard'); // Redirect to dashboard if logged in
+        } 
+    }, [user, navigate]);
+
+    const handleChange = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setInputs(values => ({ ...values, [name]: value }));
+        if (name === 'email') {
+            setEmailError('');
+            setIsEmailCorrect(false);
+        }
+        if (name === 'password') {
+            setPasswordError('');
+            setIsPasswordCorrect(false);
+        }
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+    
+        axios.post('http://localhost:80/capstone-project/jobsync/src/api/login.php',
+            new URLSearchParams({
+                email: inputs.email,
+                password: inputs.password
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => {
+                if (response.data.success) {
+                    const userData = {
+                        id: response.data.applicant_id,
+                        firstname: response.data.firstname,
+                        profilePicture: response.data.profile_picture,
+                        userType: response.data.userType
+                    };
+                    login(userData); // Save user data to sessionStorage
+                    navigate('/dashboard'); // Redirect to dashboard
+                } else {
+                    const errorMessage = response.data.error || '';
+                    
+                    if (typeof errorMessage === 'string' && errorMessage.includes('email')) {
+                        setEmailError("Incorrect email");
+                        setIsEmailCorrect(false);
+                    } else if (typeof errorMessage === 'string' && errorMessage.includes('password')) {
+                        setPasswordError("Incorrect password");
+                        setIsPasswordCorrect(false);
+                    } else {
+                        alert(response.data.error || "Login failed. Please try again.");
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("There was an error submitting the form!", error);
+                alert("An error occurred while submitting the form. Please try again.");
+            });
+    };
+
     const [formType, setFormType] = useState('candidate');
     const [isRemembered, setIsRemembered] = useState(false);
 
     const renderFormFields = () => (
         <>
             <div className="mb-3">
-                <input type="email" className="form-control register" placeholder="Email" />
+                <input
+                    type="email"
+                    name='email'
+                    className={`form-control register ${emailError ? 'border border-danger' : isEmailCorrect ? 'border border-success' : ''}`}
+                    placeholder="Email"
+                    onChange={handleChange}
+                    required
+                />
+                {emailError && <div className="text-danger">{emailError}</div>}
             </div>
             <div className="mb-3">
-                <input type="password" className="form-control register" placeholder="Password" />
+                <input
+                    type="password"
+                    name='password'
+                    className={`form-control register ${passwordError ? 'border border-danger' : isPasswordCorrect ? 'border border-success' : ''}`}
+                    placeholder="Password"
+                    onChange={handleChange}
+                    required
+                />
+                {passwordError && <div className="text-danger">{passwordError}</div>}
             </div>
             <div className="d-flex justify-content-between mb-3">
                 <div className="form-check">
@@ -48,7 +137,7 @@ function SignInForm() {
                     <div className="d-flex justify-content-center mb-4">
                         <div className="d-flex flex-column align-items-center mb-4" style={{ backgroundColor: '#F1F2F4', padding: '26px', borderRadius: '10px', width: '580px' }}>
                             <h5 className="text-center mb-3">Sign In as</h5>
-                            <div className="d-flex justify-content-center">
+                           <div className="d-flex justify-content-center">
                                 <button 
                                     className={`btn btn-primary mx-1 custom-button ${formType === 'candidate' ? 'active' : ''}`}
                                     style={{ backgroundColor: formType === 'candidate' ? '#042852' : 'white', color: formType === 'candidate' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
@@ -56,17 +145,18 @@ function SignInForm() {
                                 >
                                     <FontAwesomeIcon icon={faUser} /> Candidate
                                 </button>
-                                <button 
-                                    className={`btn btn-primary mx-1 custom-button ${formType === 'employer' ? 'active' : ''}`}
-                                    style={{ backgroundColor: formType === 'employer' ? '#042852' : 'white', color: formType === 'employer' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
-                                    onClick={() => setFormType('employer')}
-                                >
-                                    <FontAwesomeIcon icon={faBuilding} /> Employer
-                                </button>
+                                <Link to="/employer_login">
+                                    <button 
+                                        className={`btn btn-primary mx-1 custom-button ${formType === 'employer' ? 'active' : ''}`}
+                                        style={{ backgroundColor: formType === 'employer' ? '#042852' : 'white', color: formType === 'employer' ? 'white' : 'black', width: '270px', borderColor: 'black' }} 
+                                    >
+                                        <FontAwesomeIcon icon={faBuilding} /> Employer
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         {renderFormFields()}
                     </form>
                 </div>
