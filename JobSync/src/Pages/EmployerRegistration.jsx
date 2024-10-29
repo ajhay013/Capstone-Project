@@ -6,24 +6,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
-import { useAuth } from '../AuthContext';// Import useAuth hook
+import { useAuth } from '../AuthContext';
+import Swal from 'sweetalert2';
+
 
 export default function EmployerRegistrationForm() {
     const [formType, setFormType] = useState('employer');
     const [isAgreed, setIsAgreed] = useState(false);
-    const [step, setStep] = useState(1); // Manage form step
+    const [step, setStep] = useState(1); 
     const [firstName, setFirstName] = useState('');
     const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
     const [suffix, setSuffix] = useState('');
     const [position, setPosition] = useState('');
     const [contactNumber, setContactNumber] = useState('');
-    const [email, setEmail] = useState(''); // Email state
-    const [password, setPassword] = useState(''); // Password state
-    const [confirmPassword, setConfirmPassword] = useState(''); // Confirm password state
+    const [email, setEmail] = useState(''); 
+    const [password, setPassword] = useState(''); 
+    const [confirmPassword, setConfirmPassword] = useState(''); 
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false); // Loader state
-    const { user, login } = useAuth(); // Get user data
+    const [isLoading, setIsLoading] = useState(false); 
+    const { user } = useAuth(); 
 
     const [documentImage, setDocumentImage] = useState(null);
     const [faceImage, setFaceImage] = useState(null);
@@ -38,7 +40,7 @@ export default function EmployerRegistrationForm() {
     const handleImageUpload = (event, setImage, setPreview) => {
         const file = event.target.files[0];
         if (file) {
-            setImage(file); // Sets the actual file
+            setImage(file);
             setPreview(URL.createObjectURL(file)); 
         }
     };
@@ -46,7 +48,7 @@ export default function EmployerRegistrationForm() {
 
     const captureFaceImage = () => {
         const imageSrc = webcamRef.current.getScreenshot();
-        setFaceImage(imageSrc); // directly saving base64 from Webcam
+        setFaceImage(imageSrc);
         setCameraActive(false);
     };
 
@@ -57,12 +59,12 @@ export default function EmployerRegistrationForm() {
     const handleNext = (e) => {
         e.preventDefault();
         if (isFirstStepValid()) {
-            setStep(2); // Move to the next step
+            setStep(2);
         }
     };
     useEffect(() => {
         if (user) {
-            navigate('/dashboard'); // Redirect to dashboard if user is already logged in
+            navigate('/dashboard');
         }
     }, [user, navigate]);
     const isFirstStepValid = () => {
@@ -73,15 +75,15 @@ export default function EmployerRegistrationForm() {
     };
 
     const handleBack = () => {
-        setStep(1); // Move back to the first step
+        setStep(1); 
     };
     const handleBack1 = () => {
-        setStep(2); // Move back to the first step
+        setStep(2); 
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsLoading(true); // Start loading
+        setIsLoading(true); 
 
         const documentBase64 = await convertToBase64(documentImage);
         const backBase64 = await convertToBase64(backImage);
@@ -109,23 +111,44 @@ export default function EmployerRegistrationForm() {
             });
         
             if (response.data.decision) {
-                if (response.data.decision !== 'reject') { // Check if the decision is not rejected
+                if (response.data.decision !== 'reject') { 
                     navigate('/email_verification', { state: { email, formType } });
                 } else {
-                    alert("Your ID verification has been rejected.");
+                    await Swal.fire({
+                        title: 'Rejected!',
+                        text: "Your ID verification has been rejected.",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             } else if (response.data.error) {
-                alert(`Error: ${response.data.error}`);
+                await Swal.fire({
+                    title: 'Error!',
+                    text: `Error: ${response.data.error}`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             } else {
-                alert("Unexpected response from the server.");
+                await Swal.fire({
+                    title: 'Unexpected Response',
+                    text: "Unexpected response from the server.",
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
             }
         
         } catch (error) {
             console.error("Error:", error);
-            alert("Error verifying ID.");
+            await Swal.fire({
+                title: 'Error!',
+                text: "Error verifying ID.",
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         } finally {
             setIsLoading(false);
         }
+        
         
 
    
