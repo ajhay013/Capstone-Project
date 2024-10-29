@@ -215,4 +215,60 @@ iframe {
   margin: 0 auto;
 }
 
+.progress-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.progress-bar-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin: 0 10px;
+  text-align: center;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  transition: background-color 0.4s ease;
+}
+
+.progress-bar-step span {
+  font-size: 11px;
+}
+
+.completed.circle,
+.active.circle {
+  background-color: #0A65CC;
+}
+
+.progress-line {
+  height: 4px;
+  width: 50%;
+  position: relative;
+  top: -13px;
+  transform: translateY(-50%);
+  background: rgb(156, 155, 155);
+  left: 0;
+  z-index: 10;
+}
+
+.completed.progress-line,
+.active.progress-line {
+  background-color: #0A65CC;
+}
+
+
 /* Footer */

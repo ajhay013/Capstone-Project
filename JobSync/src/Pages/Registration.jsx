@@ -103,7 +103,7 @@ function RegistrationForm() {
             .then(response => {
                 setIsLoading(false); 
                 if (response.data.status === 1) { 
-                    navigate('/email_verification', { state: { email: inputs.email } });
+                    navigate('/email_verification', { state: { email: inputs.email, formType: inputs.type } });
                 } else {
                     alert(response.data.message || "Registration failed. Please try again.");
                 }

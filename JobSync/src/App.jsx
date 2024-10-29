@@ -15,7 +15,7 @@ import EmailVerification from './Pages/EmailVerification';
 import SignInEmployer from './Pages/SignInEmployer';
 import JobDetails from './Pages/JobDetails';
 import { AuthProvider } from './AuthContext'; 
-import DashboardApplicant from './Pages/Applicants/Dashboard';
+import DashboardApplicant from './Pages/Applicants/Home';
 import Header from './components/header';
 import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
 import JobAlerts from './Pages/Applicants/JobAlerts';
