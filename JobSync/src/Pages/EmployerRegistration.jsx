@@ -109,6 +109,7 @@ export default function EmployerRegistrationForm() {
                 }
             });
     
+            
             if (response.data.decision) {
                 if (response.data.decision === 'accept') {
                     await Swal.fire({
