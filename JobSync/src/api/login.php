@@ -14,7 +14,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
     $password = $_POST['password'];
 
     try {
-        // Prepare the SQL statement with a placeholder
         $stmt_applicant = $conn->prepare("
         SELECT 
             a.applicant_id, 
@@ -29,13 +28,11 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
             a.email = :email
     ");
     
-        // Bind the parameter
         $stmt_applicant->bindParam(':email', $email, PDO::PARAM_STR);
 
         $stmt_applicant->execute();
 
         if ($stmt_applicant->rowCount() > 0) {
-            // Fetch the data
             $applicant = $stmt_applicant->fetch(PDO::FETCH_ASSOC);
             $id = $applicant['applicant_id'];
             $firstname = $applicant['firstname'];
@@ -50,13 +47,12 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
                     "success" => true,
                     "applicant_id" => $id,
                     "firstname" => $firstname,
-                    "profile_picture" => $profile_picture, // Include profile picture
+                    "profile_picture" => $profile_picture,
                     "userType" => 'applicant',
                     "message" => "Login successful."
                 ]);
                 exit();
             } else {
-                // Password is incorrect
                 echo json_encode([
                     "success" => false, 
                     "error" => "Incorrect password."
@@ -64,7 +60,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
                 exit();
             }
         } else {
-            // Email does not exist
             echo json_encode([
                 "success" => false, 
                 "error" => "Incorrect email."
@@ -78,7 +73,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'])) {
         exit();
     }
 } else {
-    // Log the condition not met
     error_log("Condition not met for POST request");
     if (!isset($_POST['email'])) {
         error_log("No email provided in the request.");
