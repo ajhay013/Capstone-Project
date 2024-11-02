@@ -80,17 +80,16 @@ export default function EmployerRegistrationForm() {
     const handleBack1 = () => {
         setStep(2); 
     };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsLoading(true); 
-
+        setIsLoading(true);
+    
         const documentBase64 = await convertToBase64(documentImage);
         const backBase64 = await convertToBase64(backImage);
-
+    
         const payload = {
             document: documentBase64,
-            face: faceImage.split(',')[1],  
+            face: faceImage.split(',')[1],
             backSideId: backBase64,
             firstName,
             middleName,
@@ -102,18 +101,28 @@ export default function EmployerRegistrationForm() {
             password,
             type: 'employer'
         };
-
+    
         try {
             const response = await axios.post(api_url, payload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-        
+    
             if (response.data.decision) {
-                if (response.data.decision !== 'reject') { 
+                if (response.data.decision === 'accept') {
+                    await Swal.fire({
+                        title: 'Verified!',
+                        text: "Your ID has been successfully verified.",
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000,             
+                        timerProgressBar: true,   
+                        allowOutsideClick: false, 
+                        allowEscapeKey: false     
+                    });
                     navigate('/email_verification', { state: { email, formType } });
-                } else {
+                } else if (response.data.decision === 'reject') {
                     await Swal.fire({
                         title: 'Rejected!',
                         text: "Your ID verification has been rejected.",
@@ -122,11 +131,21 @@ export default function EmployerRegistrationForm() {
                     });
                 }
             } else if (response.data.error) {
+                let warningText = "";
+            
+                if (response.data.warnings && response.data.warnings.length > 0) {
+                    warningText = `<strong style="color: #f27474; font-weight: 500;">Reasons:</strong><br>`;
+                    warningText += `<div style="font-size: 0.9em; margin-top: 5px;">`;
+                    warningText += response.data.warnings.map((warning, index) => `${index + 1}. ${warning}`).join('<br>');
+                    warningText += `</div>`;
+                }
+            
                 await Swal.fire({
-                    title: 'Error!',
-                    text: `Error: ${response.data.error}`,
+                    title: 'Rejected!',
+                    html: `Your ID verification has been rejected.<br>${warningText}`,
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false
                 });
             } else {
                 await Swal.fire({
@@ -136,7 +155,7 @@ export default function EmployerRegistrationForm() {
                     confirmButtonText: 'OK'
                 });
             }
-        
+    
         } catch (error) {
             console.error("Error:", error);
             await Swal.fire({
@@ -148,11 +167,9 @@ export default function EmployerRegistrationForm() {
         } finally {
             setIsLoading(false);
         }
-        
-        
-
-   
     };
+    
+    
     const convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();

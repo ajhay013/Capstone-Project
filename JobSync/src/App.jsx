@@ -17,7 +17,7 @@ import JobDetails from './Pages/JobDetails';
 import { AuthProvider } from './AuthContext'; 
 import DashboardApplicant from './Pages/Applicants/Home';
 import Header from './components/header';
-import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
+import ProtectedRoute from './components/ProtectedRoute';
 import JobAlerts from './Pages/Applicants/JobAlerts';
 
 function Layout({ userId, setUserId }) {
@@ -26,8 +26,9 @@ function Layout({ userId, setUserId }) {
   const hideSearchJobs = location.pathname === '/registration' || 
                          location.pathname === '/registration_employer' || 
                          location.pathname === '/candidate_login' || 
-                         location.pathname === '/email_verification' || 
                          location.pathname === '/employer_login';
+
+  const centeredIcon = location.pathname === '/email_verification';
 
   const showHeader = 
                      location.pathname === '/findjob' || 
@@ -50,7 +51,13 @@ function Layout({ userId, setUserId }) {
   return (
     <>  
       <MyNavbar userId={userId} setUserId={setUserId} />
-      {!hideSearchJobs ? <SearchJobs /> : <LogoIcon />}
+      {centeredIcon ? (
+        <LogoIcon centered />
+      ) : !hideSearchJobs ? (
+        <SearchJobs />
+      ) : (
+        <LogoIcon />
+      )}
       {showHeader && <Header pageTitle={getPageTitle()} />}
       <Routes>
         <Route path="/" element={<Home />} />
