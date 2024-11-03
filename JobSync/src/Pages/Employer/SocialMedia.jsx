@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
 
-// File Upload Component
 const FileUpload = ({ label, required, onChange, imageSrc }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
     <Form.Label>
@@ -29,19 +28,18 @@ const FileUpload = ({ label, required, onChange, imageSrc }) => (
   </Form.Group>
 );
 
-// CompanyProfile Component
 const CompanyProfile = () => {
   const [logo, setLogo] = useState(null);
   const [banner, setBanner] = useState(null);
-  const [facebookLink, setFacebookLink] = useState(''); // Initialize facebookLink state
-  const [instagramLink, setInstagramLink] = useState(''); // Initialize instagramLink state
-  const [youtubeLink, setYoutubeLink] = useState(''); // Initialize youtubeLink state
-  const [twitterLink, setTwitterLink] = useState(''); // Initialize twitterLink state
+  const [facebookLink, setFacebookLink] = useState(''); 
+  const [instagramLink, setInstagramLink] = useState(''); 
+  const [youtubeLink, setYoutubeLink] = useState(''); 
+  const [twitterLink, setTwitterLink] = useState(''); 
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ logo, banner, companyName, aboutUs, facebookLink, instagramLink, youtubeLink, twitterLink }); // Log all social media links
+    console.log({ logo, banner, companyName, aboutUs, facebookLink, instagramLink, youtubeLink, twitterLink }); 
   };
 
   return (
@@ -58,7 +56,6 @@ const CompanyProfile = () => {
       <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
        
 
-        {/* Social Media Links */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formFacebookLink">
@@ -127,7 +124,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* Submit Button */}
         <Row>
           <Col>
             <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
@@ -140,12 +136,11 @@ const CompanyProfile = () => {
   );
 };
 
-// Main Component
-const CompanyProfilePage = () => (
+const CompanySocialMedia = () => (
   <div>
     <MyNavbar1 />
     <CompanyProfile />
   </div>
 );
 
-export default CompanyProfilePage;
+export default CompanySocialMedia;

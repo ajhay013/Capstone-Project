@@ -5,9 +5,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
-import axios from 'axios';
 import { useAuth } from '../AuthContext';
 import Swal from 'sweetalert2';
+import { postToEndpoint } from '../components/apiService';
 
 
 export default function EmployerRegistrationForm() {
@@ -32,7 +32,7 @@ export default function EmployerRegistrationForm() {
     const [backImage, setBackImage] = useState(null);
     const [cameraActive, setCameraActive] = useState(false);
     const webcamRef = useRef(null);
-    const api_url = "http://localhost:80/capstone-project/jobsync/src/api/employer.php";
+  
 
     const [idFrontImagePreview, setIdFrontImagePreview] = useState(null);
     const [backImagePreview, setBackImagePreview] = useState(null);
@@ -80,6 +80,7 @@ export default function EmployerRegistrationForm() {
     const handleBack1 = () => {
         setStep(2); 
     };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
@@ -103,10 +104,8 @@ export default function EmployerRegistrationForm() {
         };
     
         try {
-            const response = await axios.post(api_url, payload, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            const response = await postToEndpoint('/employer.php', payload, {
+                'Content-Type': 'application/json'
             });
     
             if (response.data.decision) {

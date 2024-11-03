@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
-import axios from "axios";
 import { useAuth } from '../AuthContext';
+import { postToEndpoint } from '../components/apiService';
 
 function RegistrationForm() {
     const navigate = useNavigate();
-    const { user } = useAuth(); // Get user data
+    const { user } = useAuth(); 
     
     const [inputs, setInputs] = useState({
         type: 'applicant',
@@ -27,7 +27,7 @@ function RegistrationForm() {
     const [nameError, setNameError] = useState({ firstname: '', lastname: '' });
     const [showErrors, setShowErrors] = useState(false); 
     const [formCompleted, setFormCompleted] = useState(false);
-    const [contactError, setContactError] = useState(''); // Specific for contact number
+    const [contactError, setContactError] = useState(''); 
 
 
     useEffect(() => {
@@ -89,19 +89,19 @@ function RegistrationForm() {
     
     const handleSubmit = (event) => {
         event.preventDefault();
-        setShowErrors(true); 
+        setShowErrors(true);
 
         if (!validateNames() || inputs.password !== inputs.confirmPassword || passwordError) {
             setErrorMessage(inputs.password !== inputs.confirmPassword ? "Passwords do not match." : '');
             return;
         }
-
+    
         setIsLoading(true);
         setErrorMessage('');
-
-        axios.post('http://localhost:80/capstone-project/jobsync/src/api/index.php', inputs)
+    
+        postToEndpoint('/index.php', inputs)
             .then(response => {
-                setIsLoading(false); 
+                setIsLoading(false);
                 if (response.data.status === 1) { 
                     navigate('/email_verification', { state: { email: inputs.email, formType: inputs.type } });
                 } else {
@@ -109,7 +109,7 @@ function RegistrationForm() {
                 }
             })
             .catch(error => {
-                setIsLoading(false); 
+                setIsLoading(false);
                 alert("An error occurred while submitting the form. Please try again.");
             });
     };
@@ -134,7 +134,7 @@ function RegistrationForm() {
                         onChange={handleChange} 
                         onKeyDown={(e) => {
                             if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
-                                e.preventDefault(); // Prevent non-letter characters
+                                e.preventDefault();
                             }
                         }} 
                         required  
@@ -154,7 +154,7 @@ function RegistrationForm() {
                         onChange={handleChange} 
                         onKeyDown={(e) => {
                             if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
-                                e.preventDefault(); // Prevent non-letter characters
+                                e.preventDefault(); 
                             }
                         }} 
                     />
@@ -170,7 +170,7 @@ function RegistrationForm() {
                         onChange={handleChange} 
                         onKeyDown={(e) => {
                             if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
-                                e.preventDefault(); // Prevent non-letter characters
+                                e.preventDefault(); 
                             }
                         }} 
                         required 
@@ -190,7 +190,7 @@ function RegistrationForm() {
                         onChange={handleChange} 
                         onKeyDown={(e) => {
                             if (/[^A-Za-z\s]/.test(e.key) && e.key !== 'Backspace') {
-                                e.preventDefault(); // Prevent non-letter characters
+                                e.preventDefault(); 
                             }
                         }} 
                     />
@@ -226,16 +226,14 @@ function RegistrationForm() {
                         name='contact' 
                         onChange={handleChange} 
                         onKeyDown={(e) => {
-                            // Prevent '0' as the first character
                             if (inputs.contact.length === 0 && e.key === '0') {
                                 e.preventDefault();
                             }
-                            // Only allow number keys and backspace
                             if (!/[0-9]/.test(e.key) && e.key !== 'Backspace') {
                                 e.preventDefault();
                             }
                         }} 
-                        maxLength={10} // Set max length to 10
+                        maxLength={10} 
                         required 
                     />
                 </div>

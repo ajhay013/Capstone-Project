@@ -8,7 +8,6 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
 
 
-// File Upload Component
 const FileUpload = ({ label, required, onChange, imageSrc }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
     <Form.Label>
@@ -30,7 +29,6 @@ const FileUpload = ({ label, required, onChange, imageSrc }) => (
   </Form.Group>
 );
 
-// CompanyProfile Component
 const CompanyProfile = () => {
   const [logo, setLogo] = useState(null);
   const [banner, setBanner] = useState(null);
@@ -57,7 +55,6 @@ const CompanyProfile = () => {
       }}
     >
       <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
-        {/* Company Logo and Banner Upload */}
         <Row className="mb-4">
           <Col xs={12} md={6}>
             <FileUpload label="Upload Company Logo" required onChange={handleLogoChange} imageSrc={logo} />
@@ -67,7 +64,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* Company Name */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formCompanyName">
@@ -85,7 +81,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* About Us Section */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formAboutUs">
@@ -103,7 +98,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* Submit Button */}
         <Row>
           <Col>
             <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
@@ -116,12 +110,13 @@ const CompanyProfile = () => {
   );
 };
 
-// Main Component
-const CompanyProfilePage = () => (
+export default function CompanyProfilePage() {
+  return (
   <div>
     <MyNavbar1 />
     <CompanyProfile />
   </div>
-);
+  );
+};
 
-export default CompanyProfilePage;
+

@@ -19,6 +19,11 @@ import DashboardApplicant from './Pages/Applicants/Home';
 import Header from './components/header';
 import ProtectedRoute from './components/ProtectedRoute';
 import JobAlerts from './Pages/Applicants/JobAlerts';
+import CompanyProfilePage from './Pages/Employer/CompanyProfile';
+import CompanySocialMedia from './Pages/Employer/SocialMedia';
+import FoundingInfo from './Pages/Employer/FoundingInfo';
+import CompanyContactPage from './Pages/Employer/Contact';
+import EmployerDashboard from './Pages/Employer/Dashboard';
 
 function Layout({ userId, setUserId }) {
   const location = useLocation();
@@ -67,9 +72,16 @@ function Layout({ userId, setUserId }) {
         <Route path='/registration' element={<RegistrationForm />} />
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
+        <Route path='/jobdetails' element={<JobDetails />} />
+        <Route path='/customersupport' element={<CompanyProfilePage />} />
+
         <Route path='/dashboard' element={<ProtectedRoute> <DashboardApplicant /> </ProtectedRoute> } />
         <Route path='/jobAlerts' element={<ProtectedRoute> <JobAlerts /> </ProtectedRoute> } />
-        <Route path='/jobdetails' element={<JobDetails />} />
+        <Route path='/employer/dashboard' element={<ProtectedRoute> <EmployerDashboard /> </ProtectedRoute> } />
+        <Route path='/employer/companyprofile' element={<ProtectedRoute> <CompanyProfilePage /> </ProtectedRoute> } />
+        <Route path='/employer/foundinginfo' element={<ProtectedRoute> <FoundingInfo /> </ProtectedRoute> } />
+        <Route path='/employer/socialmedia' element={<ProtectedRoute> <CompanySocialMedia /> </ProtectedRoute> } />
+        <Route path='/employer/contact' element={<ProtectedRoute> <CompanyContactPage /> </ProtectedRoute> } />
       </Routes>
       <Footer />
     </>
