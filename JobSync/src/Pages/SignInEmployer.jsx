@@ -57,7 +57,7 @@ function SignInEmployer() {
                         userType: response.data.userType
                     };
                     login(userData); 
-                    navigate('/dashboard'); 
+                    navigate('/employer/dashboard'); 
                 } else {
                     const errorMessage = response.data.error || '';
                     
