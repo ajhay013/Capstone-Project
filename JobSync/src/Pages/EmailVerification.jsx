@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+import { postToEndpoint } from '../components/apiService';
 import '../css/Specific.css';
 
 function EmailVerification() {
@@ -18,16 +18,16 @@ function EmailVerification() {
 
     const handleVerify = (event) => {
         event.preventDefault();
-        setLoading(true); 
-
+        setLoading(true);
+    
         const formData = new URLSearchParams();
         formData.append('email', email);
         formData.append('verification_code', verificationCode);
         formData.append('formType', formType);
-
-        axios.post('http://localhost:80/capstone-project/jobsync/src/api/verify_code.php', formData)
+    
+        postToEndpoint('/verify_code.php', formData) 
             .then(response => {
-                setLoading(false); 
+                setLoading(false);
                 setMessage(response.data.message);
                 if (response.data.status === 1) {
                     setError(false);
@@ -37,10 +37,10 @@ function EmailVerification() {
                         title: 'Email Verified!',
                         text: 'Your email has been successfully verified.',
                         showConfirmButton: false,
-                        timer: 2000,  
-                        timerProgressBar: true,   
-                        allowOutsideClick: false, 
-                        allowEscapeKey: false   
+                        timer: 2000,
+                        timerProgressBar: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
                     }).then(() => {
                         navigate('/');
                     });

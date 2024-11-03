@@ -3,19 +3,104 @@ import '../App.css';
 import React, { useState } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
+import { postToEndpoint } from '../components/apiService';
+import { useAuth } from '../AuthContext';
 
 function SignInEmployer() {
+    const navigate = useNavigate();
+    const { login } = useAuth(); 
     const [formType, setFormType] = useState('employer');
     const [isRemembered, setIsRemembered] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [isEmailCorrect, setIsEmailCorrect] = useState(null);
+    const [isPasswordCorrect, setIsPasswordCorrect] = useState(null);
+    
+    const [inputs, setInputs] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setInputs(values => ({ ...values, [name]: value }));
+        
+        if (name === 'email') {
+            setEmailError('');
+            setIsEmailCorrect(false);
+        }
+        if (name === 'password') {
+            setPasswordError('');
+            setIsPasswordCorrect(false);
+        }
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+    
+        const loginData = new URLSearchParams({
+            email: inputs.email,
+            password: inputs.password,
+            formType
+        });
+
+        postToEndpoint('/login.php', loginData, {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        })
+            .then(response => {
+                if (response.data.success) {
+                    const userData = {
+                        id: response.data.employer_id,
+                        firstname: response.data.firstname,
+                        userType: response.data.userType
+                    };
+                    login(userData); 
+                    navigate('/dashboard'); 
+                } else {
+                    const errorMessage = response.data.error || '';
+                    
+                    if (typeof errorMessage === 'string' && errorMessage.includes('email')) {
+                        setEmailError("Incorrect email");
+                        setIsEmailCorrect(false);
+                    } else if (typeof errorMessage === 'string' && errorMessage.includes('password')) {
+                        setPasswordError("Incorrect password");
+                        setIsPasswordCorrect(false);
+                    } else {
+                        alert(response.data.error || "Login failed. Please try again.");
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("There was an error submitting the form!", error);
+                alert("An error occurred while submitting the form. Please try again.");
+            });
+    };
 
     const renderFormFields = () => (
         <>
             <div className="mb-3">
-                <input type="email" className="form-control register" placeholder="Email" />
+                <input
+                    type="email"
+                    name='email'
+                    className={`form-control register ${emailError ? 'border border-danger' : isEmailCorrect ? 'border border-success' : ''}`}
+                    placeholder="Email"
+                    onChange={handleChange}
+                    required
+                />
+                {emailError && <small className="text-danger">{emailError}</small>}
             </div>
             <div className="mb-3">
-                <input type="password" className="form-control register" placeholder="Password" />
+                <input
+                    type="password"
+                    name='password'
+                    className={`form-control register ${passwordError ? 'border border-danger' : isPasswordCorrect ? 'border border-success' : ''}`}
+                    placeholder="Password"
+                    onChange={handleChange}
+                    required
+                />
+                {passwordError && <small className="text-danger">{passwordError}</small>}
             </div>
             <div className="d-flex justify-content-between mb-3">
                 <div className="form-check">
@@ -67,7 +152,7 @@ function SignInEmployer() {
                             </div>
                         </div>
                     </div>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         {renderFormFields()}
                     </form>
                 </div>

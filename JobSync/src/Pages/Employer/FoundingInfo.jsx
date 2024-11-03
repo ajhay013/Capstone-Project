@@ -10,7 +10,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; 
 import MyNavbar1 from '../../components/navbar1'; 
 
-const FoundingInfo = () => {
+function FoundingInfo(){
   const [organizationType, setOrganizationType] = useState('');
   const [industryType, setIndustryType] = useState('');
   const [teamSize, setTeamSize] = useState('');
@@ -29,7 +29,7 @@ const FoundingInfo = () => {
 
       <Container
         fluid
-        className="text-start" // Align text to the left
+        className="text-start" 
         style={{
           margin: '0',
           padding: '0',
@@ -42,7 +42,6 @@ const FoundingInfo = () => {
       >
         <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
 
-          {/* Organization, Industry, and Team Size Fields */}
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12} md={4}>
               <Form.Group controlId="formOrganizationType">
@@ -90,7 +89,6 @@ const FoundingInfo = () => {
             </Col>
           </Row>
 
-          {/* Year of Establishment and Company Website Fields */}
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12} md={4}>
               <Form.Group controlId="formYearOfEstablishment">
@@ -122,7 +120,6 @@ const FoundingInfo = () => {
             </Col>
           </Row>
 
-          {/* Company Vision Field */}
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12}>
               <Form.Group controlId="formCompanyVision">
@@ -137,7 +134,6 @@ const FoundingInfo = () => {
             </Col>
           </Row>
 
-          {/* Back and Submit Buttons */} 
           <Row>
             <Col className="text-start">
               <Button variant="secondary" style={{ marginRight: '10px', width: '200px' }}>

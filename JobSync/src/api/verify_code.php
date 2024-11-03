@@ -20,15 +20,30 @@ if ($method == 'POST') {
     if (isset($_POST["email"]) && isset($_POST["verification_code"]) && isset($_POST["formType"])) {
         $email = $_POST["email"];
         $verification_code = $_POST["verification_code"];
-        $formType = $_POST["formType"]; 
-
-        $checkSql = "SELECT email_verified_at FROM js_applicants WHERE email = :email";
+        $formType = $_POST["formType"];
+    
+        switch ($formType) {
+            case 'employer':
+                $checkSql = "SELECT email, email_verified_at FROM js_employer_info WHERE email = :email";
+                break;
+            case 'applicant':
+                $checkSql = "SELECT email, email_verified_at FROM js_applicants WHERE email = :email";
+                break;
+            default:
+                $response = [
+                    "status" => 0,
+                    "message" => "Invalid form type."
+                ];
+                echo json_encode($response);
+                exit;
+        }
+    
         $checkStmt = $conn->prepare($checkSql);
         $checkStmt->bindParam(':email', $email);
         $checkStmt->execute();
         $user = $checkStmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && $user['email_verified_at'] !== null) {
+    
+        if ($user && $user['email'] === $email && $user['email_verified_at'] !== '') {
             $response = [
                 "status" => 0,
                 "message" => "Your email is already verified."

@@ -40,7 +40,6 @@ const MyNavbar = () => {
         if (!user) {
             return commonLinks;
         } else if (user.userType === USER_TYPES.APPLICANT) {
-            // Applicant user
             return (
                 <>
                     <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'active-link' : ''}>
@@ -64,14 +63,15 @@ const MyNavbar = () => {
                 </>
             );
         } else if (user.userType === USER_TYPES.EMPLOYER) {
-            // Employer user
             return (
                 <>
-                    {commonLinks}
+                    <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'active-link' : ''}>
+                        Home
+                    </Nav.Link>
                     <Nav.Link as={Link} to="/findcandidate" className={location.pathname === '/findcandidate' ? 'active-link' : ''}>
                         Find Candidate
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/dashboard" className={location.pathname === '/dashboard' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/employer/dashboard" className={location.pathname === '/employer/dashboard' ? 'active-link' : ''}>
                         Dashboard
                     </Nav.Link>
                     <Nav.Link as={Link} to="/myjobs" className={location.pathname === '/myjobs' ? 'active-link' : ''}>
@@ -79,6 +79,9 @@ const MyNavbar = () => {
                     </Nav.Link>
                     <Nav.Link as={Link} to="/applications" className={location.pathname === '/applications' ? 'active-link' : ''}>
                         Applications
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/customersupport" className={location.pathname === '/customersupport' ? 'active-link' : ''}>
+                    Customer Support
                     </Nav.Link>
                 </>
             );

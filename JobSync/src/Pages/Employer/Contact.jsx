@@ -30,7 +30,6 @@ const FileUpload = ({ label, required, onChange, imageSrc }) => (
   </Form.Group>
 );
 
-// CompanyProfile Component
 const CompanyProfile = () => {
   const [logo, setLogo] = useState(null);
   const [banner, setBanner] = useState(null);
@@ -38,7 +37,7 @@ const CompanyProfile = () => {
   const [aboutUs, setAboutUs] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
-  const [mapLocation, setMapLocation] = useState({ lat: 0, lng: 0 }); // Initialize with default location
+  const [mapLocation, setMapLocation] = useState({ lat: 0, lng: 0 }); 
 
   const handleLogoChange = (e) => setLogo(URL.createObjectURL(e.target.files[0]));
   const handleBannerChange = (e) => setBanner(URL.createObjectURL(e.target.files[0]));
@@ -69,7 +68,6 @@ const CompanyProfile = () => {
       <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
        
 
-        {/* Contact Number */} 
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formContactNumber">
@@ -87,7 +85,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* Email Address */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formEmailAddress">
@@ -105,7 +102,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* Map Location */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Label>
@@ -124,7 +120,6 @@ const CompanyProfile = () => {
           </Col>
         </Row>
 
-        {/* Submit Button */}
         <Row>
           <Col>
             <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
@@ -137,12 +132,13 @@ const CompanyProfile = () => {
   );
 };
 
-// Main Component
-const CompanyProfilePage = () => (
-  <div>
-    <MyNavbar1 />
-    <CompanyProfile />
-  </div>
-);
+function CompanyContactPage() {
+  return (
+    <div>
+      <MyNavbar1 />
+      <CompanyProfile />
+    </div>
+  );
+};
 
-export default CompanyProfilePage;
+export default CompanyContactPage;
