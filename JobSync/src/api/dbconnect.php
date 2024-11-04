@@ -1,12 +1,10 @@
 <?php 
-// CORS headers
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-API-KEY");
 header('Content-Type: application/json');
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    exit; // Exit for preflight requests
+    exit; 
 }
 
 // Database connection class

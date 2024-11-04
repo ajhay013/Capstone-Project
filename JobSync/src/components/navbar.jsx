@@ -16,7 +16,7 @@ const MyNavbar = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/'); // Redirect to home page
+        navigate('/'); 
     };
 
     const renderNavLinks = () => {
@@ -40,7 +40,6 @@ const MyNavbar = () => {
         if (!user) {
             return commonLinks;
         } else if (user.userType === USER_TYPES.APPLICANT) {
-            // Applicant user
             return (
                 <>
                     <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'active-link' : ''}>
@@ -64,24 +63,46 @@ const MyNavbar = () => {
                 </>
             );
         } else if (user.userType === USER_TYPES.EMPLOYER) {
-            // Employer user
             return (
                 <>
-                    {commonLinks}
-                    <Nav.Link as={Link} to="/findcandidate" className={location.pathname === '/findcandidate' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/home" className={location.pathname === '/home' ? 'active-link' : ''}>
+                        Home
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/employer/findcandidate" className={location.pathname === '/employer/findcandidate' ? 'active-link' : ''}>
                         Find Candidate
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/dashboard" className={location.pathname === '/dashboard' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/employer/dashboard" className={location.pathname === '/employer/dashboard' ? 'active-link' : ''}>
                         Dashboard
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/myjobs" className={location.pathname === '/myjobs' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/employer/myjobs" className={location.pathname === '/employer/myjobs' ? 'active-link' : ''}>
                         My Jobs
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/applications" className={location.pathname === '/applications' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/employer/applications" className={location.pathname === '/employer/applications' ? 'active-link' : ''}>
                         Applications
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/customersupport" className={location.pathname === '/customersupport' ? 'active-link' : ''}>
+                    Customer Support
                     </Nav.Link>
                 </>
             );
+        }
+    };
+
+    const renderName = () => {
+        if(user.userType === USER_TYPES.APPLICANT) {
+            return (
+                <>
+                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                    <Nav.Link>{user.firstname}</Nav.Link>
+                </>
+            );
+        }
+        else if (user.userType === USER_TYPES.EMPLOYER) {
+            return (
+                <>
+                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                </>
+            )
         }
     };
 
@@ -98,8 +119,7 @@ const MyNavbar = () => {
                             <Nav.Link href="#">jobsync@gmail.com</Nav.Link>
                             {user && (
                                 <>
-                                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                                    <Nav.Link>{user.firstname}</Nav.Link>
+                                    {renderName()}
                                 </>
                             )}
                         </Nav>

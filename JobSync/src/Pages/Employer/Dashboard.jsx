@@ -1,11 +1,11 @@
 import React from 'react';
 
 
-export default function HomeEmployer() {
+export default function EmployerDashboard() {
 
     return(
         <>
-        sample
+        sample employer
         </>
     )
 }

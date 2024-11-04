@@ -19,10 +19,9 @@ if (!isset($data['document'], $data['face'], $data['backSideId'], $data['email']
     exit;
 }
 
-$api_key = "MMQDMghrMfjEvR92X7oyD4V0LDMRk8Mo"; 
+$api_key = "sqXDb3aRlIakD7ucNk1gnMh9JaOniJee"; 
 $api_url = "https://api2.idanalyzer.com/scan";
 
-// Ensure uploads directory exists
 $uploads_dir = 'uploads';
 if (!is_dir($uploads_dir)) {
     mkdir($uploads_dir, 0755, true);
@@ -35,7 +34,6 @@ $document_filename = $uploads_dir . '/document_' . uniqid() . '.png';
 $face_filename = $uploads_dir . '/face_' . uniqid() . '.png';
 $back_filename = $uploads_dir . '/back_' . uniqid() . '.png';
 
-// Save images to server
 if (!file_put_contents($document_filename, $document_image) ||
     !file_put_contents($face_filename, $face_image) ||
     !file_put_contents($back_filename, $back_image)) {
@@ -43,7 +41,6 @@ if (!file_put_contents($document_filename, $document_image) ||
     exit;
 }
 
-// Prepare data for API request
 $payload = json_encode([
     "profile" => "security_medium",
     "document" => $data['document'],
@@ -51,7 +48,6 @@ $payload = json_encode([
     "documentSide" => $data['backSideId']
 ]);
 
-// Call ID Analyzer API with cURL
 $ch = curl_init($api_url);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
@@ -74,7 +70,6 @@ if ($error) {
 $response_data = json_decode($response, true);
 $decision = isset($response_data['decision']) ? $response_data['decision'] : 'Unknown';
 
-// Check ID expiration
 if (isset($response_data['document']['expiry'])) {
     $expiry_date = $response_data['document']['expiry'];
     $expiry_timestamp = strtotime($expiry_date);
@@ -86,13 +81,46 @@ if (isset($response_data['document']['expiry'])) {
 $email = $data['email'];
 $lastname = $data['lastName'];
 $type = $data['type'];
+$warnings = [];
+$warningMessages = [
+    'DOCUMENT_FACE_NOT_FOUND' => 'Document Face Not Found ',
+    'FAKE_ID' => 'The ID is Fake ',
+    'MISSING_ENDORSEMENT' => 'Missing Endorsement ',
+    'MISSING_ISSUE_DATE' => 'Missing Issue Date ',
+    'DOCUMENT_EXPIRED' => 'Document Expired ',
+    'IMAGE_EDITED' => 'Image Edited ',
+    'FACE_MISMATCH' => 'Face Mismatch',
+    'SELFIE_FACE_NOT_FOUND' => 'Selfie Face Not Found',
+    'IMAGE_FORGERY' => 'Image Forgery'
+];
 
+if (isset($response_data['warning']) && is_array($response_data['warning'])) {
+    foreach ($response_data['warning'] as $warning) {
+        if ($warning['decision'] !== 'accept') {
+            $code = $warning['code'];
+            $warnings[] = $warningMessages[$code] ?? $code;
+        }
+    }
+}
 try {
     if ($decision === 'reject') {
-        echo json_encode(['error' => 'Your ID verification has been rejected.']);
-        exit; 
+        echo json_encode([
+            'error' => 'Your ID verification has been rejected.',
+            'warnings' => $warnings
+        ]);
+        exit;
+    } elseif ($decision === 'Unknown') {
+        echo json_encode([
+            'error' => 'The ID verification decision is unknown. Please contact support.',
+            'warnings' => $warnings
+        ]);
+        exit;
     }
 
+    elseif ($decision === 'accept') {
+        echo json_encode([
+            'decision' => 'accept'
+        ]);
     $mail = new PHPMailer(true);
     $mail->isSMTP();
     $mail->Host = $_ENV['SMTP_HOST'];
@@ -150,6 +178,9 @@ try {
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
+        exit;
+    }
+
 } catch (Exception $e) {
     echo json_encode(['error' => 'Failed to process request: ' . $e->getMessage()]);
     exit;

@@ -4,22 +4,23 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
-import axios from "axios";
-import { useAuth } from '../AuthContext'; // Import useAuth hook
+import { postToEndpoint } from '../components/apiService';
+import { useAuth } from '../AuthContext';
 
 function SignInForm() { 
     const navigate = useNavigate();
-    const { user, login } = useAuth(); // Get user data
+    const { user, login } = useAuth(); 
     const [inputs, setInputs] = useState({ email: '', password: '' });
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [isEmailCorrect, setIsEmailCorrect] = useState(false);
     const [isPasswordCorrect, setIsPasswordCorrect] = useState(false);
+    const [formType, setFormType] = useState('candidate');
+    const [isRemembered, setIsRemembered] = useState(false);
 
-    // Redirect if user is already logged in
     useEffect(() => {
         if (user) {
-            navigate('/dashboard'); // Redirect to dashboard if logged in
+            navigate('/dashboard');
         } 
     }, [user, navigate]);
 
@@ -40,15 +41,15 @@ function SignInForm() {
     const handleSubmit = (event) => {
         event.preventDefault();
     
-        axios.post('http://localhost:80/capstone-project/jobsync/src/api/login.php',
-            new URLSearchParams({
-                email: inputs.email,
-                password: inputs.password
-            }), {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
+        const loginData = new URLSearchParams({
+            email: inputs.email,
+            password: inputs.password,
+            formType 
+        });
+    
+        postToEndpoint('/login.php', loginData, {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        })
             .then(response => {
                 if (response.data.success) {
                     const userData = {
@@ -57,8 +58,8 @@ function SignInForm() {
                         profilePicture: response.data.profile_picture,
                         userType: response.data.userType
                     };
-                    login(userData); // Save user data to sessionStorage
-                    navigate('/dashboard'); // Redirect to dashboard
+                    login(userData); 
+                    navigate('/dashboard'); 
                 } else {
                     const errorMessage = response.data.error || '';
                     
@@ -79,8 +80,6 @@ function SignInForm() {
             });
     };
 
-    const [formType, setFormType] = useState('candidate');
-    const [isRemembered, setIsRemembered] = useState(false);
 
     const renderFormFields = () => (
         <>
