@@ -5,16 +5,13 @@ import logo from '../assets/logo3.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import ph from '../assets/ph.png';
-import { useAuth } from '../AuthContext'; // Import useAuth hook
+import { useAuth } from '../AuthContext'; 
+import defaultProfilePicture from '../assets/user_default.png';
 
 function SearchJobs() {
     const [selected, setSelected] = useState("Philippines");
-    const { user } = useAuth(); // Get user data from AuthContext
+    const { user } = useAuth(); 
   
-    const handleSelect = (value) => {
-        setSelected(value);
-    };
-
     return (
         <header className="job-sync-header p-3 border-bottom">
             <div className="container">
@@ -46,7 +43,7 @@ function SearchJobs() {
                                 type="text"
                                 className="form-control search-input"
                                 placeholder="Job title, keyword, company"
-                                style={{ paddingLeft: '45px', borderRadius: '0' }} // No border radius here for seamless connection
+                                style={{ paddingLeft: '45px', borderRadius: '0' }} 
                             />
                         </div>
 
@@ -71,7 +68,7 @@ function SearchJobs() {
                         {user ? (
                             <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
                                 <img 
-                                    src={user.profilePicture || 'path_to_default_profile_picture.png'} // Add a fallback if no profile picture is available
+                                    src={user.profilePicture || defaultProfilePicture} 
                                     alt="Profile"
                                     style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
                                 />
@@ -81,7 +78,7 @@ function SearchJobs() {
                                 <Link to="/candidate_login" className="btn btn-outline-custom me-2 custom-btn">
                                     Sign In
                                 </Link>
-                                <button className="btn btn-primary custom-btn" type="button">
+                                <button className="btn btn-primary custom-btn" style={{background: '#0A65CC'}} type="button">
                                     Post A Job
                                 </button>
                             </>
