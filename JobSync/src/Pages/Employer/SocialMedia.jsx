@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import { Container, Form, Button, Row, Col, Image } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight , faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
 
 const FileUpload = ({ label, required, onChange, imageSrc }) => (
@@ -53,7 +53,7 @@ const CompanyProfile = () => {
         paddingTop: '56px',
       }}
     >
-      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
+      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' , marginBottom: '222px' }}>
        
 
         <Row className="mb-4">
@@ -126,6 +126,9 @@ const CompanyProfile = () => {
 
         <Row>
           <Col>
+          <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black' }}>
+              <FontAwesomeIcon icon={faArrowLeft} /> Back 
+              </Button>
             <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>

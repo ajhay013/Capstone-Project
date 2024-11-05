@@ -17,16 +17,36 @@ import { AuthProvider, useAuth } from './AuthContext';
 import DashboardApplicant from './Pages/Applicants/Home';
 import Header from './components/header';
 import ProtectedRoute from './components/ProtectedRoute';
-import JobAlerts from './Pages/Applicants/JobAlerts';
+import JobAlerts from './Pages/Applicants/JobsAlerts';
+
 import CompanyProfilePage from './Pages/Employer/CompanyProfile';
 import CompanySocialMedia from './Pages/Employer/SocialMedia';
 import FoundingInfo from './Pages/Employer/FoundingInfo';
 import CompanyContactPage from './Pages/Employer/Contact';
+
+
+{/* Applicant Dashboard Pages */}
+import Overview from './Pages/Applicants/ApplicantDashboard/Overview';
+import AppliedJobs from './Pages/Applicants/ApplicantDashboard/AppliedJobs';
+import FavoriteJobs from './Pages/Applicants/ApplicantDashboard/FavoriteJobs';
+import JobsAlert from './Pages/Applicants/ApplicantDashboard/JobsAlert';
+import ApplicantSettings from './Pages/Applicants/ApplicantDashboard/ApplicantSettings';
+
+{/* Employer Dashboard Pages */}
+import EmployerOverview from './Pages/Employer/EmployerDashboard/EmployerOverview';
+import EmployerProfile from './Pages/Employer/EmployerDashboard/EmployerProfile';
+import PostJobs from './Pages/Employer/EmployerDashboard/PostJob';
+import MyJobs from './Pages/Employer/EmployerDashboard/MyJobs';
+import EmployerMessage from './Pages/Employer/EmployerDashboard/EmployerMessage';
+import SavedApplicant from './Pages/Employer/EmployerDashboard/SavedApplicant';
+import EmployerSettings from './Pages/Employer/EmployerDashboard/EmployerSettings';
+
 import EmployerDashboard from './Pages/Employer/Dashboard';
 import CustomerSupport from './Pages/CustomerSupport';
 import HomeEmployer from './Pages/Employer/Home';
 import HeaderComponent from './components/HeaderComponent';
 import SearchJobs from './components/searchbar';
+
 
 
 function Layout({ userId, setUserId }) {
@@ -104,6 +124,25 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/foundinginfo' element={<ProtectedRoute> <FoundingInfo /> </ProtectedRoute> } />
         <Route path='/employer/socialmedia' element={<ProtectedRoute> <CompanySocialMedia /> </ProtectedRoute> } />
         <Route path='/employer/contact' element={<ProtectedRoute> <CompanyContactPage /> </ProtectedRoute> } />
+      
+      {/* Applicant Dashboard Routing */}
+      <Route path='/applicants/applicantdashboard/overview' element={ <Overview /> } />
+        <Route path='/applicants/applicantdashboard/appliedjobs' element={ <AppliedJobs /> } />
+        <Route path='/applicants/applicantdashboard/favoritejobs' element={ <FavoriteJobs /> } />
+        <Route path='/applicants/applicantdashboard/jobsalert' element={ <JobsAlert /> } />
+        <Route path='/applicants/applicantdashboard/applicantsettings' element={ <ApplicantSettings /> } />
+  
+
+      {/* Employer Dashboard Routing */}
+        <Route path='/employer/employerdashboard/employeroverview' element={ <EmployerOverview /> } />
+        <Route path='/employer/employerdashboard/employerprofile' element={ <EmployerProfile /> } />
+        <Route path='/employer/employerdashboard/postjob' element={ <ProtectedRoute> <PostJobs /> </ProtectedRoute> } />
+        <Route path='/employer/employerdashboard/myjobs' element={ <MyJobs /> } />
+        <Route path='/employer/employerdashboard/employermessage' element={ <EmployerMessage /> } />
+        <Route path='/employer/employerdashboard/savedapplicant' element={ <SavedApplicant /> } />  
+        <Route path='/employer/employerdashboard/employersettings' element={ <EmployerSettings /> } />
+      
+      
       </Routes>
       <Footer />
     </>
