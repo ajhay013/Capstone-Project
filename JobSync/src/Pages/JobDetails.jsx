@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaBookmark } from 'react-icons/fa';
 import { FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const JobPosting = () => {
   return (
@@ -27,7 +28,6 @@ const JobPosting = () => {
   );
 };
 
-// Job Details Component
 const JobDetails = () => {
   return (
     <div className="text-start">
@@ -84,9 +84,11 @@ const FavoritesAndApplyButton = () => {
       <Button variant="light" size="lg" className="me-0">
         <FaBookmark className="me-1"  style={{ color: '#0A65CC' }}/>
       </Button>
+      <Link to="/candidate_login">
       <Button variant="primary" size="lg" className="ms-2" style={{ backgroundColor: '#0A65CC', color: 'white' }}>
         Apply Now
       </Button>
+      </Link>
     </div>
   );
 };
