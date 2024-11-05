@@ -1,37 +1,56 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaInfoCircle, FaShareAlt, FaEnvelope } from 'react-icons/fa';
 
 const MyNavbar1 = () => {
   const location = useLocation();
+  const navItems = [
+    { path: '/employer/companyprofile', icon: <FaHome />, label: 'Company Profile' },
+    { path: '/employer/foundinginfo', icon: <FaInfoCircle />, label: 'Founding Info' },
+    { path: '/employer/socialmedia', icon: <FaShareAlt />, label: 'Social Media Info' },
+    { path: '/employer/contact', icon: <FaEnvelope />, label: 'Contact' },
+  ];
 
-  const getActiveStyle = (path) => {
-    return location.pathname === path
-      ? { fontWeight: 'bold', color: '#0A65CC', textDecoration: 'underline' }
-      : {};
-  };
+  const activeIndex = navItems.findIndex(item => item.path === location.pathname);
+  const activeLinkRef = useRef(null);
+  const lineRef = useRef(null);
 
-  return ( 
-    <Navbar expand="lg" style={{ width: '100%', backgroundColor: 'transparent' }}>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mx-auto" style={{ gap: '20px' }}> 
-          <Nav.Link as={Link} to="/employer/companyprofile" style={{ ...getActiveStyle('/employer/companyprofile'), padding: '10px 20px' }}>
-            <FaHome /> Company Profile
-          </Nav.Link>
-          <Nav.Link as={Link} to="/employer/foundinginfo" style={{ ...getActiveStyle('/employer/foundinginfo'), padding: '10px 20px' }}>
-            <FaInfoCircle /> Founding Info
-          </Nav.Link>
-          <Nav.Link as={Link} to="/employer/socialmedia" style={{ ...getActiveStyle('/employer/socialmedia'), padding: '10px 20px' }}>
-            <FaShareAlt /> Social Media Info
-          </Nav.Link>
-          <Nav.Link as={Link} to="/employer/contact" style={{ ...getActiveStyle('/employer/contact'), padding: '10px 20px' }}>
-            <FaEnvelope /> Contact
-          </Nav.Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+  useEffect(() => {
+    if (activeLinkRef.current && lineRef.current) {
+      const { offsetWidth, offsetLeft } = activeLinkRef.current;
+      lineRef.current.style.width = `${offsetWidth}px`;
+      lineRef.current.style.left = `${offsetLeft}px`;
+    }
+  }, [activeIndex]);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <Navbar expand="lg" style={{ width: '100%', backgroundColor: 'transparent', marginTop: '30px' }}>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mx-auto" style={{ gap: '20px' }}>
+            {navItems.map((item, index) => (
+              <Nav.Link
+                key={item.path}
+                as={Link}
+                to={item.path}
+                ref={index === activeIndex ? activeLinkRef : null}
+                style={{ padding: '10px 20px', fontWeight: index === activeIndex ? 'bold' : 'normal', color: index === activeIndex ? '#0A65CC' : 'black' }}
+              >
+                {item.icon} {item.label}
+              </Nav.Link>
+            ))}
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+      {/* Gray horizontal line */}
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100vw', marginLeft: '-50vw', left: '50%', position: 'relative' }}>
+        <hr style={{ border: '1px solid #757575', margin: '10px 0 0 0', width: '60%' }} />
+      </div>
+      {/* Blue line below the active link */}
+      <div style={{ position: 'absolute', bottom: '0px', height: '2px', backgroundColor: '#0A65CC', transition: 'left 0.3s, width 0.3s' }} ref={lineRef} />
+    </div>
   );
 };
 

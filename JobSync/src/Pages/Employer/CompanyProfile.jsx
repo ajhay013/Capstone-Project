@@ -1,31 +1,18 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-quill/dist/quill.snow.css';
-import { Container, Form, Button, Row, Col, Image } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, Image, Card } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
 
-
-const FileUpload = ({ label, required, onChange, imageSrc }) => (
+const FileUpload = ({ label, required, onChange }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
     <Form.Label>
       {label} {required && <span style={{ color: 'red' }}>*</span>}
     </Form.Label>
     <Form.Control type="file" accept="image/*" onChange={onChange} />
-    {imageSrc && (
-      <Image
-        src={imageSrc}
-        alt={label}
-        className="mt-3"
-        thumbnail
-        style={{
-          width: label === "Upload Company Logo" ? '150px' : '100%',
-          height: 'auto',
-        }}
-      />
-    )}
   </Form.Group>
 );
 
@@ -35,8 +22,15 @@ const CompanyProfile = () => {
   const [companyName, setCompanyName] = useState('');
   const [aboutUs, setAboutUs] = useState('');
 
-  const handleLogoChange = (e) => setLogo(URL.createObjectURL(e.target.files[0]));
-  const handleBannerChange = (e) => setBanner(URL.createObjectURL(e.target.files[0]));
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setLogo(URL.createObjectURL(file));
+  };
+
+  const handleBannerChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setBanner(URL.createObjectURL(file));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,27 +40,67 @@ const CompanyProfile = () => {
   return (
     <Container
       fluid
-      className="text-start"
+      className="d-flex justify-content-center" 
       style={{
-        margin: '0',
         padding: '0',
-        width: '100%',
         paddingTop: '56px',
       }}
     >
-      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
+      <Form onSubmit={handleSubmit} style={{ maxWidth: '800px', width: '100%' }} className="p-4">
         <Row className="mb-4">
           <Col xs={12} md={6}>
-            <FileUpload label="Upload Company Logo" required onChange={handleLogoChange} imageSrc={logo} />
+            <FileUpload label="Upload Company Logo" required onChange={handleLogoChange} />
           </Col>
           <Col xs={12} md={6}>
-            <FileUpload label="Upload Company Banner" required onChange={handleBannerChange} imageSrc={banner} />
+            <FileUpload label="Upload Company Banner" required onChange={handleBannerChange} />
+          </Col>
+        </Row>
+
+        {/* Image preview container */}
+        <Row className="mb-4">
+          <Col xs={12} md={6}>
+            <Card className="p-3 mb-4 text-center" style={{ width: '100%' }}>
+              {logo ? (
+                <Image
+                  src={logo}
+                  alt="Company Logo Preview"
+                  thumbnail
+                  style={{
+                    width: '150px',
+                    height: 'auto',
+                  }}
+                />
+              ) : (
+                <div className="text-center text-muted" style={{ padding: '20px', fontSize: '14px' }}>
+                  No image uploaded
+                </div>
+              )}
+            </Card>
+          </Col>
+          <Col xs={12} md={6}>
+            <Card className="p-3 mb-4 text-center" style={{ width: '100%' }}>
+              {banner ? (
+                <Image
+                  src={banner}
+                  alt="Company Banner Preview"
+                  thumbnail
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                  }}
+                />
+              ) : (
+                <div className="text-center text-muted" style={{ padding: '20px', fontSize: '14px' }}>
+                  No image uploaded
+                </div>
+              )}
+            </Card>
           </Col>
         </Row>
 
         <Row className="mb-4">
           <Col xs={12}>
-            <Form.Group controlId="formCompanyName">
+            <Form.Group controlId="formCompanyName" className="text-start">
               <Form.Label>
                 Company Name <span style={{ color: 'red' }}>*</span>
               </Form.Label>
@@ -83,7 +117,7 @@ const CompanyProfile = () => {
 
         <Row className="mb-4">
           <Col xs={12}>
-            <Form.Group controlId="formAboutUs">
+            <Form.Group controlId="formAboutUs" className="text-start">
               <Form.Label>
                 About Us <span style={{ color: 'red' }}>*</span>
               </Form.Label>
@@ -92,15 +126,15 @@ const CompanyProfile = () => {
                 value={aboutUs}
                 onChange={setAboutUs}
                 placeholder="Tell us about your company"
-                style={{ height: '200px', marginBottom: '30px', width: '100%' }}
+                style={{ height: '200px', marginBottom: '30px', width: '100%' }} // Full width
               />
             </Form.Group>
           </Col>
         </Row>
 
         <Row>
-          <Col>
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
+          <Col className="text-center">
+            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' , marginTop: '3px' }}>
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </Col> 
@@ -112,11 +146,9 @@ const CompanyProfile = () => {
 
 export default function CompanyProfilePage() {
   return (
-  <div>
-    <MyNavbar1 />
-    <CompanyProfile />
-  </div>
+    <div>
+      <MyNavbar1 />
+      <CompanyProfile />
+    </div>
   );
 };
-
-

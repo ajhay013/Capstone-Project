@@ -3,14 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaLink } from 'react-icons/fa';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import ReactQuill from 'react-quill'; 
 import 'react-quill/dist/quill.snow.css'; 
 import DatePicker from 'react-datepicker'; 
 import 'react-datepicker/dist/react-datepicker.css'; 
 import MyNavbar1 from '../../components/navbar1'; 
 
-function FoundingInfo(){
+function FoundingInfo() {
   const [organizationType, setOrganizationType] = useState('');
   const [industryType, setIndustryType] = useState('');
   const [teamSize, setTeamSize] = useState('');
@@ -25,8 +25,7 @@ function FoundingInfo(){
 
   return (
     <>
-      <MyNavbar1 /> 
-
+      <MyNavbar1 />
       <Container
         fluid
         className="text-start" 
@@ -37,11 +36,10 @@ function FoundingInfo(){
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'flex-start',
-          marginTop: '56px'
+          paddingTop: '10px', 
         }}
       >
-        <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
-
+        <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' , marginBottom: '210px' }}>
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12} md={4}>
               <Form.Group controlId="formOrganizationType">
@@ -104,20 +102,22 @@ function FoundingInfo(){
               </Form.Group>
             </Col>
 
-            <Col xs={12} md={4}>
-              <Form.Group controlId="formCompanyWebsite">
-                <Form.Label>Company Website</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text"><FaLink /></span>
-                  <Form.Control
-                    type="url"
-                    value={companyWebsite}
-                    onChange={(e) => setCompanyWebsite(e.target.value)}
-                    placeholder="Enter website URL"
-                  />
-                </div>
-              </Form.Group>
-            </Col>
+            <Col xs={12} md={6}>
+  <Form.Group controlId="formCompanyWebsite">
+    <Form.Label>Company Website</Form.Label>
+    <div className="input-group">
+      <span className="input-group-text"><FaLink /></span>
+      <Form.Control
+        type="url"
+        value={companyWebsite}
+        onChange={(e) => setCompanyWebsite(e.target.value)}
+        placeholder="Enter website URL"
+        className="py-2 px-5"
+      />
+    </div>
+  </Form.Group>
+</Col>
+
           </Row>
 
           <Row className="mb-4" style={{ margin: '0' }}>
@@ -136,19 +136,18 @@ function FoundingInfo(){
 
           <Row>
             <Col className="text-start">
-              <Button variant="secondary" style={{ marginRight: '10px', width: '200px' }}>
-                Back
+              <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black' }}>
+              <FontAwesomeIcon icon={faArrowLeft} /> Back 
               </Button>
               <Button variant="primary" type="submit" style={{ width: '200px' }}>
                 Save & Next <FontAwesomeIcon icon={faArrowRight} />
               </Button>
             </Col>
           </Row>
-
         </Form>
       </Container>
     </>
   );
-};
+}
 
 export default FoundingInfo;
