@@ -15,6 +15,7 @@ function EmailVerification() {
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false); 
+    
 
     const handleVerify = (event) => {
         event.preventDefault();
@@ -63,6 +64,44 @@ function EmailVerification() {
             setErrorMessage('');
         }
     };
+
+    if (!email) {
+        return (
+            <>
+        <div className="d-flex justify-content-center align-items-center" style={{ marginBottom: '6.5rem', padding: 0 }}>
+            <div className="container" style={{ maxWidth: '100%', margin: 0, padding: 0 }}>
+                <h3 className="text-center" style={{ marginTop: 0 }}>Email not provided!</h3>
+                <p className="text-center" style={{ marginTop: 0, color: '#a6a6a6'}}>
+                        The email address was not provided
+                </p>
+                <form style={{ margin: 0, padding: 0 }}>
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            name="verification_code"
+                            className={`form-control ${error ? 'is-invalid' : ''}`}
+                            style={{ height: '50px', borderRadius: '10px', textAlign: 'center', fontSize: 'x-large', letterSpacing: '7px' }}
+                            placeholder="xxxxxx"
+                            value={verificationCode}
+                            onChange={handleInputChange}
+                            maxLength={6}
+                            disabled
+                        />
+                        {error && <div className="invalid-feedback">{errorMessage}</div>}
+                    </div>
+                    <Link to="/">
+                    <button type="btn" className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
+                            <span>
+                                Go back home
+                            </span>
+                    </button>
+                    </Link>
+                </form>
+            </div>
+        </div>
+            </>
+        );
+    }
 
     return (
         <div className="d-flex justify-content-center align-items-center" style={{ marginBottom: '6.5rem', padding: 0 }}>

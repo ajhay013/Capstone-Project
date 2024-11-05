@@ -9,7 +9,7 @@ import { useAuth } from '../AuthContext';
 import defaultProfilePicture from '../assets/user_default.png';
 
 function SearchJobs() {
-    const [selected, setSelected] = useState("Philippines");
+    const [selected] = useState("Philippines");
     const { user } = useAuth(); 
   
     return (
