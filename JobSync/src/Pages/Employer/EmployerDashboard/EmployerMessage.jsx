@@ -171,47 +171,46 @@ export default function PostJobs() {
                     </div>
 
                     {/* Advanced Information Section */}
-                    <div className="form-group" style={{
-                        marginBottom: '20px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px'
-                    }}>
+                    <div
+                        className="form-group"
+                        style={{
+                            marginBottom: '20px',
+                            padding: '20px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '8px',
+                        }}
+                    >
                         <label style={{ fontWeight: 'bold' }}>Advanced Information</label>
-                        <div className="form-row" style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
-                            {/* Education Dropdown */}
+
+                        {/* First Row: Min Salary, Max Salary, and Job Type */}
+                        <div
+                            className="form-row"
+                            style={{ display: 'flex', gap: '20px', marginTop: '10px' }}
+                        >
+                            {/* Min Salary */}
                             <div className="form-group" style={{ flex: '1' }}>
-                                <label htmlFor="education" style={{ fontWeight: 'bold' }}>Education</label>
-                                <select
-                                    id="education"
-                                    value={education}
-                                    onChange={(e) => setEducation(e.target.value)}
+                                <label htmlFor="minSalary" style={{ fontWeight: 'bold' }}>Min Salary</label>
+                                <input
+                                    type="number"
+                                    id="minSalary"
+                                    value={minSalary}
+                                    onChange={(e) => setMinSalary(e.target.value)}
                                     className="form-control"
                                     required
-                                >
-                                    <option value="" disabled>Select education level</option>
-                                    <option value="High School">High School</option>
-                                    <option value="Associate Degree">Associate Degree</option>
-                                    <option value="Bachelor's Degree">Bachelor's Degree</option>
-                                    <option value="Master's Degree">Master's Degree</option>
-                                    <option value="Doctorate">Doctorate</option>
-                                </select>
+                                />
                             </div>
 
-                            {/* Experience Dropdown */}
+                            {/* Max Salary */}
                             <div className="form-group" style={{ flex: '1' }}>
-                                <label htmlFor="experience" style={{ fontWeight: 'bold' }}>Experience</label>
-                                <select
-                                    id="experience"
-                                    value={experience}
-                                    onChange={(e) => setExperience(e.target.value)}
+                                <label htmlFor="maxSalary" style={{ fontWeight: 'bold' }}>Max Salary</label>
+                                <input
+                                    type="number"
+                                    id="maxSalary"
+                                    value={maxSalary}
+                                    onChange={(e) => setMaxSalary(e.target.value)}
                                     className="form-control"
                                     required
-                                >
-                                    <option value="" disabled>Select experience level</option>
-                                    <option value="Entry Level">Entry Level</option>
-                                    <option value="Mid Level">Mid Level</option>
-                                    <option value="Senior Level">Senior Level</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Director">Director</option>
-                                </select>
+                                />
                             </div>
 
                             {/* Job Type Dropdown */}
@@ -233,42 +232,47 @@ export default function PostJobs() {
                                     <option value="Internship">Internship</option>
                                 </select>
                             </div>
+                        </div>
 
+                            {/* Second Row: Expiration Date and Job Level */}
+                            <div className="form-row" style={{ display: 'flex', gap: '20px', marginTop: '20px' }}
+    
+    
+                            >
                             {/* Expiration Date */}
                             <div className="form-group" style={{ flex: '1' }}>
-                                <label htmlFor="expirationDate" style={{ fontWeight: 'bold' }}>Expiration Date</label>
-                                <DatePicker
-                                    id="expirationDate"
-                                    selected={expirationDate}
-                                    onChange={(date) => setExpirationDate(date)}
-                                    className="form-control"
-                                    style={{ width: '100%' }}
-                                    required
-                                />
+                                <label htmlFor="expirationDate" style={{ fontWeight: 'bold', display: 'block' }}>Expiration Date</label>
+                                    <DatePicker
+                                        id="expirationDate"
+                                        selected={expirationDate}
+                                        onChange={(date) => setExpirationDate(date)}
+                                        className="form-control"
+                                        required
+                                    />
                             </div>
-          
 
-                    <div className="form-group" style={{ flex: '1' }}>
-                        <label htmlFor="jobLevel" style={{ fontWeight: 'bold' }}>Job Level</label>
-                            <select
-                                id="jobLevel"
-                                value={jobLevel}
-                                onChange={(e) => setJobLevel(e.target.value)}
-                                className="form-control"
-                                required
-                            >
-                                <option value="" disabled>Select job level</option>
-                                <option value="Entry">Entry</option>
-                                <option value="Mid">Mid</option>
-                                <option value="Senior">Senior</option>
-                                <option value="Manager">Manager</option>
-                                <option value="Director">Director</option>
-                                <option value="Executive">Executive</option>
-                            </select>
+                            {/* Job Level */}
+                            <div className="form-group" style={{ flex: '1' }}>
+                                <label htmlFor="jobLevel" style={{ fontWeight: 'bold' }}>Job Level</label>
+                                    <select
+                                        id="jobLevel"
+                                        value={jobLevel}
+                                        onChange={(e) => setJobLevel(e.target.value)}
+                                        className="form-control"
+                                        required
+                                    >
+                                    <option value="" disabled>Select job level</option>
+                                    <option value="Entry">Entry</option>
+                                    <option value="Mid">Mid</option>
+                                    <option value="Senior">Senior</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Director">Director</option>
+                                    <option value="Executive">Executive</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    </div>
 
                     {/* Location Section */}
                     <div className="form-group" style={{ marginBottom: '20px', padding: '20px', backgroundColor: '#D9D9D9', borderRadius: '8px' }}>
