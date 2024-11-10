@@ -72,7 +72,7 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formContactNumber">
               <Form.Label>
-                Contact Number <span style={{ color: 'red' }}>*</span>
+                <strong>Contact Number <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
               <Form.Control
                 type="tel"
@@ -89,7 +89,7 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formEmailAddress">
               <Form.Label>
-                Email Address <span style={{ color: 'red' }}>*</span>
+                <strong>Email Address <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
               <Form.Control
                 type="email"
@@ -105,7 +105,7 @@ const CompanyProfile = () => {
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Label>
-              Select Location on Map <span style={{ color: 'red' }}>*</span>
+              <strong>Select Location on Map <span style={{ color: 'red' }}>*</span></strong>
             </Form.Label>
             <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
               <GoogleMap
@@ -122,10 +122,10 @@ const CompanyProfile = () => {
 
         <Row>
           <Col>
-          <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black' }}>
+          <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black', height: '50px'}}>
               <FontAwesomeIcon icon={faArrowLeft} /> Back 
               </Button>
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
+            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px'}}>
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </Col>

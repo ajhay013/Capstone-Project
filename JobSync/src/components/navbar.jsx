@@ -51,10 +51,10 @@ const MyNavbar = () => {
                     <Nav.Link as={Link} to="/employers" className={location.pathname === '/employers' ? 'active-link' : ''}>
                         Employers
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/dashboard" className={location.pathname === '/dashboard' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/applicants/overview" className={location.pathname === '/applicants/overview' ? 'active-link' : ''}>
                         Dashboard
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/jobAlerts" className={location.pathname === '/jobAlerts' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/applicants/jobsalert" className={location.pathname === '/applicants/jobsalert' ? 'active-link' : ''}>
                         Job Alerts
                     </Nav.Link>
                     <Nav.Link as={Link} to="/customersupport" className={location.pathname === '/customersupport' ? 'active-link' : ''}>
@@ -71,7 +71,7 @@ const MyNavbar = () => {
                     <Nav.Link as={Link} to="/employer/findcandidate" className={location.pathname === '/employer/findcandidate' ? 'active-link' : ''}>
                         Find Candidate
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/employer/dashboard" className={location.pathname === '/employer/dashboard' ? 'active-link' : ''}>
+                    <Nav.Link as={Link} to="/employer/overview" className={location.pathname === '/employer/overview' ? 'active-link' : ''}>
                         Dashboard
                     </Nav.Link>
                     <Nav.Link as={Link} to="/employer/myjobs" className={location.pathname === '/employer/myjobs' ? 'active-link' : ''}>

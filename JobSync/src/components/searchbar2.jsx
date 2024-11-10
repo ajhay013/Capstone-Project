@@ -12,7 +12,7 @@ export default function SearchBar2({ placeholder, onSearch }) {
     };
 
     return (
-        <div className="input-group mb-3" style={{ width: '100%' }}>
+        <div className="input-group mb-3" style={{ width: '45%' }}>
             <input
                 type="text"
                 className="form-control"

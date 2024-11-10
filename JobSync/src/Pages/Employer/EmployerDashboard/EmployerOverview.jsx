@@ -6,96 +6,97 @@ import { FaBriefcase, FaUser, FaEnvelope, FaArrowRight } from 'react-icons/fa';
 export default function EmployerOverview() {
     return (
         <>
-            <div style={{ display: 'flex' }}>
+            <div className="d-flex">
                 <EmployerSidebar />
                 <div className="flex-grow-1 p-4" style={{ marginTop: '60px', marginLeft: '-10px' }}>
                     {/* Open Jobs, Saved Applicants, and Messages Cards */}
                     <div className="row mb-4 justify-content-between">
                         {/* Open Jobs Card */}
-                        <div className="col-md-3 mb-3">
+                        <div className="col-md-1 mb-3">
                             <div
                                 className="border rounded shadow-sm p-3"
                                 style={{
                                     height: '120px',
-                                    width: '280px', // Increased width
+                                    width: '310px',
                                     backgroundColor: '#b8e2fe',
                                     color: 'black',
-                                    margin: '0 5px', // Reduced margin
+                                    margin: '0 5px', 
                                 }}
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-4">10</p>
-                                        <h5>Open Jobs</h5>
+                                        <p className="fs-3">10</p>
+                                        <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Open Jobs</h6>
                                     </div>
                                     <div
-                                        style={{
-                                            backgroundColor: '#E7F0FA',
-                                            padding: '10px',
-                                            borderRadius: '8px',
-                                        }}
+                                    style={{
+                                        backgroundColor: '#E7F0FA',
+                                        padding: '8px',
+                                        borderRadius: '8px',
+                                    }}
                                     >
-                                        <FaBriefcase size={40} style={{ color: '#0A65CC' }} />
+                                        <FaBriefcase size={40} style={{ color: '#0A65CC', width: '58%' }} />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Saved Applicants Card */}
-                        <div className="col-md-3 mb-3">
+                        <div className="col-md-1 mb-3">
                             <div
                                 className="border rounded shadow-sm p-3"
                                 style={{
                                     height: '120px',
-                                    width: '280px', // Increased width
-                                    backgroundColor: '#ffb78e',
+                                    width: '310px', 
+                                    backgroundColor: '#ffd4bb',
                                     color: 'black',
-                                    margin: '0 5px', // Reduced margin
+                                    margin: '0 5px', 
                                 }}
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-4">5</p>
-                                        <h5>Saved Applicants</h5>
+                                        <p className="fs-3">5</p>
+                                        <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Saved Applicants</h6>
                                     </div>
                                     <div
                                         style={{
                                             backgroundColor: '#E7F0FA',
-                                            padding: '10px',
+                                            padding: '7px',
                                             borderRadius: '8px',
+                                            width: '55px'
                                         }}
                                     >
-                                        <FaUser size={40} style={{ color: '#FF8616' }} />
+                                        <FaUser size={40} style={{ color: '#FF8616', width: '48%' }} />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Messages Card */}
-                        <div className="col-md-3 mb-3">
+                        <div className="col-md-4 mb-3">
                             <div
                                 className="border rounded shadow-sm p-3"
                                 style={{
                                     height: '120px',
-                                    width: '280px', // Increased width
-                                    backgroundColor: '#b1fbab',
+                                    width: '310px', 
+                                    backgroundColor: '#d7ffd4',
                                     color: 'black',
-                                    margin: '0 5px', // Reduced margin
+                                    margin: '0 5px', 
                                 }}
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-4">8</p>
-                                        <h5>Messages</h5>
+                                        <p className="fs-3">8</p>
+                                        <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Messages</h6>
                                     </div>
                                     <div
                                         style={{
                                             backgroundColor: '#E7F0FA',
-                                            padding: '10px',
+                                            padding: '8px',
                                             borderRadius: '8px',
                                         }}
                                     >
-                                        <FaEnvelope size={40} style={{ color: '#169E5D' }} />
+                                        <FaEnvelope size={40} style={{ color: '#169E5D', width: '48%' }} />
                                     </div>
                                 </div>
                             </div>
@@ -103,14 +104,12 @@ export default function EmployerOverview() {
                     </div>
 
                     {/* Heading above Applied Jobs Table with Custom View All button */}
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#333' }}>Recently Posted Jobs</h3>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h3 style={{ fontSize: '15px', fontWeight: '500', color: '#333', marginBottom: '-20px' }}>Recently Posted Jobs</h3>
                         <button
                             className="btn"
                             style={{
-                                backgroundColor: '#007bff',
-                                color: '#fff',
-                                borderRadius: '20px',
+                                color: '#4b4b4b',
                                 fontWeight: '500',
                                 padding: '0.5rem 1.5rem',
                                 display: 'flex',
@@ -121,7 +120,6 @@ export default function EmployerOverview() {
                         </button>
                     </div>
 
-                    {/* Applied Jobs Table */}
                     <PostedJobTable />
                 </div>
             </div>

@@ -20,7 +20,7 @@ function SignInForm() {
 
     useEffect(() => {
         if (user) {
-            navigate('/dashboard');
+            navigate('/applicants/overview');
         } 
     }, [user, navigate]);
 
@@ -59,7 +59,7 @@ function SignInForm() {
                         userType: response.data.userType
                     };
                     login(userData); 
-                    navigate('/dashboard'); 
+                    navigate('/applicants/overview'); 
                 } else {
                     const errorMessage = response.data.error || '';
                     

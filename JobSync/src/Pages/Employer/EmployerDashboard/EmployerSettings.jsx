@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Form, Row, Col, Button, Tabs, Tab } from 'react-bootstrap';
 import 'react-quill/dist/quill.snow.css';
-import EmployerSidebar from '../../../components/employersidebar';
+import EmployerSidebar from '../../../components/EmployerSidebar';
 
 export default function EmployerProfile() {
   const [profileImage, setProfileImage] = useState(null);

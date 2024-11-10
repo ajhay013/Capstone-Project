@@ -8,8 +8,8 @@ const jobData = [
         name: 'Software Engineer',
         location: 'New York, NY',
         jobType: 'Full-time',
-        salary: '$100,000',
-        dateApplied: '2024-10-20',
+        salary: '₱ 100,000',
+        dateApplied: 'Dec 7, 2019 23:26',
         status: 'Active',
     },
     {
@@ -18,9 +18,9 @@ const jobData = [
         name: 'Product Manager',
         location: 'San Francisco, CA',
         jobType: 'Part-time',
-        salary: '$80,000',
-        dateApplied: '2024-10-15',
-        status: 'Pending',
+        salary: '₱ 80,000',
+        dateApplied: 'Feb 2, 2019 19:28',
+        status: 'Active',
     },
     {
         id: 3,
@@ -28,8 +28,8 @@ const jobData = [
         name: 'Graphic Designer',
         location: 'Caloocan City',
         jobType: 'Freelance',
-        salary: '$60,000',
-        dateApplied: '2024-09-30',
+        salary: '₱ 60,000',
+        dateApplied: 'Feb 2, 2019 19:28',
         status: 'Expired',
     },
     {
@@ -38,8 +38,8 @@ const jobData = [
         name: 'Software Engineer',
         location: 'New York, NY',
         jobType: 'Full-time',
-        salary: '$100,000',
-        dateApplied: '2024-10-20',
+        salary: '₱ 100,000',
+        dateApplied: 'Dec 7, 2019 23:26',
         status: 'Active',
     },
     {
@@ -48,9 +48,9 @@ const jobData = [
         name: 'Product Manager',
         location: 'San Francisco, CA',
         jobType: 'Part-time',
-        salary: '$80,000',
-        dateApplied: '2024-10-15',
-        status: 'Pending',
+        salary: '₱ 80,000',
+        dateApplied: 'Feb 2, 2019 19:28',
+        status: 'Active',
     },
     {
         id: 6,
@@ -58,8 +58,8 @@ const jobData = [
         name: 'Graphic Designer',
         location: 'Caloocan City',
         jobType: 'Freelance',
-        salary: '$60,000',
-        dateApplied: '2024-09-30',
+        salary: '₱ 60,000',
+        dateApplied: 'Dec 7, 2019 23:26',
         status: 'Expired',
     },
     {
@@ -68,8 +68,8 @@ const jobData = [
         name: 'Software Engineer',
         location: 'New York, NY',
         jobType: 'Full-time',
-        salary: '$100,000',
-        dateApplied: '2024-10-20',
+        salary: '₱ 100,000',
+        dateApplied: 'Dec 7, 2019 23:26',
         status: 'Active',
     },
     {
@@ -78,9 +78,9 @@ const jobData = [
         name: 'Product Manager',
         location: 'San Francisco, CA',
         jobType: 'Part-time',
-        salary: '$80,000',
-        dateApplied: '2024-10-15',
-        status: 'Pending',
+        salary: '₱ 80,000',
+        dateApplied: 'Feb 2, 2019 19:28',
+        status: 'Active',
     },
     {
         id: 9,
@@ -88,8 +88,8 @@ const jobData = [
         name: 'Graphic Designer',
         location: 'Caloocan City',
         jobType: 'Freelance',
-        salary: '$60,000',
-        dateApplied: '2024-09-30',
+        salary: '₱ 60,000',
+        dateApplied: 'Dec 7, 2019 23:26',
         status: 'Expired',
     },
     {
@@ -98,48 +98,100 @@ const jobData = [
         name: 'Graphic Designer',
         location: 'Caloocan City',
         jobType: 'Freelance',
-        salary: '$60,000',
-        dateApplied: '2024-09-30',
+        salary: '₱ 60,000',
+        dateApplied: 'Dec 7, 2019 23:26',
         status: 'Expired',
     },
 ];
 
-const JobRow = ({ job }) => (
-    <tr key={job.id} className="border-bottom">
-        <td>
-            <div className="d-flex align-items-center">
-                <img
-                    src={job.logo}
-                    alt="Job Logo"
-                    className="me-3"
-                    style={{ width: '50px', height: '50px' }}
-                />
-                <div>
-                    <div className="d-flex justify-content-between align-items-center flex-wrap">
-                        <h6 className="mb-0" style={{ padding: '5px' }}>{job.name}</h6>
-                        <span className="badge bg-primary">{job.jobType}</span>
-                    </div>
-                    <div className="d-flex align-items-center flex-wrap">
-                        <i className="fas fa-location-dot text-muted me-1"></i>
-                        <small className="text-muted me-2">{job.location}</small>
-                        <span className="ms-auto">{job.salary}</span>
+const JobRow = ({ job }) => {
+    const statusColor = (() => {
+        switch (job.status) {
+            case 'Active':
+                return '#5bbc80'; 
+            case 'Expired':
+                return '#dc3545'; 
+            default:
+                return '#000000'; 
+        }
+    })();
+
+    return (
+        <tr key={job.id} className="border-bottom">
+            <td>
+                <div className="d-flex align-items-center">
+                    <img
+                        src={job.logo}
+                        alt="Job Logo"
+                        className="me-3"
+                        style={{ width: '50px', height: '50px' }}
+                    />
+                    <div>
+                        <div className="d-flex justify-content-between align-items-center flex-wrap">
+                            <h6 className="mb-0" style={{ padding: '5px' }}>{job.name}</h6>
+                            <span className="badge"
+                                  style={{
+                                    background: '#cde8ff',
+                                    padding: '7px 13px',
+                                    color: '#656565',
+                                    fontWeight: '700',
+                                    borderRadius: '50px',
+                                    fontSize: '12px'
+                                  }}
+                            >{job.jobType}</span>
+                        </div>
+                        <div className="d-flex align-items-center flex-wrap">
+                            <i className="fas fa-location-dot text-muted me-1"></i>
+                            <small className="text-muted me-2">{job.location}</small>
+                            <span className="ms-auto">{job.salary}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </td>
-        <td>{job.dateApplied}</td>
-        <td>
-            <span
-                className={`badge ${job.status === 'Active' ? 'bg-success' : job.status === 'Pending' ? 'bg-warning' : 'bg-secondary'}`}
-            >
-                {job.status}
-            </span>
-        </td>
-        <td>
-            <button className="btn btn-sm btn-light text-primary fw-bold">View Details</button>
-        </td>
-    </tr>
-);
+            </td>
+            <td><span 
+                style={{
+                    marginTop: '15px',
+                    display: 'inline-block',
+                    color: '#656565',
+                    fontWeight: '600',
+                    fontSize: '14px'
+                }}
+            
+            >{job.dateApplied}</span></td>
+            <td>
+                <span
+                    style={{
+                        color: statusColor,
+                        padding: '10px',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        display: 'inline-block', 
+                        marginTop: '5px',
+                        textAlign: 'center', 
+                    }}
+                >
+                    {job.status}
+                </span>
+            </td>
+            <td>
+                <button 
+                    className="btn btn-sm btn-light text-primary" 
+                    style={{
+                        width: '73%',
+                        fontWeight: '500',
+                        marginTop: '5px',
+                        background: '#ddf2ff',
+                        padding: '10px',
+                        borderRadius: '6px'
+                    }}
+                >
+                    View Details
+                </button>
+            </td>
+        </tr>
+    );
+};
+
 
 function AppliedJobsTable() {
     return (
@@ -148,10 +200,10 @@ function AppliedJobsTable() {
                 <table className="table" style={{ width: '100%', minWidth: '1000px' }}>
                     <thead className="thead-light">
                         <tr>
-                            <th className="w-30 bg-light">Job</th>
-                            <th className="bg-light">Date Applied</th>
-                            <th className="bg-light">Status</th>
-                            <th className="bg-light">Action</th>
+                            <th style={{color: '#676767', background: '#ebebebc2'}}>Job</th>
+                            <th style={{color: '#676767', background: '#ebebebc2'}}>Date Applied</th>
+                            <th style={{color: '#676767', background: '#ebebebc2'}}>Status</th>
+                            <th style={{color: '#676767', background: '#ebebebc2'}}>Action</th>
                         </tr>
                     </thead>
                     <tbody>

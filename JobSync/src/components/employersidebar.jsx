@@ -10,102 +10,105 @@ function EmployerSidebar() {
     const activeStyle = {
         backgroundColor: '#b8e2fe', 
         color: '#0A65CC', 
-        fontWeight: 'bold',
-        width: '100%',
+        fontWeight: '500',
+        width: 'calc(100% + 16px)', 
         borderRadius: '0.25rem',
+        marginLeft: '-8px', 
+        padding: '10px 22px', 
     };
 
     const buttonStyle = {
         width: '100%',
         textAlign: 'left',
         padding: '10px 15px',
-        color: 'black',
+        color: '#838383',
     };
 
     const isActive = (path) => location.pathname === path;
 
     return (
         <div 
-            className="d-flex flex-column bg-light p-2" 
+            className="d-flex flex-column p-2" 
             style={{ 
                 width: '80%', 
                 maxWidth: '400px', 
                 minWidth: '250px', 
-                height: '100vh', 
-                marginRight: '25px' 
+                height: '105vh', 
+                marginRight: '25px',
+                backgroundColor: '#f0f8ff'
             }}
         >
-            <h2 className="text-primary" style={{ fontSize: '20px', marginTop: '50px', marginBottom: '30px' }}>
+            <h2 style={{ fontSize: '16px', marginTop: '50px', marginBottom: '30px', color: '#606060' }}>
                 Employer Dashboard
             </h2>
             <ul className="nav flex-column">
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/employeroverview') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/employeroverview')}
+                        style={isActive('/employer/overview') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/overview')}
                     >
-                        <FaLayerGroup className="me-2" style={{ color: isActive('/employer/employerdashboard/employeroverview') ? '#0A65CC' : 'black' }} />
+                        <FaLayerGroup className="me-2" style={{ color: isActive('/employer/overview') ? '#0A65CC' : '#838383' }} />
                         Overview
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/employerprofile') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/employerprofile')}
+                        style={isActive('/employer/profile') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/profile')}
                     >
-                        <FaUser className="me-2" style={{ color: isActive('/employer/employerdashboard/employerprofile') ? '#0A65CC' : 'black' }} />
+                        <FaUser className="me-2" style={{ color: isActive('/employer/profile') ? '#0A65CC' : '#838383' }} />
                         Employer Profile
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/postajob') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/postajob')}
+                        style={isActive('/employer/postjob') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/postjob')}
                     >
-                        <FaPlusSquare className="me-2" style={{ color: isActive('/employer/employerdashboard/postjob') ? '#0A65CC' : 'black' }} />
+                        <FaPlusSquare className="me-2" style={{ color: isActive('/employer/postjob') ? '#0A65CC' : '#838383' }} />
                         Post a Job
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/myjobs') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/myjobs')}
+                        style={isActive('/employer/myjobs') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/myjobs')}
                     >
-                        <FaBriefcase className="me-2" style={{ color: isActive('/employer/employerdashboard/myjobs') ? '#0A65CC' : 'black' }} />
+                        <FaBriefcase className="me-2" style={{ color: isActive('/employer/myjobs') ? '#0A65CC' : '#838383' }} />
                         My Jobs
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/employermessage') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/employermessage')}
+                        style={isActive('/employer/message') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/message')}
                     >
-                        <FaEnvelope className="me-2" style={{ color: isActive('/employer/employerdashboard/employermessage') ? '#0A65CC' : 'black' }} />
+                        <FaEnvelope className="me-2" style={{ color: isActive('/employer/message') ? '#0A65CC' : '#838383' }} />
                         Messages
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/savedapplicant') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/savedapplicant')}
+                        style={isActive('/employer/savedapplicant') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/savedapplicant')}
                     >
-                        <FaBookmark className="me-2" style={{ color: isActive('/employer/employerdashboard/savedapplicant') ? '#0A65CC' : 'black' }} />
+                        <FaBookmark className="me-2" style={{ color: isActive('/employer/savedapplicant') ? '#0A65CC' : '#838383' }} />
                         Saved Applicants
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/employer/employerdashboard/employersettings') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employerdashboard/employersettings')}
+                        style={isActive('/employer/settings') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/employer/settings')}
                     >
-                        <FaCog className="me-2" style={{ color: isActive('/employer/employerdashboard/employersettings') ? '#0A65CC' : 'black' }} />
+                        <FaCog className="me-2" style={{ color: isActive('/employer/settings') ? '#0A65CC' : '#838383' }} />
                         Settings
                     </button>
                 </li>

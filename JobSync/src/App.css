@@ -125,6 +125,11 @@ body {
   height: 50px;
   border-radius: 10px;
 }
+.register1{
+  height: 50px;
+  border-radius: 10px;
+  border-color: #aeafaf;
+}
 
 .loader {
   border: 5px solid #f3f3f3; /* Light grey */

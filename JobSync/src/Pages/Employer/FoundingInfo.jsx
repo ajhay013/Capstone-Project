@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaLink } from 'react-icons/fa';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
@@ -9,19 +9,77 @@ import 'react-quill/dist/quill.snow.css';
 import DatePicker from 'react-datepicker'; 
 import 'react-datepicker/dist/react-datepicker.css'; 
 import MyNavbar1 from '../../components/navbar1'; 
+import { useAuth } from '../../AuthContext';
+import { postToEndpoint } from '../../components/apiService';
+import { Link, useNavigate } from 'react-router-dom'; 
+
 
 function FoundingInfo() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [organizationType, setOrganizationType] = useState('');
   const [industryType, setIndustryType] = useState('');
   const [teamSize, setTeamSize] = useState('');
   const [yearOfEstablishment, setYearOfEstablishment] = useState(null);
   const [companyWebsite, setCompanyWebsite] = useState('');
   const [companyVision, setCompanyVision] = useState('');
-
-  const handleSubmit = (e) => {
+  
+  useEffect(() => {
+    const fetchFoundingInfo = async () => {
+      if (user?.id) {
+        try {
+          const response = await postToEndpoint('/fetchfoundingInfo.php', {
+            employer_id: user.id,
+          });
+  
+          if (response.data) {
+            const { organization, industry, team_size, year_establishment, company_vision, company_website } = response.data;
+  
+            setOrganizationType(organization || ''); 
+            setIndustryType(industry || ''); 
+            setTeamSize(team_size || '');
+            setYearOfEstablishment(year_establishment ? new Date(year_establishment) : null); 
+            setCompanyWebsite(company_website || ''); 
+  
+            if (company_vision) {
+              const decodedVision = new DOMParser().parseFromString(company_vision, 'text/html').documentElement.textContent;
+              const cleanedVision = decodedVision.replace(/<[^>]*>/g, '');  
+              setCompanyVision(cleanedVision || '');  
+            } else {
+              setCompanyVision('');  
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching founding info:', error);
+        }
+      }
+    };
+  
+    fetchFoundingInfo();
+  }, [user?.id]);
+  
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ organizationType, industryType, teamSize, yearOfEstablishment, companyWebsite, companyVision });
+  
+    try {
+      await postToEndpoint('/foundingInfo.php', {
+        employer_id: user?.id,
+        organizationType,
+        industryType,
+        teamSize,
+        yearOfEstablishment: yearOfEstablishment?.getFullYear(),
+        companyWebsite,
+        companyVision,
+      });
+  
+      navigate('/employer/socialmedia');
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert('Failed to save data');
+    }
   };
+  
 
   return (
     <>
@@ -43,7 +101,7 @@ function FoundingInfo() {
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12} md={4}>
               <Form.Group controlId="formOrganizationType">
-                <Form.Label>Organization Type</Form.Label>
+                <strong><Form.Label>Organization Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
                 <Form.Select
                   value={organizationType}
                   onChange={(e) => setOrganizationType(e.target.value)}
@@ -58,7 +116,7 @@ function FoundingInfo() {
 
             <Col xs={12} md={4}>
               <Form.Group controlId="formIndustryType">
-                <Form.Label>Industry Type</Form.Label>
+                <strong><Form.Label>Industry Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
                 <Form.Select
                   value={industryType}
                   onChange={(e) => setIndustryType(e.target.value)}
@@ -73,7 +131,7 @@ function FoundingInfo() {
 
             <Col xs={12} md={4}>
               <Form.Group controlId="formTeamSize">
-                <Form.Label>Team Size</Form.Label>
+                <strong><Form.Label>Team Size <span style={{ color: 'red' }}>*</span></Form.Label></strong>
                 <Form.Select
                   value={teamSize}
                   onChange={(e) => setTeamSize(e.target.value)}
@@ -90,7 +148,7 @@ function FoundingInfo() {
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12} md={4}>
               <Form.Group controlId="formYearOfEstablishment">
-                <Form.Label>Year of Establishment</Form.Label>
+                <strong><Form.Label>Year of Establishment <span style={{ color: 'red' }}>*</span></Form.Label></strong>
                 <DatePicker
                   selected={yearOfEstablishment}
                   onChange={(date) => setYearOfEstablishment(date)}
@@ -103,28 +161,30 @@ function FoundingInfo() {
             </Col>
 
             <Col xs={12} md={6}>
-  <Form.Group controlId="formCompanyWebsite">
-    <Form.Label>Company Website</Form.Label>
-    <div className="input-group">
-      <span className="input-group-text"><FaLink /></span>
-      <Form.Control
-        type="url"
-        value={companyWebsite}
-        onChange={(e) => setCompanyWebsite(e.target.value)}
-        placeholder="Enter website URL"
-        className="py-2 px-5"
-      />
-    </div>
-  </Form.Group>
-</Col>
+              <Form.Group controlId="formCompanyWebsite">
+                <strong><Form.Label>Company Website <span style={{ color: 'red' }}>*</span></Form.Label></strong>
+                <div className="input-group" style={{width: '100%'}}>
+                  <span className="input-group-text"><FaLink /></span>
+                  <Form.Control
+                    type="url"
+                    value={companyWebsite}
+                    onChange={(e) => setCompanyWebsite(e.target.value)}
+                    placeholder="Enter website URL"
+                    className="py-2 px-5"
+                    style={{borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px'}}
+                  />
+                </div>
+              </Form.Group>
+            </Col>
 
           </Row>
 
           <Row className="mb-4" style={{ margin: '0' }}>
             <Col xs={12}>
               <Form.Group controlId="formCompanyVision">
-                <Form.Label>Company Vision</Form.Label>
+                <strong><Form.Label>Company Vision <span style={{ color: 'red' }}>*</span></Form.Label></strong>
                 <ReactQuill 
+                  theme="snow"
                   value={companyVision}
                   onChange={setCompanyVision}
                   placeholder="Write your vision here..."
@@ -136,10 +196,12 @@ function FoundingInfo() {
 
           <Row>
             <Col className="text-start">
-              <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black' }}>
-              <FontAwesomeIcon icon={faArrowLeft} /> Back 
+              <Link to = '/employer/companyprofile'>
+              <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black', height: '50px' }}>
+                <FontAwesomeIcon icon={faArrowLeft} /> Back 
               </Button>
-              <Button variant="primary" type="submit" style={{ width: '200px' }}>
+              </Link>
+              <Button variant="primary" type="submit" style={{ width: '200px', height: '50px' }}>
                 Save & Next <FontAwesomeIcon icon={faArrowRight} />
               </Button>
             </Col>

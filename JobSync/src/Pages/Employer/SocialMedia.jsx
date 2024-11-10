@@ -6,6 +6,7 @@ import ReactQuill from 'react-quill';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight , faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
+import { Link } from 'react-router-dom';
 
 const FileUpload = ({ label, required, onChange, imageSrc }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
@@ -54,13 +55,11 @@ const CompanyProfile = () => {
       }}
     >
       <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' , marginBottom: '222px' }}>
-       
-
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formFacebookLink">
               <Form.Label>
-                Facebook Link <span style={{ color: 'red' }}>*</span>
+               <strong>Facebook Link</strong>
               </Form.Label>
               <Form.Control
                 type="url"
@@ -77,7 +76,7 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formInstagramLink">
               <Form.Label>
-                Instagram Link <span style={{ color: 'red' }}>*</span>
+                <strong>Instagram Link</strong>
               </Form.Label>
               <Form.Control
                 type="url"
@@ -94,7 +93,7 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formYoutubeLink">
               <Form.Label>
-                YouTube Link <span style={{ color: 'red' }}>*</span>
+              <strong>YouTube Link</strong>
               </Form.Label>
               <Form.Control
                 type="url"
@@ -111,7 +110,7 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formTwitterLink">
               <Form.Label>
-                Twitter Link <span style={{ color: 'red' }}>*</span>
+              <strong>Twitter Link</strong>
               </Form.Label>
               <Form.Control
                 type="url"
@@ -126,10 +125,12 @@ const CompanyProfile = () => {
 
         <Row>
           <Col>
-          <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black' }}>
-              <FontAwesomeIcon icon={faArrowLeft} /> Back 
+          <Link to = '/employer/foundinginfo'>
+              <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black', height: '50px'  }}>
+                <FontAwesomeIcon icon={faArrowLeft} /> Back 
               </Button>
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
+          </Link>
+            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}>
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </Col>

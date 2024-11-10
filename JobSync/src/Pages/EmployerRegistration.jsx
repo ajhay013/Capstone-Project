@@ -64,7 +64,7 @@ export default function EmployerRegistrationForm() {
     };
     useEffect(() => {
         if (user) {
-            navigate('/dashboard');
+            navigate('/employer/dashboard');
         }
     }, [user, navigate]);
     const isFirstStepValid = () => {

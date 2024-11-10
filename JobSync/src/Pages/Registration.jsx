@@ -32,7 +32,7 @@ function RegistrationForm() {
 
     useEffect(() => {
         if (user) {
-            navigate('/dashboard');
+            navigate('/applicants/overview');
         }
     }, [user, navigate]);
 

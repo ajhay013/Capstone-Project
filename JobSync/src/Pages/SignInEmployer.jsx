@@ -49,16 +49,21 @@ function SignInEmployer() {
         postToEndpoint('/login.php', loginData, {
             'Content-Type': 'application/x-www-form-urlencoded'
         })
-            .then(response => {
-                if (response.data.success) {
-                    const userData = {
-                        id: response.data.employer_id,
-                        firstname: response.data.firstname,
-                        userType: response.data.userType
-                    };
-                    login(userData); 
-                    navigate('/employer/dashboard'); 
+        .then(response => {
+            if (response.data.success) {
+                const userData = {
+                    id: response.data.employer_id,
+                    firstname: response.data.firstname,
+                    userType: response.data.userType
+                };
+                login(userData); 
+        
+                if (response.data.profileIncomplete) {
+                    navigate('/employer/companyprofile');
                 } else {
+                    navigate('/employer/overview');
+                }
+            } else {
                     const errorMessage = response.data.error || '';
                     
                     if (typeof errorMessage === 'string' && errorMessage.includes('email')) {
