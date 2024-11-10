@@ -1,5 +1,5 @@
 import React from 'react';
-import EmployerSidebar from '../../../components/employersidebar';
+import EmployerSidebar from '../../../components/EmployerSidebar';
 import SavedApplicantTable from '../../../components/SavedApplicantTable';
 
 export default function SavedApplicant() {

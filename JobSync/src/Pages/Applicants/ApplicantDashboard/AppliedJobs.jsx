@@ -21,10 +21,9 @@ export default function AppliedJobs() {
                     <h2
                         className="mb-3 text-left"
                         style={{
-                            fontSize: '24px',
+                            fontSize: '16px',
                             color: '#333',
-                            fontWeight: 'bold',
-                            marginBottom: '20px',
+                            fontWeight: '500',
                             marginTop: '25px',
                             textAlign: 'left',
                         }}

@@ -10,16 +10,18 @@ function ApplicantsSidebar() {
     const activeStyle = {
         backgroundColor: '#b8e2fe', 
         color: '#0A65CC', 
-        fontWeight: 'bold',
-        width: '100%',
+        fontWeight: '500',
+        width: 'calc(100% + 16px)', 
         borderRadius: '0.25rem',
+        marginLeft: '-8px', 
+        padding: '10px 22px', 
     };
 
     const buttonStyle = {
         width: '100%',
         textAlign: 'left',
         padding: '10px 15px',
-        color: 'black',
+        color: '#838383',
     };
 
        const isActive = (path) => location.pathname === path;
@@ -35,57 +37,57 @@ function ApplicantsSidebar() {
                 marginRight: '25px' 
             }}
         >
-            <h2 className="text-primary" style={{ fontSize: '20px', marginTop: '50px', marginBottom: '30px' }}>
+            <h2 className="text" style={{ fontSize: '16px', marginTop: '50px', marginBottom: '30px', color: '#606060' }}>
                 Applicant Dashboard
             </h2>
             <ul className="nav flex-column">
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/applicants/applicantdashboard/overview') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/applicants/applicantdashboard/overview')}
+                        style={isActive('/applicants/overview') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/applicants/overview')}
                     >
-                        <FaLayerGroup className="me-2" style={{ color: isActive('/applicants/applicantdashboard/overview') ? '#0A65CC' : 'black' }} />
+                        <FaLayerGroup className="me-2" style={{ color: isActive('/applicants/overview') ? '#0A65CC' : '#838383' }} />
                         Overview
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/applicants/applicantdashboard/appliedjobs') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/applicants/applicantdashboard/appliedjobs')}
+                        style={isActive('/applicants/appliedjobs') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/applicants/appliedjobs')}
                     >
-                        <FaBriefcase className="me-2" style={{ color: isActive('/applicants/applicantdashboard/appliedjobs') ? '#0A65CC' : 'black' }} />
+                        <FaBriefcase className="me-2" style={{ color: isActive('/applicants/appliedjobs') ? '#0A65CC' : '#838383' }} />
                         Applied Jobs
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/applicants/applicantdashboard/favoritejobs') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/applicants/applicantdashboard/favoritejobs')}
+                        style={isActive('/applicants/favoritejobs') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/applicants/favoritejobs')}
                     >
-                        <FaBookmark className="me-2" style={{ color: isActive('/applicants/applicantdashboard/favoritejobs') ? '#0A65CC' : 'black' }} />
+                        <FaBookmark className="me-2" style={{ color: isActive('/applicants/favoritejobs') ? '#0A65CC' : '#838383' }} />
                         Favorite Jobs
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/applicants/applicantdashboard/jobsalert') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/applicants/applicantdashboard/jobsalert')}
+                        style={isActive('/applicants/jobsalert') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/applicants/jobsalert')}
                     >
-                        <FaBell className="me-2" style={{ color: isActive('/applicants/applicantdashboard/jobsalert') ? '#0A65CC' : 'black' }} />
+                        <FaBell className="me-2" style={{ color: isActive('/applicants/jobsalert') ? '#0A65CC' : '#838383' }} />
                         Job Alerts
                     </button>
                 </li>
                 <li className="nav-item">
                     <button
                         className="btn btn-link nav-link"
-                        style={isActive('/applicants/applicantdashboard/applicantsettings') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/applicants/applicantdashboard/applicantsettings')}
+                        style={isActive('/applicants/applicantsettings') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
+                        onClick={() => navigate('/applicants/applicantsettings')}
                     >
-                        <FaCog className="me-2" style={{ color: isActive('/applicants/applicantdashboard/applicantsettings') ? '#0A65CC' : 'black' }} />
+                        <FaCog className="me-2" style={{ color: isActive('/applicants/applicantsettings') ? '#0A65CC' : '#838383' }} />
                         Settings
                     </button>
                 </li>

@@ -68,53 +68,66 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'], $_POST['for
                 }
                 break;
 
-            case 'employer':
-                $stmt_employer = $conn->prepare("
-                    SELECT 
-                        e.employer_id, 
-                        e.firstname, 
-                        e.password
-                    FROM 
-                        js_employer_info e 
-                    WHERE 
-                        e.email = :email
-                ");
-                $stmt_employer->bindParam(':email', $email, PDO::PARAM_STR);
-                $stmt_employer->execute();
-
-                if ($stmt_employer->rowCount() > 0) {
-                    $employer = $stmt_employer->fetch(PDO::FETCH_ASSOC);
-                    $id = $employer['employer_id'];
-                    $firstname = $employer['firstname'];
-                    $hashed_password = $employer['password'];
-
-                    if (password_verify($password, $hashed_password)) {
-                        $_SESSION['employer_id'] = $id;
-                        $_SESSION['firstname'] = $firstname;
-
-                        echo json_encode([
-                            "success" => true,
-                            "employer_id" => $id,
-                            "firstname" => $firstname,
-                            "userType" => 'employer',
-                            "message" => "Login successful."
-                        ]);
-                        exit();
+                case 'employer':
+                    $stmt_employer = $conn->prepare("
+                        SELECT 
+                            e.employer_id, 
+                            e.firstname, 
+                            e.password
+                        FROM 
+                            js_employer_info e 
+                        WHERE 
+                            e.email = :email
+                    ");
+                    $stmt_employer->bindParam(':email', $email, PDO::PARAM_STR);
+                    $stmt_employer->execute();
+                
+                    if ($stmt_employer->rowCount() > 0) {
+                        $employer = $stmt_employer->fetch(PDO::FETCH_ASSOC);
+                        $id = $employer['employer_id'];
+                        $firstname = $employer['firstname'];
+                        $hashed_password = $employer['password'];
+                
+                        if (password_verify($password, $hashed_password)) {
+                            $_SESSION['employer_id'] = $id;
+                            $_SESSION['firstname'] = $firstname;
+                
+                            $profileIncomplete = false;
+                
+                            $stmt_company_info = $conn->prepare("SELECT 1 FROM js_company_info WHERE employer_id = :id");
+                            $stmt_company_info->bindParam(':id', $id, PDO::PARAM_INT);
+                            $stmt_company_info->execute();
+                            if ($stmt_company_info->rowCount() == 0) {
+                                $profileIncomplete = true;
+                            }
+                
+                            $response = [
+                                "success" => true,
+                                "employer_id" => $id,
+                                "firstname" => $firstname,
+                                "userType" => 'employer',
+                                "message" => "Login successful.",
+                                "profileIncomplete" => $profileIncomplete
+                            ];
+                
+                            echo json_encode($response);
+                            exit();
+                        } else {
+                            echo json_encode([
+                                "success" => false, 
+                                "error" => "Incorrect password."
+                            ]);
+                            exit();
+                        }
                     } else {
                         echo json_encode([
                             "success" => false, 
-                            "error" => "Incorrect password."
+                            "error" => "Incorrect email."
                         ]);
                         exit();
                     }
-                } else {
-                    echo json_encode([
-                        "success" => false, 
-                        "error" => "Incorrect email."
-                    ]);
-                    exit();
-                }
-                break;
+                    break;
+                
 
             default:
                 echo json_encode([

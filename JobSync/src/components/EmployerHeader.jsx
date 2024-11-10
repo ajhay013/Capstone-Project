@@ -27,10 +27,11 @@ function EmployerHeader() {
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <FaRegBell style={{ fontSize: '20px', marginRight: '18px', cursor: 'pointer' }} />
 
+                                    <Link to ="/employer/postjob">
                                     <button className="btn btn-primary me-3 custom-btn" style={{background: '#0A65CC'}} type="button">
                                         Post A Job
                                     </button>
-
+                                    </Link>
                                     <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
                                         <Link to="/employer/companyprofile">
                                             <img 
@@ -47,9 +48,11 @@ function EmployerHeader() {
                                 <Link to="/candidate_login" className="btn btn-outline-custom me-2 custom-btn">
                                     Sign In
                                 </Link>
+                                <Link to = "/employer_login" >
                                 <button className="btn btn-primary custom-btn" type="button">
                                     Post A Job
                                 </button>
+                                </Link>
                             </>
                         )}
                     </div>

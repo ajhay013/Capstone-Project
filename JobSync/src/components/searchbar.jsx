@@ -78,9 +78,11 @@ function SearchJobs() {
                                 <Link to="/candidate_login" className="btn btn-outline-custom me-2 custom-btn">
                                     Sign In
                                 </Link>
+                                <Link to="/employer_login">
                                 <button className="btn btn-primary custom-btn" style={{background: '#0A65CC'}} type="button">
                                     Post A Job
                                 </button>
+                                </Link>
                             </>
                         )}
                     </div>
