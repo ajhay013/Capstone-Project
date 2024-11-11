@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaBookmark } from 'react-icons/fa';
-import { FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
+import { FaLink, FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const JobPosting = () => {
@@ -137,8 +137,8 @@ const JobOverview = () => {
   return (
     <Card className="job-overview mt-4">
       <Card.Body>
-        <h4>Job Overview</h4>
-        <Row className="text-center">
+        <h4 className="text-start">Job Overview</h4> {/* Align the header to the left */}
+        <Row className="text-start mt-3"> {/* Align the row content to the left */}
           <Col xs={4}>
             <FaCalendarAlt className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
             <div><strong>Job Posted</strong></div>
@@ -155,7 +155,7 @@ const JobOverview = () => {
             <div>Senior Level</div>
           </Col>
         </Row>
-        <Row className="text-center mt-3">
+        <Row className="text-start mt-3"> {/* Align the row content to the left */}
           <Col xs={4}>
             <FaBriefcase className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
             <strong>Experience</strong>
@@ -174,27 +174,38 @@ const JobOverview = () => {
   );
 };
 
-// Share Job Component
 const ShareJob = () => {
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);  // Copies the current page URL
+    alert("Link copied to clipboard!");
+  };
+
   return (
-    <div className="mt-4">
+    <div className="mt-4" style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
       <h5>Share this Job:</h5>
-      <div className="d-flex justify-content-between">
-        <Button variant="link" aria-label="Share on LinkedIn">
-          <FaLinkedin className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
-          LinkedIn
+      <div className="d-flex justify-content-start align-items-center">
+        {/* Copy Link Button */}
+        <Button 
+          variant="primary" 
+          onClick={copyLink} 
+          aria-label="Copy Link" 
+          style={{ padding: '5px 15px', marginRight: '10px', backgroundColor: '#ddf2ff', color: '#0A65CC' , border: 'none' }}
+        >
+          <FaLink className="me-2" style={{ width: '20px', height: '20px' }} />
+          Copy Link
         </Button>
-        <Button variant="link" aria-label="Share on Facebook">
-          <FaFacebook className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
-          Facebook
+
+        <Button variant="link" aria-label="Share on LinkedIn" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
+          <FaLinkedin className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
         </Button>
-        <Button variant="link" aria-label="Share on Twitter">
-          <FaTwitter className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
-          Twitter
+        <Button variant="link" aria-label="Share on Facebook" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
+          <FaFacebook className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
         </Button>
-        <Button variant="link" aria-label="Share via Email">
-          <FaEnvelope className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
-          Email
+        <Button variant="link" aria-label="Share on Twitter" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
+          <FaTwitter className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
+        </Button>
+        <Button variant="link" aria-label="Share via Email" style={{ padding: '0', maxWidth: '50px' }}>
+          <FaEnvelope className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
         </Button>
       </div>
     </div>
@@ -208,7 +219,7 @@ const JobLocation = () => {
       <h5>Location</h5>
       <iframe 
         title="Google Map"
-        src="https://www.google.com/maps/embed?pb=!1m18..." // Ensure the src is correct
+        src="https://www.google.com/maps/embed?pb=!1m18..."
         width="100%" 
         height="300" 
         style={{ border: 0 }} 
