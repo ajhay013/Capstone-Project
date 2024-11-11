@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Form, Button, Row, Col, InputGroup, Dropdown, DropdownButton } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faArrowLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowLeft, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
 import { Link } from 'react-router-dom';
 import facebookIcon from '../../assets/fb.png';
@@ -36,6 +36,11 @@ const CompanyProfile = () => {
 
   const addSocialLink = () => {
     setSocialLinks([...socialLinks, { platform: 'Other', link: '' }]);
+  };
+
+  const handleDeleteSocialLink = (index) => {
+    const updatedLinks = socialLinks.filter((_, i) => i !== index);
+    setSocialLinks(updatedLinks);
   };
 
   const handleSubmit = (e) => {
@@ -116,6 +121,22 @@ const CompanyProfile = () => {
                     onChange={(e) => handleSocialLinkChange(index, 'link', e.target.value)}
                     style={{ flexGrow: 1 }}
                   />
+                  
+                  {/* Delete button (X icon) */}
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleDeleteSocialLink(index)}
+                    style={{
+                      marginLeft: '10px',
+                      height: '38px',
+                      width: '38px',
+                      padding: 0,
+                      borderRadius: '30%',
+                      backgroundColor: '#f8d7da',
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                  </Button>
                 </InputGroup>
               </Col>
             </Row>
