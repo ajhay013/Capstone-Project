@@ -41,8 +41,15 @@ import EmployerMessage from './Pages/Employer/EmployerDashboard/EmployerMessage'
 import SavedApplicant from './Pages/Employer/EmployerDashboard/SavedApplicant';
 import EmployerSettings from './Pages/Employer/EmployerDashboard/EmployerSettings';
 
+{/* Employer Settings Pages */}
+import CompanySettings from './pages/employer/employerdashboard/employersettings/companysettings';
+import SocmedSettings from './pages/employer/employerdashboard/employersettings/socmedsettings';
+import FoundingSettings from './pages/employer/employerdashboard/employersettings/foundingsettings';
+import AccountSettings from './pages/employer/employerdashboard/employersettings/accountsettings';
+
 import EmployerDashboard from './Pages/Employer/Dashboard';
 import CustomerSupport from './Pages/CustomerSupport';
+
 import HomeEmployer from './Pages/Employer/Home';
 import HeaderComponent from './components/HeaderComponent';
 import SearchJobs from './components/searchbar';
@@ -139,6 +146,11 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/savedapplicant' element={<ProtectedRoute> <SavedApplicant /> </ProtectedRoute>} />  
         <Route path='/employer/settings' element={<ProtectedRoute> <EmployerSettings /> </ProtectedRoute>} />
       
+      {/* Employer Settings Routing */}
+        <Route path='/employer/employerdashboard/employersettings/companysettings' element={ <CompanySettings /> } />
+        <Route path='/employer/employerdashboard/emoployersettings/foundingsettings' element={ <FoundingSettings /> } />
+        <Route path='/employer/employerdashboard/employersettings/socmedsettings' element={ <SocmedSettings /> } />
+        <Route path='/employer/employerdashboard/employersettings/accountsettings' element={ <AccountSettings /> } />
       
       </Routes>
       <Footer />
