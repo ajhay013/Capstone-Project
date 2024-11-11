@@ -66,6 +66,14 @@ export default function FoundingSettings() {
                   <option value="Technology">Technology</option>
                   <option value="Healthcare">Healthcare</option>
                   <option value="Finance">Finance</option>
+                  <option value="Education">Education</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Retail">Retail</option>
+                  <option value="Real Estate">Real Estate</option>
+                  <option value="Hospitality">Hospitality</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Energy">Energy</option>
+                  <option value="Transportation">Transportation</option>
                 </Form.Select>
               </Form.Group>
             </Col>
