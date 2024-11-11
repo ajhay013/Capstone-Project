@@ -1,46 +1,46 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-quill/dist/quill.snow.css';
-import { Container, Form, Button, Row, Col, Image } from 'react-bootstrap';
-import ReactQuill from 'react-quill';
+import { Container, Form, Button, Row, Col, InputGroup, Dropdown, DropdownButton } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight , faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
 import { Link } from 'react-router-dom';
+import facebookIcon from '../../assets/fb.png';
+import instagramIcon from '../../assets/ig.png';
+import youtubeIcon from '../../assets/yt.png';
+import twitterIcon from '../../assets/tw.png';
 
-const FileUpload = ({ label, required, onChange, imageSrc }) => (
-  <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
-    <Form.Label>
-      {label} {required && <span style={{ color: 'red' }}>*</span>}
-    </Form.Label>
-    <Form.Control type="file" accept="image/*" onChange={onChange} />
-    {imageSrc && (
-      <Image
-        src={imageSrc}
-        alt={label}
-        className="mt-3"
-        thumbnail
-        style={{
-          width: label === "Upload Company Logo" ? '150px' : '100%',
-          height: 'auto',
-        }}
-      />
-    )}
-  </Form.Group>
-);
+// Define platform options with image imports
+const platformOptions = [
+  { name: 'Facebook', icon: facebookIcon },
+  { name: 'Instagram', icon: instagramIcon },
+  { name: 'YouTube', icon: youtubeIcon },
+  { name: 'Twitter', icon: twitterIcon },
+  { name: 'Other', icon: null },
+];
 
 const CompanyProfile = () => {
-  const [logo, setLogo] = useState(null);
-  const [banner, setBanner] = useState(null);
-  const [facebookLink, setFacebookLink] = useState(''); 
-  const [instagramLink, setInstagramLink] = useState(''); 
-  const [youtubeLink, setYoutubeLink] = useState(''); 
-  const [twitterLink, setTwitterLink] = useState(''); 
+  const [socialLinks, setSocialLinks] = useState([
+    { platform: 'Facebook', link: '' },
+    { platform: 'Instagram', link: '' },
+    { platform: 'YouTube', link: '' },
+    { platform: 'Twitter', link: '' },
+  ]);
 
+  const handleSocialLinkChange = (index, field, value) => {
+    const updatedLinks = socialLinks.map((socialLink, i) =>
+      i === index ? { ...socialLink, [field]: value } : socialLink
+    );
+    setSocialLinks(updatedLinks);
+  };
+
+  const addSocialLink = () => {
+    setSocialLinks([...socialLinks, { platform: 'Other', link: '' }]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ logo, banner, companyName, aboutUs, facebookLink, instagramLink, youtubeLink, twitterLink }); 
+    console.log(socialLinks);
   };
 
   return (
@@ -48,88 +48,99 @@ const CompanyProfile = () => {
       fluid
       className="text-start"
       style={{
-        margin: '0',
-        padding: '0',
+        margin: 0,
+        padding: 0,
         width: '100%',
         paddingTop: '56px',
       }}
     >
-      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' , marginBottom: '222px' }}>
-        <Row className="mb-4">
-          <Col xs={12}>
-            <Form.Group controlId="formFacebookLink">
-              <Form.Label>
-               <strong>Facebook Link</strong>
-              </Form.Label>
-              <Form.Control
-                type="url"
-                placeholder="Enter Facebook link"
-                value={facebookLink}
-                onChange={(e) => setFacebookLink(e.target.value)}
-                style={{ padding: '10px', width: '100%' }}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '140%', marginBottom: '350px' }}>
+        {socialLinks.map((socialLink, index) => {
+          const selectedOption = platformOptions.find((option) => option.name === socialLink.platform);
+          return (
+            <Row className="mb-4" key={index}>
+              <Col>
+                <InputGroup>
+                  <DropdownButton
+                    as={InputGroup.Prepend}
+                    variant="outline-secondary"
+                    title={
+                      <>
+                        {selectedOption?.icon && (
+                          <img
+                            src={selectedOption.icon}
+                            alt={selectedOption.name}
+                            style={{ marginRight: '8px', width: '20px' }}
+                          />
+                        )}
+                        {socialLink.platform}
+                      </>
+                    }
+                    id={`dropdown-custom-components-${index}`}
+                    onSelect={(value) => handleSocialLinkChange(index, 'platform', value)}
+                    style={{
+                      width: '150px',
+                      border: 'none',
+                      boxShadow: 'none',
+                    }}
+                    className="no-hover"
+                  >
+                    {platformOptions.map((option) => (
+                      <Dropdown.Item
+                        key={option.name}
+                        eventKey={option.name}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          padding: '8px 16px',
+                        }}
+                        onMouseEnter={(e) => (e.target.style.backgroundColor = 'transparent')}
+                        onMouseLeave={(e) => (e.target.style.backgroundColor = 'transparent')}
+                      >
+                        {option.icon && (
+                          <img
+                            src={option.icon}
+                            alt={option.name}
+                            style={{ marginRight: '8px', width: '25px' }}
+                          />
+                        )}
+                        {option.name}
+                      </Dropdown.Item>
+                    ))}
+                  </DropdownButton>
 
-        <Row className="mb-4"> 
-          <Col xs={12}>
-            <Form.Group controlId="formInstagramLink">
-              <Form.Label>
-                <strong>Instagram Link</strong>
-              </Form.Label>
-              <Form.Control
-                type="url"
-                placeholder="Enter Instagram link"
-                value={instagramLink}
-                onChange={(e) => setInstagramLink(e.target.value)}
-                style={{ padding: '10px', width: '100%' }}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+                  <Form.Control
+                    type="url"
+                    placeholder={`Enter ${socialLink.platform} link`}
+                    value={socialLink.link}
+                    onChange={(e) => handleSocialLinkChange(index, 'link', e.target.value)}
+                    style={{ flexGrow: 1 }}
+                  />
+                </InputGroup>
+              </Col>
+            </Row>
+          );
+        })}
 
-        <Row className="mb-4">
-          <Col xs={12}>
-            <Form.Group controlId="formYoutubeLink">
-              <Form.Label>
-              <strong>YouTube Link</strong>
-              </Form.Label>
-              <Form.Control
-                type="url"
-                placeholder="Enter YouTube link"
-                value={youtubeLink}
-                onChange={(e) => setYoutubeLink(e.target.value)}
-                style={{ padding: '10px', width: '100%' }}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-
-        <Row className="mb-4">
-          <Col xs={12}>
-            <Form.Group controlId="formTwitterLink">
-              <Form.Label>
-              <strong>Twitter Link</strong>
-              </Form.Label>
-              <Form.Control
-                type="url"
-                placeholder="Enter Twitter link"
-                value={twitterLink}
-                onChange={(e) => setTwitterLink(e.target.value)}
-                style={{ padding: '10px', width: '100%' }}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+        <Button
+          variant="secondary"
+          onClick={addSocialLink}
+          className="mb-4"
+          style={{ width: '70%', backgroundColor: '#757575' }}
+        >
+          <FontAwesomeIcon icon={faPlus} /> Add New Social Link
+        </Button>
 
         <Row>
           <Col>
-          <Link to = '/employer/foundinginfo'>
-              <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black', height: '50px'  }}>
-                <FontAwesomeIcon icon={faArrowLeft} /> Back 
+            <Link to="/employer/foundinginfo">
+              <Button
+                variant="secondary"
+                style={{ marginRight: '10px', width: '200px', backgroundColor: 'white', color: 'black', height: '50px' }}
+              >
+                <FontAwesomeIcon icon={faArrowLeft} /> Back
               </Button>
-          </Link>
+            </Link>
             <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}>
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>
