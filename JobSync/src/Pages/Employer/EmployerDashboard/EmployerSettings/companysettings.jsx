@@ -3,8 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-quill/dist/quill.snow.css';
 import { Container, Form, Button, Row, Col, Image, Card } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const FileUpload = ({ label, required, onChange }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
@@ -39,13 +37,15 @@ export default function CompanySettings() {
   return (
     <Container
       fluid
-      className="d-flex justify-content-center" 
+      className="d-flex justify-content-center"
       style={{
         padding: '0',
         paddingTop: '15px',
       }}
     >
       <Form onSubmit={handleSubmit} style={{ maxWidth: '800px', width: '100%' }} className="p-4">
+        
+        {/* File upload section */}
         <Row className="mb-4">
           <Col xs={12} md={6}>
             <FileUpload label="Upload Company Logo" required onChange={handleLogoChange} />
@@ -55,16 +55,32 @@ export default function CompanySettings() {
           </Col>
         </Row>
 
-        {/* Image preview container */}
+        {/* Image preview section */}
         <Row className="mb-4">
           <Col xs={12} md={6}>
-            <Card className="p-3 mb-4 text-center" style={{ width: '100%', height: '200px', overflow: 'hidden' }}>
+            <Card
+              className="p-3 mb-4 text-center"
+              style={{
+                width: '200px',
+                height: '200px',
+                overflow: 'hidden',
+                borderRadius: '50%',
+                border: '1px solid #ddd',
+                margin: '0 auto',
+              }}
+            >
               {logo ? (
                 <Image
                   src={logo}
                   alt="Company Logo Preview"
                   thumbnail
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%',
+                    border: 'none',
+                  }}
                 />
               ) : (
                 <div className="text-center text-muted" style={{ padding: '20px', fontSize: '14px' }}>
@@ -74,13 +90,25 @@ export default function CompanySettings() {
             </Card>
           </Col>
           <Col xs={12} md={6}>
-            <Card className="p-3 mb-4 text-center" style={{ width: '100%', height: '200px', overflow: 'hidden' }}>
+            <Card
+              className="p-3 mb-4 text-center"
+              style={{
+                width: '100%',
+                height: '200px',
+                overflow: 'hidden',
+              }}
+            >
               {banner ? (
                 <Image
                   src={banner}
                   alt="Company Banner Preview"
                   thumbnail
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    border: 'none',
+                  }}
                 />
               ) : (
                 <div className="text-center text-muted" style={{ padding: '20px', fontSize: '14px' }}>
@@ -91,6 +119,7 @@ export default function CompanySettings() {
           </Col>
         </Row>
 
+        {/* Company Name Input */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formCompanyName" className="text-start">
@@ -108,6 +137,7 @@ export default function CompanySettings() {
           </Col>
         </Row>
 
+        {/* About Us Section */}
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formAboutUs" className="text-start">
@@ -125,12 +155,13 @@ export default function CompanySettings() {
           </Col>
         </Row>
 
+        {/* Submit Button */}
         <Row>
           <Col className="text-center">
             <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '3px' }}>
               Save Changes
             </Button>
-          </Col> 
+          </Col>
         </Row>
       </Form>
     </Container>
