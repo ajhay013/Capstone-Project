@@ -79,11 +79,20 @@ const ApplicantRow = ({ applicant, handleShowModal }) => (
         <td style={{ textAlign: 'right' }}>
             <div className="d-flex align-items-center justify-content-end">
                 <FaBookmark className="me-2" />
-                <button className="btn btn-sm btn-light text-primary fw-bold">View Profile <FaArrowRight className="ms-1" /></button>
+                <button className="btn btn-sm btn-light text-primary fw-bold">
+                    View Profile <FaArrowRight className="ms-1" />
+                </button>
+                <FaEllipsisV
+                    className="ms-3"
+                    style={{ cursor: 'pointer' , color: '#757575'  }}
+                    onClick={(event) => handleShowModal(applicant, event)}
+                />
             </div>
         </td>
     </tr>
 );
+
+
 
 const ApplicantsTable = () => {
     const [showModal, setShowModal] = useState(false);
