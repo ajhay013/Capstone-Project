@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import JobDetailsModal from '../components/jobdetailsmodal';
 
 const jobData = [
     {
         id: 1,
         logo: '../../src/assets/riot.png',
-        name: 'Software Engineer',
+        name: 'Visual Designer',
         location: 'New York, NY',
         jobType: 'Full-time',
         salary: '₱ 100,000',
@@ -104,7 +105,7 @@ const jobData = [
     },
 ];
 
-const JobRow = ({ job }) => {
+const JobRow = ({ job, onViewDetails }) => {
     const statusColor = (() => {
         switch (job.status) {
             case 'Active':
@@ -156,7 +157,6 @@ const JobRow = ({ job }) => {
                     fontWeight: '600',
                     fontSize: '14px'
                 }}
-            
             >{job.dateApplied}</span></td>
             <td>
                 <span
@@ -184,6 +184,7 @@ const JobRow = ({ job }) => {
                         padding: '10px',
                         borderRadius: '6px'
                     }}
+                    onClick={() => onViewDetails(job.id)} // Call the function to open modal
                 >
                     View Details
                 </button>
@@ -192,8 +193,19 @@ const JobRow = ({ job }) => {
     );
 };
 
-
 function AppliedJobsTable() {
+    const [showModal, setShowModal] = useState(false);
+
+    // Function to handle opening and closing the modal
+    const handleViewDetails = (jobId) => {
+        setShowModal(true);
+        // Optionally set job details to display based on jobId
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
     return (
         <div className="container-fluid px-0">
             <div className="table-responsive">
@@ -208,11 +220,13 @@ function AppliedJobsTable() {
                     </thead>
                     <tbody>
                         {jobData.map((job) => (
-                            <JobRow job={job} key={job.id} />
+                            <JobRow job={job} key={job.id} onViewDetails={handleViewDetails} />
                         ))}
                     </tbody>
                 </table>
             </div>
+            {/* Render the JobDetailsModal */}
+            <JobDetailsModal show={showModal} handleClose={handleCloseModal} />
         </div>
     );
 }

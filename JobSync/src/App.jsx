@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import MyNavbar from './components/navbar';
 import FindJob from './Pages/FindJob';
+import FindEmployer from './Pages/findemployer';
 import Home from './Pages/Home';
 import RegistrationForm from './Pages/Registration';
 import Footer from './components/Footer';
@@ -114,6 +115,7 @@ function Layout({ userId, setUserId }) {
         
         <Route path="/" element={renderHomePage()} />
         <Route path='/findjob' element={<FindJob/>} />
+        <Route path='/findemployer' element={<FindEmployer />} />
         <Route path='/candidate_login' element={<SignInForm setUserId={setUserId} />} />
         <Route path='/employer_login' element={<SignInEmployer />} />
         <Route path='/registration' element={<RegistrationForm />} />

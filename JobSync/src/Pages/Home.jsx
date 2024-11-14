@@ -2,8 +2,10 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 import { FaBriefcase, FaBuilding, FaUser, FaPlus } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import JobSyncFlow from '../components/jobsyncflow.jsx';
 import PopularCategories from '../components/popularcategories';
+import JobCards from '../components/jobcards';
 
 export default function Home() {
     return (
@@ -64,6 +66,24 @@ export default function Home() {
                  <div className="my-5">
                     <PopularCategories />
                 </div>
+
+                <div>
+            {/* Featured Job Header */}
+            <div className="d-flex justify-content-between align-items-center my-5">
+                <h4>Featured Jobs</h4>
+                <Link to="/findjob" style={{ textDecoration: 'none', color: '#0A65CC' }}>
+                    <div className="d-flex align-items-center">
+                        <span>View All</span>
+                        <i className="fas fa-arrow-right ms-2"></i>
+                    </div>
+                </Link>
+            </div>
+
+            {/* Job Cards Section */}
+            <div className="my-5">
+                <JobCards />
+            </div>
+        </div>
 
             </main>
         </div>
