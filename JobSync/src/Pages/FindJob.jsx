@@ -1,102 +1,107 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../App.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Link } from 'react-router-dom';
-
-const jobs = [
-    {
-        title: 'Software Developer',
-        type: 'Part-Time',
-        salary: '$20/hour',
-        company: 'Google Inc.',
-        location: 'Manila, Philippines',
-        logo: './src/assets/google.png',
-    },
-    {
-        title: 'Job Title 2',
-        type: 'Fulltime',
-        salary: '$20/hour',
-        company: 'Company Name 2',
-        location: 'Location 2',
-        logo: './src/assets/google.png',
-    },
-    {
-        title: 'Job Title 3',
-        type: 'Internship',
-        hours: '200-400hrs',
-        company: 'Company Name 3',
-        location: 'Location 3',
-        logo: './src/assets/google.png',
-    },
-    {
-        title: 'Job Title 4',
-        type: 'Internship',
-        hours: '200-400hrs',
-        company: 'Company Name 4',
-        location: 'Location 4',
-        logo: './src/assets/google.png',
-    },
-    {
-        title: 'Job Title 5',
-        type: 'Internship',
-        hours: '200-400hrs',
-        company: 'Company Name 5',
-        location: 'Location 5',
-        logo: './src/assets/google.png',
-    },
-    {
-        title: 'Job Title 6',
-        type: 'Internship',
-        hours: '200-400hrs',
-        company: 'Company Name 6',
-        location: 'Location 6',
-        logo: './src/assets/google.png',
-    },
-];
-
-const JobCard = ({ job }) => (
-    <div className="col-md-4 mb-4 custom-job-container">
-        <Link to="/jobdetails" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="border p-3 position-relative job-container" style={{
-                border: '1px solid #F1F2F4',
-                borderRadius: '15px',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            }}>
-                <h5 className="mb-2 font-weight-bold text-start">{job.title}</h5>
-                <p className="text-start">
-                    <span style={{ color: '#0BA02C', fontWeight: 'bold', backgroundColor: '#A8D9A0', borderRadius: '5px', padding: '2px 5px' }}>
-                        {job.type}
-                    </span> | {job.salary ? `Salary: ${job.salary}` : `Hours: ${job.hours}`}
-                </p>
-                <div className="d-flex align-items-center">
-                    <img src={job.logo} alt="Company Logo" style={{ width: '50px', height: '50px', marginRight: '10px' }} />
-                    <div>
-                        <p className="text-start">{job.company}</p>
-                        <div className="d-flex align-items-center">
-                            <i className="fas fa-location-dot" style={{ color: 'gray', marginRight: '5px', marginBottom: '15px' }}></i>
-                            <p>{job.location}</p>
-                        </div>
-                    </div>
-                </div>
-    
-                <i className="fas fa-bookmark position-absolute" style={{ right: '15px', bottom: '15px', fontSize: '20px', color: '#555' }}></i>
-            </div>
-        </Link>
-    </div>
-);
+import React, { useState } from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import JobCards from '../components/jobcards';
 
 export default function FindJob() {
-    return (
-        <div>
-            <div className="container mt-5" style={{ width: '100%', maxWidth: '1200px', margin: 'auto' }}>
-                <div className="row">
-                    {jobs.map((job, index) => (
-                        <JobCard key={index} job={job} />
-                    ))}
-                </div>
-            </div>
+  const [jobSearch, setJobSearch] = useState('');
+  const [locationSearch, setLocationSearch] = useState('');
 
-        </div>
-    );
+  // Handle the search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log("Searching for jobs:", jobSearch, "in location:", locationSearch);
+    // Here, you could trigger an API request or filter the job data based on the inputs
+  };
+
+  return (
+    <>
+      <Container className="my-5" style={{ maxWidth: "1200px", width: "100%" }}>
+        {/* Combined Search Section with Icons Inside Fields */}
+        <Row className="mb-5" style={{ marginTop: "100px" }}>
+          <Col md={12}>
+            <form onSubmit={handleSearch} className="d-flex mb-4">
+              {/* Job Search Input */}
+              <div className="input-group" style={{ maxWidth: "600px", flexGrow: "1" }}>
+                <div className="input-group-prepend">
+                  <span
+                    className="input-group-text"
+                    style={{
+                      border: "none",
+                      backgroundColor: "transparent",
+                      color: "#0A65CC",
+                      padding: "15px",
+                      fontSize: "18px",
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faSearch} />
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  className="form-control search-input"
+                  placeholder="Job title, keyword, company"
+                  value={jobSearch}
+                  onChange={(e) => setJobSearch(e.target.value)}
+                  style={{
+                    paddingLeft: "45px",
+                    fontSize: "16px",
+                    borderRadius: "10px 0 0 10px",
+                    paddingRight: "10px",
+                    height: "45px",
+                  }}
+                />
+              </div>
+
+              {/* Location Search Input */}
+              <div className="input-group" style={{ maxWidth: "600px", flexGrow: "1" }}>
+                <div className="input-group-prepend">
+                  <span
+                    className="input-group-text"
+                    style={{
+                      border: "none",
+                      backgroundColor: "transparent",
+                      color: "#0A65CC",
+                      padding: "15px",
+                      fontSize: "18px",
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  className="form-control search-input"
+                  placeholder="City, state, or zip code"
+                  value={locationSearch}
+                  onChange={(e) => setLocationSearch(e.target.value)}
+                  style={{
+                    paddingLeft: "45px",
+                    fontSize: "16px",
+                    borderRadius: "0 10px 10px 0",
+                    paddingRight: "10px",
+                    height: "45px",
+                  }}
+                />
+              </div>
+
+              {/* Find Job Button on the Right */}
+              <Button
+                variant="primary"
+                className="ms-2"
+                style={{ fontSize: "16px", height: "40px", width: "150px" }}
+                type="submit"
+              >
+                Find Job
+              </Button>
+            </form>
+          </Col>
+        </Row>
+      </Container>
+
+      {/* Job Cards Section */}
+      <JobCards jobSearch={jobSearch} locationSearch={locationSearch} />
+    </>
+  );
 }

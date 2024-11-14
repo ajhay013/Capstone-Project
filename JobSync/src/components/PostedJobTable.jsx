@@ -162,6 +162,9 @@ const PostedJobTable = () => {
                 </div>
             )}
         </div>
+
+
+
     );
 };
 

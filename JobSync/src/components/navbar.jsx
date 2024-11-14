@@ -28,7 +28,7 @@ const MyNavbar = () => {
                 <Nav.Link as={Link} to="/findjob" className={location.pathname === '/findjob' ? 'active-link' : ''}>
                     Find Job
                 </Nav.Link>
-                <Nav.Link as={Link} to="/employers" className={location.pathname === '/employers' ? 'active-link' : ''}>
+                <Nav.Link as={Link} to="/findemployer" className={location.pathname === '/findemployer' ? 'active-link' : ''}>
                     Employers
                 </Nav.Link>
                 <Nav.Link as={Link} to="/customersupport" className={location.pathname === '/customersupport' ? 'active-link' : ''}>

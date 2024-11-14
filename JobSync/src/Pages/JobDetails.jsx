@@ -1,59 +1,70 @@
-import React from 'react';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaBookmark } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Container, Row, Col, Button, Card, Modal } from 'react-bootstrap';
+import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaBookmark, FaArrowRight } from 'react-icons/fa';
 import { FaLink, FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+
 
 const JobPosting = () => {
+  const [modalShow, setModalShow] = useState(false);
+  const [jobTitle, setJobTitle] = useState("Senior UX Designer");
+
+  const handleShowModal = () => setModalShow(true);
+  const handleCloseModal = () => setModalShow(false);
+
   return (
     <div>
       <Container className="mt-5 pt-5 job-posting custom-container">
         <Row className="mb-4">
           <Col md={8}>
-  
             <JobDetails />
           </Col>
           <Col md={4}>
-            
-            <FavoritesAndApplyButton />
-          
+            <FavoritesAndApplyButton handleShowModal={handleShowModal} setJobTitle={setJobTitle} />
             <SalaryAndLocation />
-           
             <JobOverview />
           </Col>
         </Row>
       </Container>
 
+      <ApplyModal 
+        show={modalShow} 
+        onHide={handleCloseModal} 
+        jobTitle={jobTitle} 
+      />
     </div>
   );
 };
 
 const JobDetails = () => {
   return (
-    <div className="text-start">
-      <Row className="align-items-center no-margin mt-5">
-        <Col xs={3} className="no-padding">
-          <img 
-            src='./src/assets/google.png'
-            alt="Senior UX Designer" 
-            className="img-fluid no-margin"
-            style={{ margin: '20px 0', width: '75%', height: 'auto', padding: '0' }}
-          />
-        </Col>
-        <Col xs={9} className="no-padding" style={{ padding: '0'}}>
-          <h1 className="no-margin text-start">Senior UX Designer</h1>
-          <span className="company-name no-margin text-start">at Google</span> 
-          <span className="badge bg-success ms-2 no-margin">FULL-TIME</span> 
-          <span className="badge bg-primary ms-2 no-margin">Featured</span>
-        </Col>
-      </Row>
-      <p className="job-description mt-4">Join our vibrant team and apply your creativity and expertise in UI/UX design...</p>
-      <p className="job-location">Join our vibrant team and apply your creativity and expertise in UI/UX design in a supportive and dynamic environment...</p>
-      <JobRequirements />
-      <JobResponsibilities />
-    </div>
+    <Container style={{ border: '1px solid #e0e0e0', padding: '20px', borderRadius: '8px' }} className="mt-5">
+      <div className="text-start">
+        <Row className="align-items-center no-margin m-0">
+          <Col xs={3} className="no-padding">
+            <img 
+              src='./src/assets/google.png'
+              alt="Senior UX Designer" 
+              className="img-fluid no-margin"
+              style={{ margin: '20px 0', width: '75%', height: 'auto', padding: '0' }}
+            />
+          </Col>
+          <Col xs={9} className="no-padding" style={{ padding: '0' }}>
+            <h1 className="no-margin text-start">Senior UX Designer</h1>
+            <span className="company-name no-margin text-start">at Google</span> 
+            <span className="badge bg-success ms-2 no-margin">FULL-TIME</span> 
+            <span className="badge bg-primary ms-2 no-margin">Featured</span>
+          </Col>
+        </Row>
+        <p className="job-description mt-4">Join our vibrant team and apply your creativity and expertise in UI/UX design...</p>
+        <p className="job-location">Join our vibrant team and apply your creativity and expertise in UI/UX design in a supportive and dynamic environment...</p>
+        <JobRequirements />
+        <JobResponsibilities />
+      </div>
+    </Container>
   );
 };
+
 
 // Salary and Location Component
 const SalaryAndLocation = () => {
@@ -78,18 +89,78 @@ const SalaryAndLocation = () => {
 };
 
 // Favorites and Apply Button Component
-const FavoritesAndApplyButton = () => {
+const FavoritesAndApplyButton = ({ handleShowModal, setJobTitle }) => {
   return (
-    <div className="d-flex mb-2 mt-5" style={{ marginLeft: '180px'}}>
-      <Button variant="light" size="lg" className="me-0">
-        <FaBookmark className="me-1"  style={{ color: '#0A65CC' }}/>
+    <div className="d-flex mb-2 mt-5" style={{ marginLeft: '170px' }}>
+      <Button variant="light" size="lg" className="me-0 d-flex align-items-center justify-content-center" style={{ height: '40px', borderColor: '#757575' }}>
+        <FaBookmark className="me-1" style={{ color: '#0A65CC' }} />
       </Button>
-      <Link to="/candidate_login">
-      <Button variant="primary" size="lg" className="ms-2" style={{ backgroundColor: '#0A65CC', color: 'white' }}>
-        Apply Now
+      <Button
+        variant="primary"
+        size="lg"
+        className="ms-1 d-flex align-items-center justify-content-center"
+        style={{ backgroundColor: '#0A65CC', color: 'white', width: '150px', height: '40px', fontSize: '17px' }}
+        onClick={() => {
+          setJobTitle("Senior UX Designer");
+          handleShowModal();
+        }}
+      >
+        Apply Now <FaArrowRight  style={{ marginLeft: '5px' }} />
       </Button>
-      </Link>
     </div>
+  );
+};
+
+
+// Apply Modal Component
+const ApplyModal = ({ show, onHide, jobTitle }) => {
+  const [resume, setResume] = useState(null);
+  const [coverLetter, setCoverLetter] = useState("");
+
+  const handleCoverLetterChange = (value) => {
+    setCoverLetter(value);
+  };
+
+  const handleSubmit = () => {
+    // Handle the application logic here (e.g., form submission, API call)
+    alert("Job application submitted!");
+    onHide();
+  };
+
+  return (
+    <Modal show={show} onHide={onHide} centered size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Apply Job: {jobTitle}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="mb-3">
+          <label>Upload Resume</label>
+          <input 
+            type="file" 
+            className="form-control" 
+            onChange={(e) => setResume(e.target.files[0])} 
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>Cover Letter</label>
+          <ReactQuill 
+            value={coverLetter} 
+            onChange={handleCoverLetterChange} 
+            placeholder="Write your cover letter here..." 
+          />
+        </div>
+
+        <div className="d-flex justify-content-between mt-4">
+          <Button variant="secondary" onClick={onHide}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSubmit} style={{ backgroundColor: '#0A65CC', color: 'white' }}>
+            Apply Now <FaArrowRight />
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 
