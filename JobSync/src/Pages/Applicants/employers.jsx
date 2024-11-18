@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Container, Row, Col, Button, Pagination } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-import { Link } from 'react-router-dom';
 
 const JobBoard = () => {
   // State for job search and location input
@@ -143,11 +142,9 @@ const JobBoard = () => {
               </Row>
 
               {/* Open Position Button */}
-              <Link to="/employerdetails">
-  <Button className="mt-2" style={{ padding: "5px 10px", width: '100%' , color: '#0A65CC' , backgroundColor: '#add1ff' , border: 'none' }}>
-    Open Position ({job.positions})
-  </Button>
-</Link>
+              <Button className="mt-2" style={{ padding: "5px 10px", width: '100%' , color: '#0A65CC' , backgroundColor: '#add1ff' , border: 'none' }}>
+                Open Position ({job.positions})
+              </Button>
             </div>
           </Col>
         ))}
