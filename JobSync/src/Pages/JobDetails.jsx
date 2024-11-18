@@ -22,6 +22,7 @@ const JobPosting = () => {
           <Col md={4}>
             <FavoritesAndApplyButton handleShowModal={handleShowModal} setJobTitle={setJobTitle} />
             <SalaryAndLocation />
+            <JobBenefits />
             <JobOverview />
           </Col>
         </Row>
@@ -38,7 +39,7 @@ const JobPosting = () => {
 
 const JobDetails = () => {
   return (
-    <Container style={{ border: '1px solid #e0e0e0', padding: '20px', borderRadius: '8px' }} className="mt-5">
+    <Container style={{ border: '1px solid #e0e0e0', padding: '20px', borderRadius: '8px' ,  height: 'auto' , width: '120%' , marginLeft: '-150px' }} className="mt-5">
       <div className="text-start">
         <Row className="align-items-center no-margin m-0">
           <Col xs={3} className="no-padding">
@@ -69,17 +70,21 @@ const JobDetails = () => {
 // Salary and Location Component
 const SalaryAndLocation = () => {
   return (
-    <Card className="salary-location mt-4">
+    <Card className="salary-location mt-4" style= {{ width: '130%'}}>
       <Card.Body>
-        <Row className="text-center">
-          <Col xs={6}>
-            <FaMoneyBillWave className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
-            <strong>Salary</strong> 
-            <div>$100,000 - $120,000</div>
+        <Row className="text-center gx-4">
+          <Col xs={12} md={6} className="d-flex flex-column align-items-center border-end">
+            <FaMoneyBillWave
+              style={{ color: '#0A65CC', width: '30px', height: '30px' }}
+            />
+            <strong className="mt-2">Salary</strong>
+            <div style={{ color: '#0BA02C', fontSize: '21px' , fontWeight: '500' }}>₱100,000 - ₱120,000</div>
           </Col>
-          <Col xs={6}>
-            <FaMapMarkerAlt className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
-            <strong>Location</strong> 
+          <Col xs={12} md={6} className="d-flex flex-column align-items-center">
+            <FaMapMarkerAlt
+              style={{ color: '#0A65CC', width: '30px', height: '30px' }}
+            />
+            <strong className="mt-2">Job Location</strong>
             <div>Manila, Philippines</div>
           </Col>
         </Row>
@@ -88,24 +93,30 @@ const SalaryAndLocation = () => {
   );
 };
 
-// Favorites and Apply Button Component
+
+
 const FavoritesAndApplyButton = ({ handleShowModal, setJobTitle }) => {
   return (
-    <div className="d-flex mb-2 mt-5" style={{ marginLeft: '170px' }}>
-      <Button variant="light" size="lg" className="me-0 d-flex align-items-center justify-content-center" style={{ height: '40px', borderColor: '#757575' }}>
+    <div className="d-flex justify-content-end mb-2 mt-5 w-100 ms-auto">
+      <Button
+        variant="light"
+        size="lg"
+        className="me-2 d-flex align-items-center justify-content-center"
+        style={{ height: '45px', borderColor: '#757575' , borderRadius: '5px' }}
+      >
         <FaBookmark className="me-1" style={{ color: '#0A65CC' }} />
       </Button>
       <Button
         variant="primary"
         size="lg"
-        className="ms-1 d-flex align-items-center justify-content-center"
-        style={{ backgroundColor: '#0A65CC', color: 'white', width: '150px', height: '40px', fontSize: '17px' }}
+        className="ms-2 d-flex align-items-center justify-content-center"
+        style={{ backgroundColor: '#0A65CC', borderRadius: '5px', color: 'white', width: '220px', height: '45px', fontSize: '17px' , marginRight: '-110px' }}
         onClick={() => {
           setJobTitle("Senior UX Designer");
           handleShowModal();
         }}
       >
-        Apply Now <FaArrowRight  style={{ marginLeft: '5px' }} />
+        Apply Now <FaArrowRight style={{ marginLeft: '5px' }} />
       </Button>
     </div>
   );
@@ -203,38 +214,81 @@ const JobResponsibilities = () => {
   );
 };
 
+// Job Benefits Component
+const JobBenefit = ({ title, description }) => {
+  return (
+    <div
+      className="benefit-item"
+      style={{
+        padding: '5px 10px',
+        backgroundColor: '#ececec',
+        color: '#0BA02C',
+        borderRadius: '7px',
+        fontWeight: '500',
+      }}
+    >
+      <div className="me-2">{title}</div>
+      <div>{description}</div>
+    </div>
+  );
+};
+
+const JobBenefits = () => {
+  const benefits = [
+    'Health Insurance',
+    'Paid Time Off',
+    'Retirement Plan',
+    'Bonuses',
+    'Stock Options',
+    'Flexible Hours',
+  ];
+
+  return (
+    <Card className="job-benefits mt-4 mx-auto" style={{ width: '130%' }}>
+      <Card.Body>
+        <h4 className="text-start" style={{ fontSize: '22px'}}>Job Benefits</h4>
+        <div className="d-flex flex-wrap gap-2 mt-3">
+          {benefits.map((benefit, index) => (
+            <JobBenefit key={index} title={benefit} />
+          ))}
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
 // Job Overview Component
 const JobOverview = () => {
   return (
-    <Card className="job-overview mt-4">
+    <Card className="job-overview mt-4 mx-auto" style={{ width: '130%' }}>
       <Card.Body>
-        <h4 className="text-start">Job Overview</h4> {/* Align the header to the left */}
-        <Row className="text-start mt-3"> {/* Align the row content to the left */}
+        <h4 className="text-start" style={{ fontSize: '22px'}}>Job Overview</h4> 
+        <Row className="text-start mt-3" style={{ fontWeight: '500'}}> 
           <Col xs={4}>
-            <FaCalendarAlt className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
-            <div><strong>Job Posted</strong></div>
+            <FaCalendarAlt className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+            <div style={{ color: '#767F8C'}}>Job Posted</div>
             <div>29 Sept, 2024</div>
           </Col>
           <Col xs={4}>
-            <FaCalendarAlt className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
-            <div><strong>Job Expires</strong></div>
+            <FaCalendarAlt className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+            <div style={{ color: '#767F8C'}}>Job Expires</div>
             <div>14 Dec, 2024</div>
           </Col>
           <Col xs={4}>
-            <FaBriefcase className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
-            <div><strong>Job Level</strong></div>
+            <FaBriefcase className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+            <div style={{ color: '#767F8C'}}>Job Level</div>
             <div>Senior Level</div>
           </Col>
         </Row>
-        <Row className="text-start mt-3"> {/* Align the row content to the left */}
+        <Row className="text-start mt-3" style={{ fontWeight: '500'}}> 
           <Col xs={4}>
-            <FaBriefcase className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
-            <strong>Experience</strong>
+            <FaBriefcase className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }} />
+            <div style={{ color: '#767F8C'}}>Experience</div>
             <div>1+ years</div>
           </Col>
           <Col xs={4}>
-            <FaGraduationCap className="me-2" style={{ color: '#0A65CC', width: '20px', height: '20px' }}/>
-            <strong>Education</strong> 
+            <FaGraduationCap className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+            <div style={{ color: '#767F8C'}}>Education</div>
             <div>College Graduate</div>
           </Col>
         </Row>
@@ -247,13 +301,13 @@ const JobOverview = () => {
 
 const ShareJob = () => {
   const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);  // Copies the current page URL
+    navigator.clipboard.writeText(window.location.href); 
     alert("Link copied to clipboard!");
   };
 
   return (
     <div className="mt-4" style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
-      <h5>Share this Job:</h5>
+      <h5 style={{ textAlign: 'left' }}>Share this Job:</h5>
       <div className="d-flex justify-content-start align-items-center">
         {/* Copy Link Button */}
         <Button 

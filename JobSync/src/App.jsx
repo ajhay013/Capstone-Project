@@ -31,6 +31,8 @@ import AppliedJobs from './Pages/Applicants/ApplicantDashboard/AppliedJobs';
 import FavoriteJobs from './Pages/Applicants/ApplicantDashboard/FavoriteJobs';
 import ApplicantSettings from './Pages/Applicants/ApplicantDashboard/ApplicantSettings';
 
+import EmployerDetails from './Pages/Applicants/employerdetails';
+
 
 
 {/* Employer Dashboard Pages */}
@@ -68,7 +70,7 @@ function Layout({ userId, setUserId }) {
   const centeredIcon = location.pathname === '/email_verification';
   const hideHeader = location.pathname === '/customersupport';
   const showHeader = location.pathname === '/findjob' || 
-                     location.pathname === '/employers' || 
+                     location.pathname === '/findemployer' || 
                      location.pathname === '/jobAlerts' || 
                      location.pathname === '/jobdetails';
   const getPageTitle = () => {
@@ -77,7 +79,7 @@ function Layout({ userId, setUserId }) {
         return 'Find Job';
       case '/jobdetails':
         return 'Job Details';
-      case '/employers':
+      case '/findemployer':
         return 'Employers';
       case '/jobAlerts':
         return 'Job Alert';
@@ -137,6 +139,8 @@ function Layout({ userId, setUserId }) {
         <Route path='/applicants/favoritejobs' element={<ProtectedRoute> <FavoriteJobs /> </ProtectedRoute>} />
         <Route path='/applicants/jobsalert' element={<ProtectedRoute> <JobsAlert /> </ProtectedRoute>} />
         <Route path='/applicants/applicantsettings' element={<ProtectedRoute> <ApplicantSettings /> </ProtectedRoute>} />
+
+        <Route path='/employerdetails' element={<ProtectedRoute> <EmployerDetails /> </ProtectedRoute>} />
   
 
       {/* Employer Dashboard Routing */}
