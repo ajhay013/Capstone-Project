@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faMapMarkerAlt, faFilter, faTimes } from '@fortawesome/free-solid-svg-icons';
 import JobCards from '../components/jobcards';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import { getFromEndpoint } from '../components/apiService';
 
 export default function FindJob() {
   const [jobSearch, setJobSearch] = useState('');
@@ -38,6 +39,20 @@ export default function FindJob() {
     setSelectedSalaryRange(range === salaryRange ? 'Custom' : range);
     addFilter('Salary', `₱${range[0]} - ₱${range[1]}`);
   };
+  const [jobs, setJobs] = useState([]);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await getFromEndpoint('/get_jobs.php');
+        setJobs(response.data);
+      } catch (error) {
+        console.error('There was an error fetching the jobs!', error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -50,15 +65,12 @@ export default function FindJob() {
 
   const addFilter = (type, value) => {
     setActiveFilters((prevFilters) => {
-      // Check if the filter already exists, and if it does, update the value
       const existingFilterIndex = prevFilters.findIndex((filter) => filter.type === type);
       if (existingFilterIndex !== -1) {
-        // Update the existing filter value
         const updatedFilters = [...prevFilters];
         updatedFilters[existingFilterIndex] = { type, value };
         return updatedFilters;
       } else {
-        // Add the new filter
         return [...prevFilters, { type, value }];
       }
     });
@@ -80,13 +92,18 @@ export default function FindJob() {
     addFilter('Job Type', value);
   };
 
+  const marginTop = 
+  jobs.length > 0 && jobs.length <= 3 ? '-272px' : 
+  jobs.length >= 4 && jobs.length <= 6 ? '-50px' : 
+  '115px';
+
   return (
     <>
-      {/* Search Bar */}
-      <Container className="my-5" style={{ maxWidth: '1200px', width: '100%' }}>
-        <Row className="mb-5" style={{ marginTop: '100px' }}>
+      <Container style={{ width: '1209px' }}>
+        <Row className="mb-3" style={{ marginTop }}>
           <Col md={12}>
             <form onSubmit={handleSearch} className="d-flex mb-4">
+              {/* Job Search Input */}
               <div className="input-group" style={{ maxWidth: '600px', flexGrow: '1' }}>
                 <div className="input-group-prepend">
                   <span
@@ -118,6 +135,7 @@ export default function FindJob() {
                 />
               </div>
 
+              {/* Location Search Input */}
               <div className="input-group" style={{ maxWidth: '600px', flexGrow: '1' }}>
                 <div className="input-group-prepend">
                   <span

@@ -1,23 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-quill/dist/quill.snow.css';
 import { Container, Form, Button, Row, Col, Image, Card } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
+import { useAuth } from '../../../../AuthContext'; 
+import { postToEndpoint } from '../../../../components/apiService';
+
 
 const FileUpload = ({ label, required, onChange }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
     <Form.Label>
       {label} {required && <span style={{ color: 'red' }}>*</span>}
     </Form.Label>
-    <Form.Control type="file" accept="image/*" onChange={onChange} />
+    <Form.Control type="file" accept="image/*" style={{borderRadius: '10px'}} onChange={onChange} />
   </Form.Group>
 );
 
 export default function CompanySettings() {
+  const { user } = useAuth(); 
   const [logo, setLogo] = useState(null);
   const [banner, setBanner] = useState(null);
   const [companyName, setCompanyName] = useState('');
   const [aboutUs, setAboutUs] = useState('');
+
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      if (user?.id) {
+        try {
+          const response = await postToEndpoint('/getCompanyInfo.php', {
+            employer_id: user.id,
+          });
+          if (response.data) {
+            const { company_name, about_us, logo, banner } = response.data;
+            setCompanyName(company_name);
+            setAboutUs(about_us);
+
+            setLogo(logo ? logo : null);
+            setBanner(banner ? banner : null);
+          }
+        } catch (error) {
+          console.error('Error fetching company info:', error);
+        }
+      }
+    };
+
+    fetchCompanyInfo();
+  }, [user]); 
 
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
@@ -127,6 +155,7 @@ export default function CompanySettings() {
                 Company Name <span style={{ color: 'red' }}>*</span>
               </Form.Label>
               <Form.Control
+                className='register1'
                 type="text"
                 placeholder="Enter company name"
                 value={companyName}
@@ -149,7 +178,7 @@ export default function CompanySettings() {
                 value={aboutUs}
                 onChange={setAboutUs}
                 placeholder="Tell us about your company"
-                style={{ height: '200px', marginBottom: '30px', width: '100%' }}
+                style={{ height: '200px', marginBottom: '30px', width: '100%'}}
               />
             </Form.Group>
           </Col>
@@ -158,7 +187,7 @@ export default function CompanySettings() {
         {/* Submit Button */}
         <Row>
           <Col className="text-center">
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '3px' }}>
+            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '3px', height: '48px'}}>
               Save Changes
             </Button>
           </Col>

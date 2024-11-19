@@ -10,7 +10,6 @@ import { useAuth } from '../../AuthContext';
 import { postToEndpoint } from '../../components/apiService';
 import { useNavigate } from 'react-router-dom';
 
-// FileUpload Component
 const FileUpload = ({ label, required, onChange }) => (
   <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
     <Form.Label>
@@ -20,16 +19,14 @@ const FileUpload = ({ label, required, onChange }) => (
   </Form.Group>
 );
 
-// CompanyProfile Component
 const CompanyProfile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [logo, setLogo] = useState(null);
   const [banner, setBanner] = useState(null);
-  const [companyName, setCompanyName] = useState('');
-  const [aboutUs, setAboutUs] = useState('');
+  const [companyName, setCompanyName] = useState(''); 
+  const [aboutUs, setAboutUs] = useState(''); 
 
-  // Fetch Company Info on Component Mount
   useEffect(() => {
     const fetchCompanyInfo = async () => {
       if (user?.id) {
@@ -39,10 +36,11 @@ const CompanyProfile = () => {
           });
           if (response.data) {
             const { company_name, about_us, logo, banner } = response.data;
-            setCompanyName(company_name);
-            setAboutUs(about_us);
-            setLogo(logo || null);
-            setBanner(banner || null);
+            setCompanyName(company_name || '');
+            setAboutUs(about_us || '');
+
+            setLogo(logo ? logo : null);
+            setBanner(banner ? banner : null);
           }
         } catch (error) {
           console.error('Error fetching company info:', error);
@@ -53,7 +51,6 @@ const CompanyProfile = () => {
     fetchCompanyInfo();
   }, [user]);
 
-  // Handle File Changes
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) setLogo(file);
@@ -64,7 +61,6 @@ const CompanyProfile = () => {
     if (file) setBanner(file);
   };
 
-  // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -81,12 +77,14 @@ const CompanyProfile = () => {
       });
       console.log('Data saved successfully:', response.data);
       navigate('/employer/foundinginfo');
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 1);
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
 
-  // Generate URLs for Image Previews
   const logoUrl = logo instanceof File ? URL.createObjectURL(logo) : logo;
   const bannerUrl = banner instanceof File ? URL.createObjectURL(banner) : banner;
 
@@ -177,10 +175,10 @@ const CompanyProfile = () => {
               <Form.Label>
                 <strong>Company Name <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
-              <Form.Control
+              <Form.Control className='register1'
                 type="text"
                 placeholder="Enter company name"
-                value={companyName}
+                value={companyName || ''}
                 onChange={(e) => setCompanyName(e.target.value)}
                 style={{ padding: '10px', width: '100%' }}
               />
@@ -196,7 +194,7 @@ const CompanyProfile = () => {
               </Form.Label>
               <ReactQuill
                 theme="snow"
-                value={aboutUs}
+                value={aboutUs || ''}
                 onChange={setAboutUs}
                 placeholder="Tell us about your company"
                 style={{ height: '200px', marginBottom: '30px', width: '100%' }}
@@ -207,10 +205,14 @@ const CompanyProfile = () => {
 
         <Row>
           <Col className="text-start">
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '3px', height: '50px' }}>
-              Save & Next <FontAwesomeIcon icon={faArrowRight} />
-            </Button>
-          </Col>
+          <Button
+            type="submit"
+            style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '3px', height: '50px' }}
+            disabled={!(companyName && aboutUs && logo && banner)} 
+          >
+            Save & Next <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
+          </Col> 
         </Row>
       </Form>
     </Container>

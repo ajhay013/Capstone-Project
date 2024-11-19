@@ -13,7 +13,6 @@ import { useAuth } from '../../AuthContext';
 import { postToEndpoint } from '../../components/apiService';
 import { Link, useNavigate } from 'react-router-dom'; 
 
-
 function FoundingInfo() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -58,7 +57,6 @@ function FoundingInfo() {
     fetchFoundingInfo();
   }, [user?.id]);
   
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -72,14 +70,23 @@ function FoundingInfo() {
         companyWebsite,
         companyVision,
       });
-  
       navigate('/employer/socialmedia');
     } catch (error) {
       console.error('Error saving data:', error);
       alert('Failed to save data');
     }
   };
-  
+
+  const isFormValid = () => {
+    return (
+      organizationType &&
+      industryType &&
+      teamSize &&
+      yearOfEstablishment &&
+      companyWebsite &&
+      companyVision
+    );
+  };
 
   return (
     <>
@@ -102,7 +109,7 @@ function FoundingInfo() {
             <Col xs={12} md={4}>
               <Form.Group controlId="formOrganizationType">
                 <strong><Form.Label>Organization Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
-                <Form.Select
+                <Form.Select className='register1'
                   value={organizationType}
                   onChange={(e) => setOrganizationType(e.target.value)}
                 >
@@ -117,7 +124,7 @@ function FoundingInfo() {
             <Col xs={12} md={4}>
               <Form.Group controlId="formIndustryType">
                 <strong><Form.Label>Industry Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
-                <Form.Select
+                <Form.Select className='register1'
                   value={industryType}
                   onChange={(e) => setIndustryType(e.target.value)}
                 >
@@ -132,7 +139,7 @@ function FoundingInfo() {
             <Col xs={12} md={4}>
               <Form.Group controlId="formTeamSize">
                 <strong><Form.Label>Team Size <span style={{ color: 'red' }}>*</span></Form.Label></strong>
-                <Form.Select
+                <Form.Select className='register1'
                   value={teamSize}
                   onChange={(e) => setTeamSize(e.target.value)}
                 >
@@ -155,7 +162,7 @@ function FoundingInfo() {
                   showYearPicker
                   dateFormat="yyyy"
                   placeholderText="Select year"
-                  className="form-control"
+                  className="form-control register1"
                 />
               </Form.Group>
             </Col>
@@ -170,7 +177,7 @@ function FoundingInfo() {
                     value={companyWebsite}
                     onChange={(e) => setCompanyWebsite(e.target.value)}
                     placeholder="Enter website URL"
-                    className="py-2 px-5"
+                    className="py-2 px-5 register1"
                     style={{borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px'}}
                   />
                 </div>
@@ -198,10 +205,15 @@ function FoundingInfo() {
             <Col className="text-start">
               <Link to = '/employer/companyprofile'>
               <Button variant="secondary" style={{ marginRight: '10px', width: '200px' , backgroundColor: 'white', color: 'black', height: '50px' }}>
-                <FontAwesomeIcon icon={faArrowLeft} /> Back 
+                <FontAwesomeIcon icon={faArrowLeft} /> Previous 
               </Button>
               </Link>
-              <Button variant="primary" type="submit" style={{ width: '200px', height: '50px' }}>
+              <Button 
+                variant="primary" 
+                type="submit" 
+                style={{ width: '200px', height: '50px' }} 
+                disabled={!isFormValid()} 
+              >
                 Save & Next <FontAwesomeIcon icon={faArrowRight} />
               </Button>
             </Col>

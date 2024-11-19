@@ -43,12 +43,13 @@ import MyJobs from './Pages/Employer/EmployerDashboard/MyJobs';
 import EmployerMessage from './Pages/Employer/EmployerDashboard/EmployerMessage';
 import SavedApplicant from './Pages/Employer/EmployerDashboard/SavedApplicant';
 import EmployerSettings from './Pages/Employer/EmployerDashboard/EmployerSettings';
+import AccountSettings from './pages/employer/employerdashboard/employersettings/accountsettings';
+
 
 {/* Employer Settings Pages */}
 import CompanySettings from './pages/employer/employerdashboard/employersettings/companysettings';
 import SocmedSettings from './pages/employer/employerdashboard/employersettings/socmedsettings';
 import FoundingSettings from './pages/employer/employerdashboard/employersettings/foundingsettings';
-import AccountSettings from './pages/employer/employerdashboard/employersettings/accountsettings';
 
 import EmployerDashboard from './Pages/Employer/Dashboard';
 import CustomerSupport from './Pages/CustomerSupport';
@@ -57,6 +58,9 @@ import HomeEmployer from './Pages/Employer/Home';
 import HeaderComponent from './components/HeaderComponent';
 import SearchJobs from './components/searchbar';
 import JobsAlert from './Pages/Applicants/ApplicantDashboard/JobsAlert';
+import HeaderProgress from './components/headerProgress';
+import CompletedProfile from './Pages/Employer/CompletedProfile';
+import SemiFooter from './components/SemiFooter';
 
 
 
@@ -68,17 +72,35 @@ function Layout({ userId, setUserId }) {
                          location.pathname === '/candidate_login' || 
                          location.pathname === '/employer_login';
   const centeredIcon = location.pathname === '/email_verification';
+  
   const hideHeader = location.pathname === '/customersupport';
-  const showHeader = location.pathname === '/findjob' || 
-                     location.pathname === '/findemployer' || 
-                     location.pathname === '/jobAlerts' || 
-                     location.pathname === '/jobdetails';
+
+  const hideFooter = location.pathname === '/employer/companyprofile' ||
+                     location.pathname === '/employer/foundinginfo' ||
+                     location.pathname === '/employer/socialmedia' ||
+                     location.pathname === '/Complete' ||
+                     location.pathname === '/complete' ||
+                     location.pathname === '/employer/contact';
+  
+  const hideEmployerHeader = location.pathname === '/employer/companyprofile' ||
+                             location.pathname === '/employer/foundinginfo' ||
+                             location.pathname === '/employer/socialmedia' ||
+                             location.pathname === '/Complete' ||
+                             location.pathname === '/complete' ||
+                             location.pathname === '/employer/contact';
+
+  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts'].some((path) =>
+    location.pathname.startsWith(path.replace(':job_id', ''))
+  );
+
+
   const getPageTitle = () => {
+    if (location.pathname.startsWith('/jobdetails/')) {
+      return 'Job Details';
+    }
     switch (location.pathname) {
       case '/findjob':
         return 'Find Job';
-      case '/jobdetails':
-        return 'Job Details';
       case '/findemployer':
         return 'Employers';
       case '/jobAlerts':
@@ -87,6 +109,7 @@ function Layout({ userId, setUserId }) {
         return '';
     }
   };
+
   const renderHomePage = () => {
     if (!user) {
       return <Home />;
@@ -100,18 +123,21 @@ function Layout({ userId, setUserId }) {
 
   return (
     <>  
-      <MyNavbar userId={userId} setUserId={setUserId} />
+      {!hideEmployerHeader && <MyNavbar userId={userId} setUserId={setUserId} />}
       {centeredIcon ? (
           <LogoIcon centered />
+      ) : hideEmployerHeader ? (
+          <HeaderProgress />
       ) : hideHeader ? (
           <CustomerSupport />
       ) : user ? (
           <HeaderComponent />
       ) : !hideSearchJobs ? (
-        <SearchJobs />
+          <SearchJobs />
       ) : (
           <LogoIcon />
       )}
+
       {showHeader && <Header pageTitle={getPageTitle()} />}
       <Routes>
         
@@ -123,7 +149,7 @@ function Layout({ userId, setUserId }) {
         <Route path='/registration' element={<RegistrationForm />} />
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
-        <Route path='/jobdetails' element={<JobDetails />} />
+        <Route path="/jobdetails/:job_id" element={<JobDetails />} />
         
         {/* For Employer */}
         <Route path="/home" element={<ProtectedRoute> <HomeEmployer /> </ProtectedRoute> } />
@@ -132,6 +158,7 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/foundinginfo' element={<ProtectedRoute> <FoundingInfo /> </ProtectedRoute> } />
         <Route path='/employer/socialmedia' element={<ProtectedRoute> <CompanySocialMedia /> </ProtectedRoute> } />
         <Route path='/employer/contact' element={<ProtectedRoute> <CompanyContactPage /> </ProtectedRoute> } />
+        <Route path='/Complete' element={<ProtectedRoute> <CompletedProfile /> </ProtectedRoute>} />
       
       {/* Applicant Dashboard Routing */}
         <Route path='/applicants/overview' element={<ProtectedRoute> <Overview /> </ProtectedRoute> } />
@@ -153,13 +180,15 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/settings' element={<ProtectedRoute> <EmployerSettings /> </ProtectedRoute>} />
       
       {/* Employer Settings Routing */}
-        <Route path='/employer/employerdashboard/employersettings/companysettings' element={ <CompanySettings /> } />
-        <Route path='/employer/employerdashboard/emoployersettings/foundingsettings' element={ <FoundingSettings /> } />
-        <Route path='/employer/employerdashboard/employersettings/socmedsettings' element={ <SocmedSettings /> } />
-        <Route path='/employer/employerdashboard/employersettings/accountsettings' element={ <AccountSettings /> } />
+        <Route path='/employer/employersettings/companysettings' element={<ProtectedRoute> <CompanySettings /> </ProtectedRoute> } />
+        <Route path='/employer/emoployersettings/foundingsettings' element={<ProtectedRoute> <FoundingSettings /> </ProtectedRoute>} />
+        <Route path='/employer/employersettings/socmedsettings' element={<ProtectedRoute> <SocmedSettings /> </ProtectedRoute>} />
+        <Route path='/employer/employersettings/accountsettings' element={ <ProtectedRoute><AccountSettings /> </ProtectedRoute>} />
       
+
+
       </Routes>
-      <Footer />
+      {!hideFooter ? <Footer /> : <SemiFooter />}
     </>
   );
 }

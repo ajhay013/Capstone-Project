@@ -78,6 +78,7 @@ if (isset($response_data['document']['expiry'])) {
         exit;
     }
 }
+
 $email = $data['email'];
 $lastname = $data['lastName'];
 $type = $data['type'];
@@ -102,6 +103,7 @@ if (isset($response_data['warning']) && is_array($response_data['warning'])) {
         }
     }
 }
+
 try {
     if ($decision === 'reject') {
         echo json_encode([
@@ -121,63 +123,79 @@ try {
         echo json_encode([
             'decision' => 'accept'
         ]);
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host = $_ENV['SMTP_HOST'];
-    $mail->SMTPAuth = true;
-    $mail->Username = $_ENV['SMTP_USER'];
-    $mail->Password = $_ENV['SMTP_PASS'];
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = $_ENV['SMTP_PORT'];
+        
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = $_ENV['SMTP_HOST'];
+        $mail->SMTPAuth = true;
+        $mail->Username = $_ENV['SMTP_USER'];
+        $mail->Password = $_ENV['SMTP_PASS'];
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = $_ENV['SMTP_PORT'];
 
-    $mail->setFrom($_ENV['SMTP_FROM_EMAIL'], $_ENV['SMTP_FROM_NAME']);
-    $mail->addAddress($email, $lastname);
-    $mail->isHTML(true);
+        $mail->setFrom($_ENV['SMTP_FROM_EMAIL'], $_ENV['SMTP_FROM_NAME']);
+        $mail->addAddress($email, $lastname);
+        $mail->isHTML(true);
 
-    $verification_code = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+        $verification_code = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
 
-    $mail->Subject = 'Email Verification for ' . ucfirst($type) . ' Registration';
-    $mail->Body = '<div class="container" style="display: flex; justify-content: center; text-align: center;">
-                    <div class="contents" style="border: 1px solid black; width: 100%;">
-                        <p style="font-size: 20px; padding: 20px;">
-                            <img src="cid:logo12" style="max-width: 150px;" alt="Jobsync Logo"><br>
-                            Dear ' . ucfirst($type) . ',<br><br>
-                            Your Verification code is:<br><br>
-                            <b style="font-size: 40px;">' . $verification_code . '</b><br><br>
-                            Please use the provided code to complete your registration.<br>
-                            If you have not made this request, please disregard this notification.<br><br>
-                            Thank you,<br>
-                            JobSync.
-                        </p>
-                    </div>
-                </div>';
+        $mail->Subject = 'Email Verification for ' . ucfirst($type) . ' Registration';
+        $mail->Body = '<div class="container" style="display: flex; justify-content: center; text-align: center;">
+                        <div class="contents" style="border: 1px solid black; width: 100%;">
+                            <p style="font-size: 20px; padding: 20px;">
+                                <img src="cid:logo12" style="max-width: 150px;" alt="Jobsync Logo"><br>
+                                Dear ' . ucfirst($type) . ',<br><br>
+                                Your Verification code is:<br><br>
+                                <b style="font-size: 40px;">' . $verification_code . '</b><br><br>
+                                Please use the provided code to complete your registration.<br>
+                                If you have not made this request, please disregard this notification.<br><br>
+                                Thank you,<br>
+                                JobSync.
+                            </p>
+                        </div>
+                    </div>';
 
-    // $mail->addEmbeddedImage('path/to/logo.png', 'logo12');
+        $mail->send();
 
-    $mail->send();
+        $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
 
-    $hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+        $sql = "INSERT INTO js_employer_info (firstname, middlename, lastname, suffix, contact, position, email, password, verification_code, document_path, face_path, back_side_path, decision) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $sql = "INSERT INTO js_employer_info (firstname, middlename, lastname, suffix, contact, position, email, password, verification_code, document_path, face_path, back_side_path, decision) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $params = [
+            $data['firstName'], 
+            $data['middleName'], 
+            $data['lastName'], 
+            $data['suffix'] ?? null, 
+            $data['contactNumber'], 
+            $data['position'], 
+            $data['email'], 
+            $hashed_password, 
+            $verification_code,
+            $document_filename, 
+            $face_filename, 
+            $back_filename, 
+            $decision
+        ];
 
-    $params = [
-        $data['firstName'], 
-        $data['middleName'], 
-        $data['lastName'], 
-        $data['suffix'] ?? null, 
-        $data['contactNumber'], 
-        $data['position'], 
-        $data['email'], 
-        $hashed_password, 
-        $verification_code,
-        $document_filename, 
-        $face_filename, 
-        $back_filename, 
-        $decision
-    ];
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+
+        $lastInsertId = $pdo->lastInsertId();
+
+        $company_sql = "INSERT INTO js_company_info (employer_id) VALUES (?)";
+        $founding_sql = "INSERT INTO js_founding_info (employer_id) VALUES (?)";
+        $contact_sql = "INSERT INTO js_company_contact (employer_id) VALUES (?)";
+
+        $company_stmt = $pdo->prepare($company_sql);
+        $company_stmt->execute([$lastInsertId]);
+
+        $founding_stmt = $pdo->prepare($founding_sql);
+        $founding_stmt->execute([$lastInsertId]);
+ 
+        $contact_stmt = $pdo->prepare($contact_sql);
+        $contact_stmt->execute([$lastInsertId]);
+
         exit;
     }
 
@@ -189,3 +207,4 @@ try {
 echo json_encode(['decision' => $decision]);
 
 $pdo = null;
+?>

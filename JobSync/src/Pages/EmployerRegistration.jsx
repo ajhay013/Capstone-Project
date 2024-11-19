@@ -251,7 +251,7 @@ export default function EmployerRegistrationForm() {
                             screenshotFormat="image/jpeg"
                             style={{ width: '100%', borderRadius: '5px' }}
                         />
-                        <button type="button" onClick={captureFaceImage} style={{ marginTop: '10px' }}>Capture</button>
+                        <button type="button" onClick={captureFaceImage} style={{ marginTop: '10px', color: '#ffffff', background: '#0a65cc' }}>Capture</button>
                     </div>
                 ) : (
                     <>
@@ -262,7 +262,7 @@ export default function EmployerRegistrationForm() {
                             style={{ display: 'none' }}
                             id="face-upload"
                         />
-                        <button type="button" onClick={() => setCameraActive(true)} style={{ marginLeft: '10px' }}>
+                        <button type="button" onClick={() => setCameraActive(true)} style={{ marginLeft: '10px', color: '#ffffff', background: '#0a65cc' }}>
                             Open Camera
                         </button>
                     </>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Form, Button, Row, Col, InputGroup, Dropdown, DropdownButton } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,33 +9,66 @@ import facebookIcon from '../../assets/fb.png';
 import instagramIcon from '../../assets/ig.png';
 import youtubeIcon from '../../assets/yt.png';
 import twitterIcon from '../../assets/tw.png';
+import redditIcon from '../../assets/reddit.png';
+import pinterestIcon from '../../assets/pinterest.png';
+import whatsAppIcon from '../../assets/WhatsApp.png';
+import telegramIcon from '../../assets/Telegram.png';
+import WeChatIcon from '../../assets/WeChat.png';
+import { useAuth } from '../../AuthContext';
+import { postToEndpoint, getFromEndpoint } from '../../components/apiService';
+import { useNavigate } from 'react-router-dom';
 
-// Define platform options with image imports
 const platformOptions = [
   { name: 'Facebook', icon: facebookIcon },
   { name: 'Instagram', icon: instagramIcon },
   { name: 'YouTube', icon: youtubeIcon },
   { name: 'Twitter', icon: twitterIcon },
-  { name: 'Other', icon: null },
+  { name: 'Pinterest', icon: pinterestIcon },
+  { name: 'Reddit', icon: redditIcon },
+  { name: 'WhatsApp Business', icon: whatsAppIcon },
+  { name: 'Telegram', icon: telegramIcon },
+  { name: 'WeChat', icon: WeChatIcon },
 ];
 
 const CompanyProfile = () => {
-  const [socialLinks, setSocialLinks] = useState([
-    { platform: 'Facebook', link: '' },
-    { platform: 'Instagram', link: '' },
-    { platform: 'YouTube', link: '' },
-    { platform: 'Twitter', link: '' },
-  ]);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [socialLinks, setSocialLinks] = useState([]);
+
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      if (!user?.id) {
+        console.error('User ID is missing');
+        return;
+      }
+      try {
+        const response = await getFromEndpoint(`/getSocialMedia.php?employer_id=${user.id}`);
+        console.log('Fetched social links:', response.data);
+        if (response.data.socialLinks) {
+          const formattedLinks = response.data.socialLinks.map(socialLink => ({
+            platform: socialLink.social_media,
+            link: socialLink.media_link
+          }));
+          setSocialLinks(formattedLinks);
+        }
+      } catch (error) {
+        console.error('Error fetching social links:', error);
+      }
+    };
+
+    fetchSocialLinks();
+  }, [user]);
 
   const handleSocialLinkChange = (index, field, value) => {
     const updatedLinks = socialLinks.map((socialLink, i) =>
       i === index ? { ...socialLink, [field]: value } : socialLink
     );
+
     setSocialLinks(updatedLinks);
   };
 
   const addSocialLink = () => {
-    setSocialLinks([...socialLinks, { platform: 'Other', link: '' }]);
+    setSocialLinks([...socialLinks, { platform: '', link: '' }]); 
   };
 
   const handleDeleteSocialLink = (index) => {
@@ -43,71 +76,64 @@ const CompanyProfile = () => {
     setSocialLinks(updatedLinks);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(socialLinks);
+  
+    try {
+      await postToEndpoint('/socialmedia.php', {
+        employer_id: user?.id,
+        socialLinks
+      });
+      navigate('/employer/contact');
+    } catch (error) {
+      console.error('Error saving social links:', error);
+    }
   };
 
+  const isButtonEnabled = socialLinks.length > 0 && socialLinks.every(
+    (socialLink) => socialLink.platform?.trim() && socialLink.link?.trim()
+  );
+  
+
+  // Create a Set of already selected platforms
+  const selectedPlatforms = new Set(socialLinks.map((socialLink) => socialLink.platform));
+
   return (
-    <Container
-      fluid
-      className="text-start"
-      style={{
-        margin: 0,
-        padding: 0,
-        width: '100%',
-        paddingTop: '56px',
-      }}
-    >
-      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '140%', marginBottom: '350px' }}>
+    <Container fluid className="text-start" style={{ margin: 0, padding: 0, width: '100%', paddingTop: '56px' }}>
+      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%', marginBottom: '350px' }}>
         {socialLinks.map((socialLink, index) => {
           const selectedOption = platformOptions.find((option) => option.name === socialLink.platform);
           return (
             <Row className="mb-4" key={index}>
               <Col>
-                <InputGroup>
-                  <DropdownButton
-                    as={InputGroup.Prepend}
-                    variant="outline-secondary"
-                    title={
-                      <>
-                        {selectedOption?.icon && (
-                          <img
-                            src={selectedOption.icon}
-                            alt={selectedOption.name}
-                            style={{ marginRight: '8px', width: '20px' }}
-                          />
-                        )}
-                        {socialLink.platform}
-                      </>
-                    }
-                    id={`dropdown-custom-components-${index}`}
-                    onSelect={(value) => handleSocialLinkChange(index, 'platform', value)}
-                    style={{
-                      width: '150px',
-                      border: 'none',
-                      boxShadow: 'none',
-                    }}
-                    className="no-hover"
-                  >
+                <InputGroup style={{ width: '100%' }} className="register1">
+                <DropdownButton
+                      as={InputGroup.Prepend}
+                      variant="outline-secondary"
+                      title={
+                        <>
+                          {selectedOption?.icon && (
+                            <img src={selectedOption.icon} alt={selectedOption.name} style={{ marginRight: '8px', width: '20px' }} />
+                          )}
+                          {socialLink.platform || 'Select Platform'} 
+                        </>
+                      }
+                      id={`dropdown-custom-components-${index}`}
+                      onSelect={(value) => handleSocialLinkChange(index, 'platform', value)}
+                    >
                     {platformOptions.map((option) => (
                       <Dropdown.Item
                         key={option.name}
                         eventKey={option.name}
+                        disabled={selectedPlatforms.has(option.name)} // Disable if the platform is already selected
                         style={{
                           backgroundColor: 'transparent',
                           border: 'none',
                           padding: '8px 16px',
                         }}
-                        onMouseEnter={(e) => (e.target.style.backgroundColor = 'transparent')}
-                        onMouseLeave={(e) => (e.target.style.backgroundColor = 'transparent')}
                       >
                         {option.icon && (
-                          <img
-                            src={option.icon}
-                            alt={option.name}
-                            style={{ marginRight: '8px', width: '25px' }}
-                          />
+                          <img src={option.icon} alt={option.name} style={{ marginRight: '8px', width: '25px' }} />
                         )}
                         {option.name}
                       </Dropdown.Item>
@@ -117,12 +143,11 @@ const CompanyProfile = () => {
                   <Form.Control
                     type="url"
                     placeholder={`Enter ${socialLink.platform} link`}
-                    value={socialLink.link}
+                    value={socialLink.link || ''} // Ensure it's set to an empty string if undefined
                     onChange={(e) => handleSocialLinkChange(index, 'link', e.target.value)}
                     style={{ flexGrow: 1 }}
                   />
-                  
-                  {/* Delete button (X icon) */}
+
                   <Button
                     variant="outline-danger"
                     onClick={() => handleDeleteSocialLink(index)}
@@ -143,12 +168,7 @@ const CompanyProfile = () => {
           );
         })}
 
-        <Button
-          variant="secondary"
-          onClick={addSocialLink}
-          className="mb-4"
-          style={{ width: '70%', backgroundColor: '#757575' }}
-        >
+        <Button variant="secondary" onClick={addSocialLink} className="mb-4" style={{ width: '100%', backgroundColor: '#757575' }}>
           <FontAwesomeIcon icon={faPlus} /> Add New Social Link
         </Button>
 
@@ -159,10 +179,14 @@ const CompanyProfile = () => {
                 variant="secondary"
                 style={{ marginRight: '10px', width: '200px', backgroundColor: 'white', color: 'black', height: '50px' }}
               >
-                <FontAwesomeIcon icon={faArrowLeft} /> Back
+                <FontAwesomeIcon icon={faArrowLeft} /> Previous
               </Button>
             </Link>
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}>
+            <Button
+              type="submit"
+              style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}
+              disabled={!isButtonEnabled} // Enable only if there’s a link in the input field
+            >
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </Col>

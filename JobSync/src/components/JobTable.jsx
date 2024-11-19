@@ -196,10 +196,8 @@ const JobRow = ({ job, onViewDetails }) => {
 function AppliedJobsTable() {
     const [showModal, setShowModal] = useState(false);
 
-    // Function to handle opening and closing the modal
     const handleViewDetails = (jobId) => {
         setShowModal(true);
-        // Optionally set job details to display based on jobId
     };
 
     const handleCloseModal = () => {

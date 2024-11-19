@@ -17,7 +17,26 @@ if ($employer_id === null) {
 }
 
 try {
-    $stmt = $conn->prepare("SELECT * FROM js_post_jobs WHERE employer_id = :employer_id");
+    $updateStmt = $conn->prepare("
+        UPDATE js_post_jobs
+        SET status = 'Expired', expirationDate = IF(expirationDate < NOW(), expirationDate, NOW())
+        WHERE employer_id = :employer_id AND expirationDate < NOW()
+    ");
+    $updateStmt->bindParam(':employer_id', $employer_id, PDO::PARAM_INT);
+    $updateStmt->execute();
+
+    $stmt = $conn->prepare("
+        SELECT *,
+        GREATEST(DATEDIFF(expirationDate, NOW()), 0) AS remainingDays
+        FROM js_post_jobs 
+        WHERE employer_id = :employer_id
+        ORDER BY 
+            CASE
+                WHEN status = 'Expired' THEN 1
+                ELSE 0
+            END,
+            expirationDate ASC, created_at DESC
+    ");
     $stmt->bindParam(':employer_id', $employer_id, PDO::PARAM_INT);
     $stmt->execute();
 
@@ -32,5 +51,6 @@ try {
     echo json_encode(['error' => 'Query execution failed: ' . $e->getMessage()]);
 }
 
-$conn = null; 
+$conn = null;
+
 ?>

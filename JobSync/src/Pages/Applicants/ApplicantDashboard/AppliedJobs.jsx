@@ -11,9 +11,7 @@ export default function AppliedJobs() {
                     <ApplicantsSidebar />
                 </div>
 
-                {/* Main content area with flexible width */}
                 <div className="flex-grow-1 p-3" style={{ marginTop: '60px', marginRight: '194px', width: '120%' }}>
-                    {/* Search bar positioned above the table */}
                     <div className="mt-0 mb-3"> 
                         <SearchBar2 placeholder="Search applied jobs..." /> 
                     </div>
@@ -31,7 +29,6 @@ export default function AppliedJobs() {
                         Applied Jobs (10)
                     </h2>
                     
-                    {/* Applied Jobs Table */}
                     <AppliedJobsTable />
                 </div>
             </div>

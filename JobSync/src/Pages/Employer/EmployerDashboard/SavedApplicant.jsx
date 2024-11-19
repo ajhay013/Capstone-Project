@@ -9,7 +9,7 @@ export default function SavedApplicant() {
                 <EmployerSidebar /> 
             </div>
             <div className="content" style={{ width: '80%' , marginTop: '60px', textAlign: 'left' , marginLeft: '30px' }}>
-                <h2 style={{fontSize: '24px', color: '#333', fontWeight: 'bold', marginBottom: '20px', marginTop: '25px', textAlign: 'left' , marginLeft: '15px'}}>Saved Applicants (10)</h2>
+                <h2 style={{fontSize: '19px', color: '#333', fontWeight: '500', marginBottom: '20px', marginTop: '25px', textAlign: 'left' , marginLeft: '15px'}}>Saved Applicants (10)</h2>
                 <SavedApplicantTable />
             </div>
         </div>

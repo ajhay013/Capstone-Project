@@ -8,3 +8,74 @@
     border-width: 0.2em;
 }
 
+  
+  .completed-profile {
+    text-align: center;
+    background-color: white;
+    padding: 40px;
+    position: relative;
+    top: -90px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 610px;
+  }
+  
+  .check-mark {
+    display: inline-block;
+    background-color: #cfe5ff;
+    color: #2a81e1;
+    font-size: 41px;
+    padding: 47px 50px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 14px;
+    color: #4b4b4b;
+  }
+  
+  p {
+    font-size: 16px;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  
+  .view-dashboard {
+    background-color: #28a745;
+  }
+  
+  .view-dashboard:hover {
+    background-color: #218838;
+  }
+  
+  .post-job {
+    background-color: #ffc107;
+  }
+  
+  .post-job:hover {
+    background-color: #e0a800;
+  }
+
+ 

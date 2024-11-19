@@ -24,9 +24,13 @@ const MyNavbar1 = () => {
     }
   }, [activeIndex]);
 
+  const handleClick = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div style={{ position: 'relative' }}>
-      <Navbar expand="lg" style={{ width: '100%', backgroundColor: 'transparent', marginTop: '30px' }}>
+      <Navbar expand="lg" style={{ width: '100%', backgroundColor: 'transparent' }}>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto" style={{ gap: '20px', position: 'relative' }}>
@@ -41,6 +45,7 @@ const MyNavbar1 = () => {
                   fontWeight: index === activeIndex ? '500' : 'normal',
                   color: index === activeIndex ? '#0A65CC' : '#898989',
                 }}
+                onClick={handleClick} 
               >
                 {item.icon} {item.label}
               </Nav.Link>

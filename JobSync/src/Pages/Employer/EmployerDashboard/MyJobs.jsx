@@ -33,7 +33,7 @@ export default function MyJobs() {
             </div>
             <div className="flex-grow-1 p-3" style={{ marginTop: '60px', marginRight: '194px', width: '120%' }}>
                 <h2 className="mb-3 text-left" style={{ fontSize: '20px', color: '#575757', fontWeight: '600', marginBottom: '20px', marginTop: '25px', textAlign: 'left', marginLeft: '15px' }}>
-                    My Jobs ({jobs.total_jobs})
+                    My Jobs {jobs.total_jobs > 0 ? `(${jobs.total_jobs})` : ''}
                 </h2>
                 <PostedJobTable /> 
             </div>

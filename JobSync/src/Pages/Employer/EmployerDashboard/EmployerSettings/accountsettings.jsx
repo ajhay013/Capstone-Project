@@ -71,7 +71,7 @@ const AccountSettings = () => {
                   <InputGroup.Text>
                     <FaMapMarkerAlt />
                   </InputGroup.Text>
-                  <Form.Control
+                  <Form.Control className='register1'
                     type="text"
                     placeholder="Enter map location"
                     value={mapLocation}
@@ -93,7 +93,7 @@ const AccountSettings = () => {
                   <InputGroup.Text>
                     <FaPhoneAlt />
                   </InputGroup.Text>
-                  <Form.Control
+                  <Form.Control className='register1'
                     type="tel"
                     placeholder="Enter contact number"
                     value={contactNumber}
@@ -115,7 +115,7 @@ const AccountSettings = () => {
                   <InputGroup.Text>
                     <FaEnvelope />
                   </InputGroup.Text>
-                  <Form.Control
+                  <Form.Control className='register1'
                     type="email"
                     placeholder="Enter email address"
                     value={emailAddress}
@@ -130,7 +130,7 @@ const AccountSettings = () => {
           {/* Save Changes Button */}
           <Row>
             <Col>
-              <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC' }}>
+              <Button type="submit" style={{width: '200px', backgroundColor: '#0A65CC', height: '48px'}}>
                 Save Changes
               </Button>
             </Col>
@@ -144,8 +144,8 @@ const AccountSettings = () => {
               <Col xs={12} md={4}>
                 <Form.Group controlId="formCurrentPassword">
                   <Form.Label>Current Password</Form.Label>
-                  <InputGroup>
-                    <Form.Control
+                  <InputGroup style={{width: '100%'}}>
+                    <Form.Control className='register1'
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter current password"
                       value={currentPassword}
@@ -160,8 +160,8 @@ const AccountSettings = () => {
               <Col xs={12} md={4}>
                 <Form.Group controlId="formNewPassword">
                   <Form.Label>New Password</Form.Label>
-                  <InputGroup>
-                    <Form.Control
+                  <InputGroup style={{width: '100%'}}>
+                    <Form.Control className='register1'
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter new password"
                       value={newPassword}
@@ -176,8 +176,8 @@ const AccountSettings = () => {
               <Col xs={12} md={4}>
                 <Form.Group controlId="formConfirmNewPassword">
                   <Form.Label>Confirm New Password</Form.Label>
-                  <InputGroup>
-                    <Form.Control
+                  <InputGroup style={{width: '100%'}}>
+                    <Form.Control className='register1'
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Confirm new password"
                       value={confirmNewPassword}
@@ -194,7 +194,7 @@ const AccountSettings = () => {
             {/* New Button Below Password Fields */}
             <Row>
               <Col>
-                <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '20px' }}>
+                <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', marginTop: '20px', height: '48px' }}>
                   Change Password
                 </Button>
               </Col>
@@ -202,7 +202,7 @@ const AccountSettings = () => {
           </div>
 
           {/* Delete Account Section */}
-          <div className="mt-5">
+          <div className="mt-4">
             <h4>Delete Account</h4>
             <p style={{ color: '#757575', textAlign: 'justify' }}>
               If you delete you JobSync account, you will no longer be able to get information about the matched jobs,
@@ -212,7 +212,7 @@ const AccountSettings = () => {
               <Col>
                 <Button
                   type="button"
-                  style={{ width: '200px', backgroundColor: '#D9534F' , borderColor: '#D9534F' }}
+                  style={{ width: '200px', backgroundColor: '#D9534F' , borderColor: '#D9534F', height: '48px' }}
                   onClick={() => alert('Account will be deleted')}
                 >
                   <FaTimes style={{ marginRight: '8px' }} /> 

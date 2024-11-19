@@ -1,11 +1,12 @@
 <?php
 include 'dbconnect.php';
+include 'config.php';  
 
 try {
     $objDb = new Dbconnect();
     $conn = $objDb->connect(); 
 } catch (PDOException $e) {
-    die(json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]));
+    die(json_encode(['error' => 'Database connection failed: ' . $e->getMessage()])); 
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -22,11 +23,10 @@ try {
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
-        $companyInfo = $stmt->fetch(PDO::FETCH_ASSOC); 
+        $companyInfo = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $base_url = 'http://localhost/capstone-project/jobsync/src/api/';
-        $companyInfo['logo'] = $base_url . $companyInfo['logo'];
-        $companyInfo['banner'] = $base_url . $companyInfo['banner'];
+        $companyInfo['logo'] = BASE_URL . $companyInfo['logo'];
+        $companyInfo['banner'] = BASE_URL . $companyInfo['banner'];
 
         echo json_encode($companyInfo);
     } else {
@@ -36,5 +36,5 @@ try {
     echo json_encode(['error' => 'Query execution failed: ' . $e->getMessage()]);
 }
 
-$conn = null; 
+$conn = null;
 ?>
