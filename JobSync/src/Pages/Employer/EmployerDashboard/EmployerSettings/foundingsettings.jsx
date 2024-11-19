@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaLink } from 'react-icons/fa';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
@@ -8,15 +8,52 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useAuth } from '../../../../AuthContext'; 
+import { postToEndpoint } from '../../../../components/apiService';
 
 
 export default function FoundingSettings() {
+  const { user } = useAuth(); 
   const [organizationType, setOrganizationType] = useState('');
   const [industryType, setIndustryType] = useState('');
   const [teamSize, setTeamSize] = useState('');
   const [yearOfEstablishment, setYearOfEstablishment] = useState(null);
   const [companyWebsite, setCompanyWebsite] = useState('');
   const [companyVision, setCompanyVision] = useState('');
+
+  useEffect(() => {
+    const fetchFoundingInfo = async () => {
+      if (user?.id) {
+        try {
+          const response = await postToEndpoint('/fetchfoundingInfo.php', {
+            employer_id: user.id,
+          });
+  
+          if (response.data) {
+            const { organization, industry, team_size, year_establishment, company_vision, company_website } = response.data;
+  
+            setOrganizationType(organization || ''); 
+            setIndustryType(industry || ''); 
+            setTeamSize(team_size || '');
+            setYearOfEstablishment(year_establishment ? new Date(year_establishment) : null); 
+            setCompanyWebsite(company_website || ''); 
+  
+            if (company_vision) {
+              const decodedVision = new DOMParser().parseFromString(company_vision, 'text/html').documentElement.textContent;
+              const cleanedVision = decodedVision.replace(/<[^>]*>/g, '');  
+              setCompanyVision(cleanedVision || '');  
+            } else {
+              setCompanyVision('');  
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching founding info:', error);
+        }
+      }
+    };
+  
+    fetchFoundingInfo();
+  }, [user?.id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -43,7 +80,7 @@ export default function FoundingSettings() {
             <Col xs={12} md={4}>
               <Form.Group controlId="formOrganizationType">
                 <Form.Label>Organization Type</Form.Label>
-                <Form.Select
+                <Form.Select className='register1'
                   value={organizationType}
                   onChange={(e) => setOrganizationType(e.target.value)}
                 >
@@ -58,7 +95,7 @@ export default function FoundingSettings() {
             <Col xs={12} md={4}>
               <Form.Group controlId="formIndustryType">
                 <Form.Label>Industry Type</Form.Label>
-                <Form.Select
+                <Form.Select className='register1'
                   value={industryType}
                   onChange={(e) => setIndustryType(e.target.value)}
                 >
@@ -81,7 +118,7 @@ export default function FoundingSettings() {
             <Col xs={12} md={4}>
               <Form.Group controlId="formTeamSize">
                 <Form.Label>Team Size</Form.Label>
-                <Form.Select
+                <Form.Select className='register1'
                   value={teamSize}
                   onChange={(e) => setTeamSize(e.target.value)}
                 >
@@ -104,7 +141,7 @@ export default function FoundingSettings() {
                   showYearPicker
                   dateFormat="yyyy"
                   placeholderText="Select year"
-                  className="form-control"
+                  className="form-control register1"
                 />
               </Form.Group>
             </Col>
@@ -112,14 +149,15 @@ export default function FoundingSettings() {
             <Col xs={12} md={6}>
               <Form.Group controlId="formCompanyWebsite">
                 <Form.Label>Company Website</Form.Label>
-                <div className="input-group">
+                <div className="input-group" style={{width: '100%'}}>
                   <span className="input-group-text"><FaLink /></span>
                   <Form.Control
                     type="url"
                     value={companyWebsite}
                     onChange={(e) => setCompanyWebsite(e.target.value)}
                     placeholder="Enter website URL"
-                    className="py-2 px-5"
+                    className="py-2 px-5 register1"
+                    style={{borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px'}}
                   />
                 </div>
               </Form.Group>

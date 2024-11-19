@@ -2,6 +2,7 @@ import React from 'react';
 import EmployerSidebar from '../../../components/EmployerSidebar';
 import PostedJobTable from '../../../components/PostedJobTable';
 import { FaBriefcase, FaUser, FaEnvelope, FaArrowRight } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function EmployerOverview() {
     return (
@@ -25,7 +26,7 @@ export default function EmployerOverview() {
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-3">10</p>
+                                        <p className="fs-3" style={{marginBottom: '18px'}}>10</p>
                                         <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Open Jobs</h6>
                                     </div>
                                     <div
@@ -55,7 +56,7 @@ export default function EmployerOverview() {
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-3">5</p>
+                                        <p className="fs-3" style={{marginBottom: '18px'}}>5</p>
                                         <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Saved Applicants</h6>
                                     </div>
                                     <div
@@ -86,7 +87,7 @@ export default function EmployerOverview() {
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-3">8</p>
+                                        <p className="fs-3" style={{marginBottom: '18px'}}>8</p>
                                         <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Messages</h6>
                                     </div>
                                     <div
@@ -103,9 +104,9 @@ export default function EmployerOverview() {
                         </div>
                     </div>
 
-                    {/* Heading above Applied Jobs Table with Custom View All button */}
                     <div className="d-flex justify-content-between align-items-center mb-2">
                         <h3 style={{ fontSize: '15px', fontWeight: '500', color: '#333', marginBottom: '-20px' }}>Recently Posted Jobs</h3>
+                        <Link to = '/employer/myjobs'>
                         <button
                             className="btn"
                             style={{
@@ -118,6 +119,7 @@ export default function EmployerOverview() {
                         >
                             View All <FaArrowRight style={{ marginLeft: '8px' }} />
                         </button>
+                        </Link>
                     </div>
 
                     <PostedJobTable />

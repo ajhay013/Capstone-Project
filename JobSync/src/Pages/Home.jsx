@@ -80,7 +80,7 @@ export default function Home() {
             </div>
 
             {/* Job Cards Section */}
-            <div className="my-5">
+            <div>
                 <JobCards />
             </div>
         </div>

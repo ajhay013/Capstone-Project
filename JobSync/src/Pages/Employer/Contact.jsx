@@ -1,48 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-quill/dist/quill.snow.css';
-import { Container, Form, Button, Row, Col, Image } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight , faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import MyNavbar1 from '../../components/navbar1';
-
-// File Upload Component
-const FileUpload = ({ label, required, onChange, imageSrc }) => (
-  <Form.Group controlId={`form${label.replace(" ", "")}`} className="text-start">
-    <Form.Label>
-      {label} {required && <span style={{ color: 'red' }}>*</span>}
-    </Form.Label>
-    <Form.Control type="file" accept="image/*" onChange={onChange} />
-    {imageSrc && (
-      <Image
-        src={imageSrc}
-        alt={label}
-        className="mt-3"
-        thumbnail
-        style={{
-          width: label === "Upload Company Logo" ? '150px' : '100%',
-          height: 'auto',
-        }}
-      />
-    )}
-  </Form.Group>
-);
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../AuthContext';
+import { postToEndpoint } from '../../components/apiService';
+import { useNavigate } from 'react-router-dom';
 
 const CompanyProfile = () => {
-  const [logo, setLogo] = useState(null);
-  const [banner, setBanner] = useState(null);
-  const [companyName, setCompanyName] = useState('');
-  const [aboutUs, setAboutUs] = useState('');
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [contactNumber, setContactNumber] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
-  const [location, setLocation] = useState(''); // Changed from mapLocation to location
+  const [location, setLocation] = useState('');
+  const [contactError, setContactError] = useState('');
 
-  const handleLogoChange = (e) => setLogo(URL.createObjectURL(e.target.files[0]));
-  const handleBannerChange = (e) => setBanner(URL.createObjectURL(e.target.files[0]));
+  const isFormValid = contactNumber && emailAddress && location;
 
-  const handleSubmit = (e) => {
+  const handleContactChange = (e) => {
+    const value = e.target.value;
+    const contactRegex = /^[1-9]\d{0,9}$/;
+
+    if (value.length === 10) {
+      setContactError('');
+    } else if (!contactRegex.test(value) && value !== '') {
+      setContactError("Contact number must be 10 digits long and cannot start with 0");
+    } else {
+      setContactError(''); 
+    }
+
+    setContactNumber(value);
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ logo, banner, companyName, aboutUs, contactNumber, emailAddress, location });
+
+    try {
+      const response = await postToEndpoint('/companyContact.php', {
+        employer_id: user?.id,
+        contactNumber,
+        emailAddress,
+        location,
+      });
+
+      if (response.data.success) {
+        navigate('/complete');
+      } else {
+        alert('Failed to save data');
+      }
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert('An error occurred while saving data');
+    }
   };
 
   return (
@@ -53,18 +64,19 @@ const CompanyProfile = () => {
         margin: '0',
         padding: '0',
         width: '100%',
-        paddingTop: '56px'
+        paddingTop: '28px'
       }}
     >
-      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' , marginBottom: '350px' }}>
+      <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%', marginBottom: '350px' }}>
         
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group controlId="formLocation">
               <Form.Label>
-                <strong>Location <span style={{ color: 'red' }}>*</span></strong>
+                <strong>Map Location <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
               <Form.Control
+                className="register1"
                 type="text"
                 placeholder="Enter company location"
                 value={location}
@@ -82,11 +94,22 @@ const CompanyProfile = () => {
                 <strong>Contact Number <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
               <Form.Control
-                type="tel"
+                className="register1"
                 placeholder="Enter contact number"
                 value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
+                onChange={handleContactChange}
                 style={{ padding: '10px', width: '100%' }}
+                type="text"
+                onKeyDown={(e) => {
+                  if (contactNumber.length === 0 && e.key === '0') {
+                    e.preventDefault();
+                  }
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace') {
+                    e.preventDefault();
+                  }
+                }}
+                maxLength={10}
+                required
               />
             </Form.Group>
           </Col>
@@ -96,9 +119,10 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formEmailAddress">
               <Form.Label>
-                <strong>Email Address <span style={{ color: 'red' }}>*</span></strong>
+                <strong>Company Email Address <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
               <Form.Control
+                className="register1"
                 type="email"
                 placeholder="Enter email address"
                 value={emailAddress}
@@ -111,11 +135,26 @@ const CompanyProfile = () => {
 
         <Row>
           <Col>
-            <Button variant="secondary" style={{ marginRight: '10px', width: '200px', backgroundColor: 'white', color: 'black', height: '50px' }}>
-              <FontAwesomeIcon icon={faArrowLeft} /> Back
-            </Button>
-            <Button type="submit" style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}>
-              Save & Next <FontAwesomeIcon icon={faArrowRight} />
+            <Link to="/employer/socialmedia">
+              <Button
+                variant="secondary"
+                style={{
+                  marginRight: '10px',
+                  width: '200px',
+                  backgroundColor: 'white',
+                  color: 'black',
+                  height: '50px',
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowLeft} /> Previous
+              </Button>
+            </Link>
+            <Button
+              type="submit"
+              style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}
+              disabled={!isFormValid} // Disable button if form is not valid
+            >
+              Finish Editing <FontAwesomeIcon icon={faArrowRight} />
             </Button>
           </Col>
         </Row>
@@ -131,6 +170,6 @@ function CompanyContactPage() {
       <CompanyProfile />
     </div>
   );
-};
+}
 
 export default CompanyContactPage;

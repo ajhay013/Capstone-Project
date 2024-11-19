@@ -93,12 +93,35 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'], $_POST['for
                             $_SESSION['firstname'] = $firstname;
                 
                             $profileIncomplete = false;
-                
-                            $stmt_company_info = $conn->prepare("SELECT 1 FROM js_company_info WHERE employer_id = :id");
+
+                            $stmt_company_info = $conn->prepare("SELECT * FROM js_company_info WHERE employer_id = :id");
                             $stmt_company_info->bindParam(':id', $id, PDO::PARAM_INT);
                             $stmt_company_info->execute();
-                            if ($stmt_company_info->rowCount() == 0) {
-                                $profileIncomplete = true;
+                            if ($stmt_company_info->rowCount() > 0) {
+                                $company_info = $stmt_company_info->fetch(PDO::FETCH_ASSOC);
+                                foreach ($company_info as $column_value) {
+                                    if (empty($column_value) || is_null($column_value)) {
+                                        $profileIncomplete = true;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                $profileIncomplete = true; 
+                            }
+
+                            $stmt_founding_info = $conn->prepare("SELECT * FROM js_founding_info WHERE employer_id = :id");
+                            $stmt_founding_info->bindParam(':id', $id, PDO::PARAM_INT);
+                            $stmt_founding_info->execute();
+                            if ($stmt_founding_info->rowCount() > 0) {
+                                $founding_info = $stmt_founding_info->fetch(PDO::FETCH_ASSOC);
+                                foreach ($founding_info as $column_value) {
+                                    if (empty($column_value) || is_null($column_value)) {
+                                        $profileIncomplete = true;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                $profileIncomplete = true; 
                             }
                 
                             $response = [

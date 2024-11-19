@@ -72,6 +72,11 @@ export default function PostJobs() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        const cleanedBenefits = selectedBenefits
+            .map(benefit => benefit.trim())  
+            .filter(benefit => benefit !== "") 
+            .join(', '); 
         const jobData = {
             employer_id: user?.id,
             jobTitle,
@@ -87,7 +92,7 @@ export default function PostJobs() {
             jobLevel,
             address,
             city,
-            selectedBenefits,
+            selectedBenefits: cleanedBenefits,
             jobDescription,
         };
         try {
@@ -104,6 +109,9 @@ export default function PostJobs() {
             }).then((result) => {
                 if (result.isConfirmed) {
                     navigate('/employer/myjobs');
+                    setTimeout(() => {
+                        window.scrollTo(0, 0);
+                    }, 300);
                 } else {
                     Swal.close();
                     setTimeout(() => {
@@ -111,12 +119,11 @@ export default function PostJobs() {
                     }, 300);
                 }
             });
-        
-            window.scrollTo(0, 0);
+    
             resetForm();
         } catch (error) {
             console.error('Error saving job:', error);
-        
+    
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
@@ -124,8 +131,10 @@ export default function PostJobs() {
                 confirmButtonText: 'Close',
             });
         }
-        
     };
+    
+    
+    
     const resetForm = () => {
         setJobTitle('');
         setJobTags('');
@@ -151,6 +160,20 @@ export default function PostJobs() {
         'Relocation Assistance', 'Employee Assistance Program', 'Pet Insurance', 'Mental Health Days', 'Disability Insurance'
     ];
 
+    const modules = {
+        toolbar: [
+            [{ 'header': [null, '3'] }],
+            [{ 'font': [] }],
+            [{ 'size': ['small', 'medium', 'large'] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'align': [] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            ['link'],
+            ['blockquote', 'code-block'],
+            [{ 'color': [] }, { 'background': [] }],
+            ['clean'],
+        ],
+    };
     return (
         <div className="d-flex">
             <div className="sidebar" style={{ width: '20%', minWidth: '250px' }}>
@@ -269,9 +292,9 @@ export default function PostJobs() {
                                     required
                                 >
                                     <option value="" disabled>Select type</option>
-                                    <option value="hourly">Hourly</option>
-                                    <option value="monthly">Monthly</option>
-                                    <option value="yearly">Yearly</option>
+                                    <option value="Hourly">Hourly</option>
+                                    <option value="Monthly">Monthly</option>
+                                    <option value="Yearly">Yearly</option>
                                 </select>
                             </div>
                         </div>
@@ -322,11 +345,10 @@ export default function PostJobs() {
                                     required
                                 >
                                     <option value="" disabled>Select experience level</option>
-                                    <option value="Entry Level">Entry Level</option>
-                                    <option value="Mid Level">Mid Level</option>
-                                    <option value="Senior Level">Senior Level</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Director">Director</option>
+                                    <option value="1 year - 2 years">1 year - 2 years</option>
+                                    <option value="3 years - 4 years">3 years - 4 years</option>
+                                    <option value="5 years - 6 years">5 years - 6 years</option>
+                                    <option value="7 years and Above">7 years and Above</option>
                                 </select>
                             </div>
 
@@ -379,12 +401,12 @@ export default function PostJobs() {
                                         required
                                     >
                                     <option value="" disabled>Select job level</option>
-                                    <option value="Entry">Entry</option>
-                                    <option value="Mid">Mid</option>
-                                    <option value="Senior">Senior</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Director">Director</option>
-                                    <option value="Executive">Executive</option>
+                                    <option value="Entry Level">Entry Level</option>
+                                    <option value="Mid Level">Mid Level</option>
+                                    <option value="Senior Level">Senior Level</option>
+                                    <option value="Manager Level">Manager Level</option>
+                                    <option value="Director Level">Director Level</option>
+                                    <option value="Executive Level">Executive Level</option>
                                     </select>
                                 </div>
                             </div>
@@ -459,11 +481,15 @@ export default function PostJobs() {
                         <ReactQuill
                             value={jobDescription}
                             onChange={setJobDescription}
+                            theme="snow"
                             placeholder="Describe the job"
                             className="form-control"
                             style={{ width: '100%' }}
+                            modules={modules} 
                         />
                     </div>
+
+
 
                     <button type="submit" className="btn btn-primary" style={{marginLeft: '20px', marginTop: '15px' , width: '150px', padding: '11px' }}>Post Job</button>
                 </form>

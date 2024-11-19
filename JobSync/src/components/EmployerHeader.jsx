@@ -33,7 +33,7 @@ function EmployerHeader() {
                                     </button>
                                     </Link>
                                     <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Link to="/employer/companyprofile">
+                                        <Link to="/employer/settings">
                                             <img 
                                                 src={user.profilePicture ? user.profilePicture : defaultProfilePicture}
                                                 alt="Profile"

@@ -19,6 +19,20 @@ export default function ApplicantSettings() {
   };
 
   const handleButtonClick = () => fileInputRef.current.click();
+  
+  const modules = {
+    toolbar: [
+        [{ 'header': [null, '3'] }],
+        [{ 'font': [] }],
+        [{ 'size': ['small', 'medium', 'large'] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['link'],
+        [{ 'color': [] }, { 'background': [] }],
+        ['clean'],
+    ],
+  };
 
   return (
     <div className="d-flex">
@@ -66,7 +80,7 @@ export default function ApplicantSettings() {
 
               <Form.Group className="mt-3">
                 <Form.Label>Biography</Form.Label>
-                <ReactQuill value={biography} onChange={setBiography} placeholder="Write your message..." style={{ height: '150px' }} />
+                <ReactQuill value={biography} onChange={setBiography} placeholder="Write your message..." style={{ height: '150px', textAlign: 'left', width: 'max-content' }} modules={modules}/>
               </Form.Group>
 
               {/* Moved the button here */}

@@ -6,7 +6,7 @@ const JobDetailsModal = ({ show, handleClose }) => {
   const iconStyle = { color: '#007bff', fontSize: '1.5em' };
 
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered>
+    <Modal show={show} onHide={handleClose} size="xl" centered>
       <Modal.Header closeButton>
         <Modal.Title>Job Details</Modal.Title>
       </Modal.Header>
@@ -14,7 +14,7 @@ const JobDetailsModal = ({ show, handleClose }) => {
       <Modal.Body>
         <div className="d-flex">
           {/* Left Section */}
-          <div className="flex-grow-1 me-3">
+          <div className="flex-grow-1 me-5 ps-4">
             <div className="d-flex align-items-center mb-3">
               <img
                 src="../../src/assets/riot.png"
@@ -65,7 +65,7 @@ const JobDetailsModal = ({ show, handleClose }) => {
               <iframe
                 src="https://www.google.com/maps/embed?..."
                 width="100%"
-                height="200"
+                height="288"
                 style={{ border: 0 }}
                 allowFullScreen=""
                 loading="lazy"
@@ -75,7 +75,7 @@ const JobDetailsModal = ({ show, handleClose }) => {
           </div>
 
           {/* Right Section */}
-          <div className="border-start ps-3" style={{ minWidth: '250px' }}>
+          <div className="border-start ps-3" style={{ minWidth: '330px' }}>
             {/* Apply Buttons */}
             <div className="d-flex mb-3">
             <Button
