@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Button, Pagination } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
+import Pagination from '../components/pagination';
 
 const JobBoard = () => {
   // State for job search and location input
   const [jobSearch, setJobSearch] = useState("");
   const [locationSearch, setLocationSearch] = useState("");
-
-  // Sample job data
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; 
   const jobs = Array.from({ length: 15 }, (_, i) => ({
     id: i + 1,
     company: "Lebron James",
@@ -17,12 +20,18 @@ const JobBoard = () => {
     positions: 3,
   }));
 
-  // Handle the search
   const handleSearch = (e) => {
     e.preventDefault();
     console.log("Searching for jobs:", jobSearch, "in location:", locationSearch);
     // Here, you could trigger an API request or filter the job data based on the inputs
   };
+
+  // Pagination logic
+  const indexOfLastJob = currentPage * itemsPerPage;
+  const indexOfFirstJob = indexOfLastJob - itemsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <Container className="my-5" style={{ maxWidth: "1200px", width: "100%" }}>
@@ -116,7 +125,7 @@ const JobBoard = () => {
 
       {/* Job Grid */}
       <Row className="gy-5">
-        {jobs.map((job) => (
+        {currentJobs.map((job) => (
           <Col md={4} key={job.id}>
             <div className="border p-4 rounded bg-light text-center" style={{ maxWidth: "100%", width: "100%" }}>
               <Row className="align-items-center">
@@ -144,10 +153,10 @@ const JobBoard = () => {
 
               {/* Open Position Button */}
               <Link to="/employerdetails">
-  <Button className="mt-2" style={{ padding: "5px 10px", width: '100%' , color: '#0A65CC' , backgroundColor: '#add1ff' , border: 'none' }}>
-    Open Position ({job.positions})
-  </Button>
-</Link>
+                <Button className="mt-2" style={{ padding: "5px 10px", width: '100%' , color: '#0A65CC' , backgroundColor: '#add1ff' , border: 'none' }}>
+                  Open Position ({job.positions})
+                </Button>
+              </Link>
             </div>
           </Col>
         ))}
@@ -156,15 +165,12 @@ const JobBoard = () => {
       {/* Pagination */}
       <Row className="mt-5">
         <Col className="d-flex justify-content-center">
-          <Pagination>
-            <Pagination.Prev />
-            {[1, 2, 3, 4, 5].map((number) => (
-              <Pagination.Item key={number} active={number === 1}>
-                {number}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next />
-          </Pagination>
+          <Pagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={jobs.length}
+            paginate={paginate}
+          />
         </Col>
       </Row>
     </Container>

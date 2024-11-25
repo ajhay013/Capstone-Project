@@ -33,8 +33,6 @@ import ApplicantSettings from './Pages/Applicants/ApplicantDashboard/ApplicantSe
 
 import EmployerDetails from './Pages/Applicants/employerdetails';
 
-
-
 {/* Employer Dashboard Pages */}
 import EmployerOverview from './Pages/Employer/EmployerDashboard/EmployerOverview';
 import EmployerProfile from './Pages/Employer/EmployerDashboard/EmployerProfile';
@@ -45,6 +43,14 @@ import SavedApplicant from './Pages/Employer/EmployerDashboard/SavedApplicant';
 import EmployerSettings from './Pages/Employer/EmployerDashboard/EmployerSettings';
 import AccountSettings from './pages/employer/employerdashboard/employersettings/accountsettings';
 
+
+import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/EmployerMessage';
+
+
+import ViewApplications from './Pages/Employer/EmployerDashboard/ViewApplications';
+
+import FindApplicant from './Pages/Employer/findapplicant';
+import Applications from './Pages/Employer/Applications';
 
 {/* Employer Settings Pages */}
 import CompanySettings from './pages/employer/employerdashboard/employersettings/companysettings';
@@ -89,7 +95,7 @@ function Layout({ userId, setUserId }) {
                              location.pathname === '/complete' ||
                              location.pathname === '/employer/contact';
 
-  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts'].some((path) =>
+  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts' , '/employer/findapplicant' , '/employer/applications' ].some((path) =>
     location.pathname.startsWith(path.replace(':job_id', ''))
   );
 
@@ -105,6 +111,10 @@ function Layout({ userId, setUserId }) {
         return 'Employers';
       case '/jobAlerts':
         return 'Job Alert';
+      case '/employer/findapplicant':
+        return 'Applicants';
+      case '/employer/applications':
+        return 'Applications';
       default:
         return '';
     }
@@ -150,6 +160,8 @@ function Layout({ userId, setUserId }) {
         <Route path='/registration_employer' element={<EmployerRegistrationForm />} />
         <Route path='/email_verification' element={<EmailVerification />} />
         <Route path="/jobdetails/:job_id" element={<JobDetails />} />
+
+       
         
         {/* For Employer */}
         <Route path="/home" element={<ProtectedRoute> <HomeEmployer /> </ProtectedRoute> } />
@@ -158,7 +170,9 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/foundinginfo' element={<ProtectedRoute> <FoundingInfo /> </ProtectedRoute> } />
         <Route path='/employer/socialmedia' element={<ProtectedRoute> <CompanySocialMedia /> </ProtectedRoute> } />
         <Route path='/employer/contact' element={<ProtectedRoute> <CompanyContactPage /> </ProtectedRoute> } />
-        <Route path='/Complete' element={<ProtectedRoute> <CompletedProfile /> </ProtectedRoute>} />
+
+
+        <Route path='/employer/findapplicant' element={<ProtectedRoute> <FindApplicant /> </ProtectedRoute> } />
       
       {/* Applicant Dashboard Routing */}
         <Route path='/applicants/overview' element={<ProtectedRoute> <Overview /> </ProtectedRoute> } />
@@ -178,6 +192,12 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/message' element={<ProtectedRoute> <EmployerMessage /> </ProtectedRoute>} />
         <Route path='/employer/savedapplicant' element={<ProtectedRoute> <SavedApplicant /> </ProtectedRoute>} />  
         <Route path='/employer/settings' element={<ProtectedRoute> <EmployerSettings /> </ProtectedRoute>} />
+
+        <Route path='/viewapplications/:job_id' element={<ProtectedRoute> <ViewApplications /> </ProtectedRoute>} />
+        <Route path='/employer/applications' element={<ProtectedRoute> <Applications /> </ProtectedRoute>} />  
+
+
+        <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
       
       {/* Employer Settings Routing */}
         <Route path='/employer/employersettings/companysettings' element={<ProtectedRoute> <CompanySettings /> </ProtectedRoute> } />
