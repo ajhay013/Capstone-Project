@@ -5,23 +5,26 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from '../AuthContext'; 
 import { FaUsers, FaEllipsisV, FaBullhorn, FaEye, FaClock, FaCheck, FaTimes } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const JobRow = ({ job, handleShowModal }) => {
+    const navigate = useNavigate();
     const statusColor = job.status === 'Active' ? '#5bbc80' : '#dc3545';
+
+    const handleViewApplications = () => {
+        navigate(`/viewapplications/${job.job_id}`);
+    };
+
     return (
         <tr className="border-bottom">
             {/* Job details */}
             <td style={{ textAlign: 'left' }}>
                 <div>
                     <h6 className="mb-0" style={{ padding: '5px', textAlign: 'left', color: '#444444' }}>{job.jobTitle}</h6>
-                    <small className="text-muted" style={{ marginLeft: '6px'}}>
-                        {job.jobType}  
-                    </small>
-                    <small className="text-muted" style={{ left: '9px', position: 'relative'}}>
-                            • 
-                    </small>
-                    <small className='text-muted' style={{ left: '16px', position: 'relative'}}>
-                        {job.remainingDays > 0 
+                    <small className="text-muted" style={{ marginLeft: '6px' }}>{job.jobType}</small>
+                    <small className="text-muted" style={{ left: '9px', position: 'relative' }}> • </small>
+                    <small className='text-muted' style={{ left: '16px', position: 'relative' }}>
+                        {job.remainingDays > 0
                             ? `${job.remainingDays} days remaining`
                             : `${new Date(job.expirationDate).toLocaleDateString('en-US', {
                                 year: 'numeric', month: 'short', day: 'numeric'
@@ -32,7 +35,7 @@ const JobRow = ({ job, handleShowModal }) => {
 
             {/* Status */}
             <td className="text-center">
-                <span style={{ color: statusColor, padding: '10px', fontSize: '14px', fontWeight: '700', display: 'inline-block', marginTop: '5px', textAlign: 'center' }}>
+                <span style={{ color: statusColor, padding: '10px', fontSize: '14px', fontWeight: '700', display: 'inline-block', marginTop: '5px' }}>
                     {job.status === 'Active' ? <FaCheck className="me-2" /> : <FaTimes className="me-2" />}
                     {job.status}
                 </span>
@@ -49,8 +52,26 @@ const JobRow = ({ job, handleShowModal }) => {
             {/* Actions */}
             <td className="text-center">
                 <div className="d-flex justify-content-center align-items-center">
-                    <button className="btn btn-sm btn-light text-primary" style={{marginLeft:'auto', width: '60%', fontWeight: '500', marginTop: '5px', background: '#ddf2ff', padding: '10px', borderRadius: '6px' }}>View Details</button>
-                    <button className="btn btn-sm btn-light text-primary fw-bold ms-2" style={{ marginTop: '7px' }} onClick={(e) => handleShowModal(job, e)}>
+                    <button
+                        className="btn btn-sm btn-light text-primary"
+                        style={{
+                            marginLeft: 'auto',
+                            width: '60%',
+                            fontWeight: '500',
+                            marginTop: '5px',
+                            background: '#ddf2ff',
+                            padding: '10px',
+                            borderRadius: '6px'
+                        }}
+                        onClick={handleViewApplications}
+                    >
+                        View Applications
+                    </button>
+                    <button
+                        className="btn btn-sm btn-light text-primary fw-bold ms-2"
+                        style={{ marginTop: '7px' }}
+                        onClick={(e) => handleShowModal(job, e)}
+                    >
                         <FaEllipsisV />
                     </button>
                 </div>
@@ -88,7 +109,7 @@ const PostedJobTable = () => {
         };
     
         fetchJobs();
-    }, []);
+    }, [user.id]);
 
 
     useEffect(() => {

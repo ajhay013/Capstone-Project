@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Pagination from './Pagination'; // Assuming Pagination is in the same folder
 
 const jobData = [
     {
@@ -102,51 +103,91 @@ const jobData = [
         dateApplied: '2024-10-29',
         status: 'Active',
     },
+    {
+        id: 11,
+        logo: '../../src/assets/google.png',
+        name: 'System Administrator',
+        location: 'Atlanta, GA',
+        jobType: 'Part-time',
+        salary: '$75,000',
+        dateApplied: '2024-10-29',
+        status: 'Active',
+    },
+    {
+        id: 12,
+        logo: '../../src/assets/google.png',
+        name: 'System Administrator',
+        location: 'Atlanta, GA',
+        jobType: 'Part-time',
+        salary: '$75,000',
+        dateApplied: '2024-10-29',
+        status: 'Active',
+    },
 ];
 
 const JobRow = ({ job }) => (
-    <div className="d-flex justify-content-between align-items-start p-3 border-bottom">
-        <div className="d-flex align-items-start">
-            <img
-                src={job.logo}
-                alt="Job Logo"
-                className="me-3"
-                style={{ width: '50px', height: '50px' }}
-            />
-            <div>
-                <div className="d-flex justify-content-between align-items-start mb-2">
-                    <h6 className="mb-0 me-3">{job.name}</h6>
-                    <span className={`badge ${job.jobType === 'Full-time' ? 'bg-success' : job.jobType === 'Part-time' ? 'bg-warning' : 'bg-info'}`}>
-                        {job.jobType}
-                    </span>
-                </div>
-                <small className="text-muted d-flex align-items-center mb-1">
-                    <i className="fas fa-map-marker-alt me-1"></i>
-                    <span className="me-2">{job.location}</span> | 
-                    <span className="ms-2">{job.salary}</span>
-                </small>
-            </div>
+  <div className="d-flex justify-content-between align-items-start p-3 border-bottom">
+    <div className="d-flex align-items-start">
+      <img
+        src={job.logo}
+        alt="Job Logo"
+        className="me-3"
+        style={{ width: '50px', height: '50px' }}
+      />
+      <div>
+        <div className="d-flex justify-content-between align-items-start mb-2">
+          <h6 className="mb-0 me-3">{job.name}</h6>
+          <span
+            className={`badge ${
+              job.jobType === 'Full-time'
+                ? 'bg-success'
+                : job.jobType === 'Part-time'
+                ? 'bg-warning'
+                : 'bg-info'
+            }`}
+          >
+            {job.jobType}
+          </span>
         </div>
-        <div className="d-flex align-items-center" style={{ marginLeft: '520px' }}>
-            <i className="fas fa-bookmark me-3" style={{ cursor: 'pointer' }}></i>
-            <button className="btn btn-primary btn-sm">
-                Apply <i className="fas fa-arrow-right"></i>
-            </button>
-        </div>
+        <small className="text-muted d-flex align-items-center mb-1">
+          <i className="fas fa-map-marker-alt me-1"></i>
+          <span className="me-2">{job.location}</span> | 
+          <span className="ms-2">{job.salary}</span>
+        </small>
+      </div>
     </div>
+    <div className="d-flex align-items-center" style={{ marginLeft: '520px' }}>
+      <i className="fas fa-bookmark me-3" style={{ cursor: 'pointer' }}></i>
+      <button className="btn btn-primary btn-sm">
+        Apply <i className="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
 );
 
+function FavoriteJobs() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of jobs per page
 
+  const indexOfLastJob = currentPage * itemsPerPage;
+  const indexOfFirstJob = indexOfLastJob - itemsPerPage;
+  const currentJobs = jobData.slice(indexOfFirstJob, indexOfLastJob);
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-function AppliedJobsList() {
-    return (
-        <div className="container-fluid p-0">
-            {jobData.map((job) => (
-                <JobRow job={job} key={job.id} />
-            ))}
-        </div>
-    );
+  return (
+    <div className="container-fluid p-0">
+      {currentJobs.map((job) => (
+        <JobRow job={job} key={job.id} />
+      ))}
+      <Pagination
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        totalItems={jobData.length}
+        paginate={paginate}
+      />
+    </div>
+  );
 }
 
-export default AppliedJobsList;
+export default FavoriteJobs;
