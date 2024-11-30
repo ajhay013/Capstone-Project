@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { postToEndpoint } from '../../../components/apiService';
 import Swal from 'sweetalert2';
 
+
 export default function PostJobs() {
     const { user } = useAuth(); 
     const navigate = useNavigate();
@@ -173,6 +174,10 @@ export default function PostJobs() {
             [{ 'color': [] }, { 'background': [] }],
             ['clean'],
         ],
+    };
+    
+    const handleNextClick = () => {
+        navigate('/step1');
     };
     return (
         <div className="d-flex">
@@ -491,7 +496,16 @@ export default function PostJobs() {
 
 
 
-                    <button type="submit" className="btn btn-primary" style={{marginLeft: '20px', marginTop: '15px' , width: '150px', padding: '11px' }}>Post Job</button>
+                    {/* Next Button */}
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ marginLeft: '50px', marginTop: '15px', width: '150px', padding: '11px' }}
+                    onClick={handleNextClick}
+                >
+                    Next
+                </button>
+
                 </form>
             </div>
         </div>
