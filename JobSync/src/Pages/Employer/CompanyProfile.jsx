@@ -88,6 +88,20 @@ const CompanyProfile = () => {
   const logoUrl = logo instanceof File ? URL.createObjectURL(logo) : logo;
   const bannerUrl = banner instanceof File ? URL.createObjectURL(banner) : banner;
 
+  const modules = {
+    toolbar: [
+        [{ 'header': [null, '3'] }],
+        [{ 'font': [] }],
+        [{ 'size': ['small', 'medium', 'large'] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['bold', 'italic', 'underline'],
+        ['link'],
+        [{ 'color': [] }, { 'background': [] }],
+        ['clean'],
+      ],
+  };
+
   return (
     <Container fluid className="d-flex justify-content-center" style={{ padding: '0', paddingTop: '20px' }}>
       <Form onSubmit={handleSubmit} style={{ maxWidth: '800px', width: '100%' }} className="p-4">
@@ -198,6 +212,7 @@ const CompanyProfile = () => {
                 onChange={setAboutUs}
                 placeholder="Tell us about your company"
                 style={{ height: '200px', marginBottom: '30px', width: '100%' }}
+                modules={modules}
               />
             </Form.Group>
           </Col>

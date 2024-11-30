@@ -136,15 +136,17 @@ const JobRow = ({ job }) => (
       />
       <div>
         <div className="d-flex justify-content-between align-items-start mb-2">
-          <h6 className="mb-0 me-3">{job.name}</h6>
+          <h6 className="mb-0 me-3" style={{color: '#373737'}}>{job.name}</h6>
           <span
-            className={`badge ${
-              job.jobType === 'Full-time'
-                ? 'bg-success'
-                : job.jobType === 'Part-time'
-                ? 'bg-warning'
-                : 'bg-info'
-            }`}
+            className="badge" 
+            style={{
+              background: '#cde8ff',
+              padding: '7px 13px',
+              color: '#0076df',
+              fontWeight: '600',
+              borderRadius: '50px',
+              fontSize: '11px'
+            }}
           >
             {job.jobType}
           </span>
@@ -156,10 +158,22 @@ const JobRow = ({ job }) => (
         </small>
       </div>
     </div>
-    <div className="d-flex align-items-center" style={{ marginLeft: '520px' }}>
+    <div className="d-flex align-items-center">
       <i className="fas fa-bookmark me-3" style={{ cursor: 'pointer' }}></i>
-      <button className="btn btn-primary btn-sm">
-        Apply <i className="fas fa-arrow-right"></i>
+      <button className="btn btn-primary btn-sm"
+      style={{ width: '150px',
+      height: '46px',
+      fontWeight: '500',
+      marginTop: '5px',
+      background: '#ddf2ff',
+      color: '#0064ff',
+      padding: '10px',
+      borderRadius: '3px',
+      fontSize:'13px',
+      border: 'none'
+      }}
+      >
+        Apply Now <i className="fas fa-arrow-right" style={{marginLeft: '10px'}}></i>
       </button>
     </div>
   </div>
@@ -176,7 +190,7 @@ function FavoriteJobs() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container-fluid p-0">
+    <div className="container-fluid p-0" style={{marginLeft: '16px'}}>
       {currentJobs.map((job) => (
         <JobRow job={job} key={job.id} />
       ))}

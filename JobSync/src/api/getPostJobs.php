@@ -27,8 +27,9 @@ try {
 
     $stmt = $conn->prepare("
         SELECT *,
-        GREATEST(DATEDIFF(expirationDate, NOW()), 0) AS remainingDays
-        FROM js_post_jobs 
+        GREATEST(DATEDIFF(expirationDate, NOW()), 0) AS remainingDays,
+        IF(DATEDIFF(NOW(), created_at) <= 30, 1, 0) AS recent
+        FROM js_post_jobs
         WHERE employer_id = :employer_id
         ORDER BY 
             CASE
@@ -52,5 +53,4 @@ try {
 }
 
 $conn = null;
-
 ?>

@@ -108,14 +108,17 @@ function Layout({ userId, setUserId }) {
                              location.pathname === '/complete' ||
                              location.pathname === '/employer/contact';
 
-  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts' , '/employer/findapplicant' , '/employer/applications' ].some((path) =>
-    location.pathname.startsWith(path.replace(':job_id', ''))
+  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts', '/employerdetails' , '/employer/findapplicant' , '/employer/applications' ].some((path) =>
+    location.pathname.startsWith(path.replace(':job_id', '').replace(':employerId', ''))
   );
 
 
   const getPageTitle = () => {
     if (location.pathname.startsWith('/jobdetails/')) {
       return 'Job Details';
+    }
+    if (location.pathname.startsWith('/employerdetails/')) {
+      return 'Single Employer';
     }
     switch (location.pathname) {
       case '/findjob':
@@ -124,6 +127,8 @@ function Layout({ userId, setUserId }) {
         return 'Employers';
       case '/jobAlerts':
         return 'Job Alert';
+      case '/employerdetails':
+        return 'Single Employer';
       case '/employer/findapplicant':
         return 'Applicants';
       case '/employer/applications':
@@ -132,6 +137,49 @@ function Layout({ userId, setUserId }) {
         return '';
     }
   };
+  const getBreadcrumbs = () => {
+    if (location.pathname.startsWith("/jobdetails/")) {
+      return [
+        { label: "Home", path: "/" },
+        { label: "Find Job", path: "/findjob" },
+        { label: "Job Details", path: location.pathname },
+      ];
+    }
+    if (location.pathname.startsWith('/employerdetails/')) {
+      return [
+        { label: 'Home', path: '/' },
+        { label: 'Employers', path: '/findemployer' },
+        { label: 'Single Employer', path: location.pathname },
+      ];
+    }
+    switch (location.pathname) {
+      case "/findjob":
+        return [{ label: "Home", path: "/" }, { label: "Find Job", path: "/findjob" }];
+      case "/findemployer":
+        return [{ label: "Home", path: "/" }, { label: "Employers", path: "/findemployer" }];
+      case "/jobAlerts":
+        return [{ label: "Home", path: "/" }, { label: "Job Alert", path: "/jobAlerts" }];
+      case "/employerdetails":
+        return [
+          { label: "Home", path: "/" },
+          { label: "Employers", path: "/findemployer" },
+          { label: "Single Employer", path: "/employerdetails" },
+        ];
+      case "/employer/applications":
+        return [
+          { label: "Home", path: "/home" },
+          { label: "Applications", path: "/employer/applications" },
+        ];
+      case "/employer/findapplicant":
+        return [
+          { label: "Home", path: "/home" },
+          { label: "Find Applicant", path: "/employer/findapplicant" },
+        ];
+      default:
+        return [];
+    }
+  };
+  
 
 
   const renderHomePage = () => {
@@ -162,7 +210,9 @@ function Layout({ userId, setUserId }) {
           <LogoIcon />
       )}
 
-      {showHeader && <Header pageTitle={getPageTitle()} />}
+      {showHeader && (
+        <Header pageTitle={getPageTitle()} breadcrumbs={getBreadcrumbs()} />
+      )}
       <Routes>
         
         <Route path="/" element={renderHomePage()} />
@@ -185,7 +235,7 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/socialmedia' element={<ProtectedRoute> <CompanySocialMedia /> </ProtectedRoute> } />
         <Route path='/employer/contact' element={<ProtectedRoute> <CompanyContactPage /> </ProtectedRoute> } />
 
-
+        <Route path='/Complete' element={<ProtectedRoute> <CompletedProfile /> </ProtectedRoute>} />
         <Route path='/employer/findapplicant' element={<ProtectedRoute> <FindApplicant /> </ProtectedRoute> } />
       
       {/* Applicant Dashboard Routing */}
@@ -205,6 +255,7 @@ function Layout({ userId, setUserId }) {
         <Route path='/personal' element={<ProtectedRoute> <Personal /> </ProtectedRoute>} />
         <Route path='/profile' element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
         <Route path='/socmedlinks' element={<ProtectedRoute> <Socmedlinks /> </ProtectedRoute>} />
+        <Route path='/employerdetails/:employerId' element={ <EmployerDetails />} />
   
 
       {/* Employer Dashboard Routing */}

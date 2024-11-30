@@ -21,7 +21,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
   const pageNumbers = getPageNumbers();
 
   return (
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" className="mt-4">
       <ul className="pagination justify-content-center">
         {/* Left Arrow */}
         <li
@@ -29,6 +29,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
           style={{
             borderRadius: '50%',
             margin: '0 5px',
+            padding: '7px 15px',
             cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
           }}
         >
@@ -44,7 +45,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
               transition: 'background-color 0.3s, color 0.3s',
             }}
           >
-            <FaArrowLeft />
+            <FaArrowLeft style={{ marginTop: '-3px' }} />
           </button>
         </li>
 
@@ -67,7 +68,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
                 color: currentPage === number ? 'white' : 'black',
                 borderRadius: '50%',
                 fontWeight: 'bold',
-                padding: '10px 15px',
+                padding: '7px 15px',
                 transition: 'background-color 0.3s, color 0.3s',
               }}
             >
@@ -82,6 +83,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
           style={{
             borderRadius: '50%',
             margin: '0 5px',
+            padding: '7px 15px',
             cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
           }}
         >
@@ -97,7 +99,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
               transition: 'background-color 0.3s, color 0.3s',
             }}
           >
-            <FaArrowRight />
+            <FaArrowRight style={{ marginTop: '-3px' }} />
           </button>
         </li>
       </ul>

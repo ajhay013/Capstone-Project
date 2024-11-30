@@ -35,7 +35,7 @@ function EmployerSidebar() {
                 minWidth: '250px', 
                 height: '105vh', 
                 marginRight: '25px',
-                backgroundColor: '#f0f8ff'
+                backgroundColor: '#f0f8ff',
             }}
         >
             <h2 style={{ fontSize: '16px', marginTop: '50px', marginBottom: '30px', color: '#606060' }}>

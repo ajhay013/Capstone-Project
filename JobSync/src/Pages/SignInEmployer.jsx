@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight, faUser, faBuilding } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faUser, faBuilding, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom'; 
 import { postToEndpoint } from '../components/apiService';
 import { useAuth } from '../AuthContext';
@@ -16,11 +16,36 @@ function SignInEmployer() {
     const [passwordError, setPasswordError] = useState('');
     const [isEmailCorrect, setIsEmailCorrect] = useState(null);
     const [isPasswordCorrect, setIsPasswordCorrect] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [loadingPage, setLoadingPage] = useState(true);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoadingPage(false); 
+        }, 500); 
+    
+        return () => clearTimeout(timer);
+    }, []);
     
     const [inputs, setInputs] = useState({
         email: '',
         password: ''
     });
+    
+    const [passwordVisible, setPasswordVisible] = useState(false);
+
+    useEffect(() => {
+        if (formType === 'employer') {
+            const savedEmail = localStorage.getItem('employer_email');
+            const savedPassword = localStorage.getItem('employer_password');
+            if (savedEmail && savedPassword) {
+                setInputs({ email: savedEmail, password: savedPassword });
+                setIsRemembered(true); 
+            }
+        } else {
+            setInputs({ email: '', password: '' });
+            setIsRemembered(false);
+        }
+    }, [formType]);
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -40,16 +65,20 @@ function SignInEmployer() {
     const handleSubmit = (event) => {
         event.preventDefault();
     
+        setLoading(true); 
+    
         const loginData = new URLSearchParams({
             email: inputs.email,
             password: inputs.password,
             formType
         });
-
+    
         postToEndpoint('/login.php', loginData, {
             'Content-Type': 'application/x-www-form-urlencoded'
         })
         .then(response => {
+            setLoading(false);  
+    
             if (response.data.success) {
                 const userData = {
                     id: response.data.employer_id,
@@ -57,32 +86,41 @@ function SignInEmployer() {
                     userType: response.data.userType
                 };
                 login(userData); 
-        
+    
+                if (isRemembered) {
+                    localStorage.setItem('employer_email', inputs.email);
+                    localStorage.setItem('employer_password', inputs.password);
+                } else {
+                    localStorage.removeItem('employer_email');
+                    localStorage.removeItem('employer_password');
+                }
+    
                 if (response.data.profileIncomplete) {
                     navigate('/employer/companyprofile');
                 } else {
                     navigate('/employer/overview');
                 }
             } else {
-                    const errorMessage = response.data.error || '';
-                    
-                    if (typeof errorMessage === 'string' && errorMessage.includes('email')) {
-                        setEmailError("Incorrect email");
-                        setIsEmailCorrect(false);
-                    } else if (typeof errorMessage === 'string' && errorMessage.includes('password')) {
-                        setPasswordError("Incorrect password");
-                        setIsPasswordCorrect(false);
-                    } else {
-                        alert(response.data.error || "Login failed. Please try again.");
-                    }
+                const errorMessage = response.data.error || '';
+    
+                if (typeof errorMessage === 'string' && errorMessage.includes('email')) {
+                    setEmailError("Incorrect email");
+                    setIsEmailCorrect(false);
+                } else if (typeof errorMessage === 'string' && errorMessage.includes('password')) {
+                    setPasswordError("Incorrect password");
+                    setIsPasswordCorrect(false);
+                } else {
+                    alert(response.data.error || "Login failed. Please try again.");
                 }
-            })
-            .catch(error => {
-                console.error("There was an error submitting the form!", error);
-                alert("An error occurred while submitting the form. Please try again.");
-            });
+            }
+        })
+        .catch(error => {
+            setLoading(false); 
+            console.error("There was an error submitting the form!", error);
+            alert("An error occurred while submitting the form. Please try again.");
+        });
     };
-
+    
     const renderFormFields = () => (
         <>
             <div className="mb-3">
@@ -92,19 +130,38 @@ function SignInEmployer() {
                     className={`form-control register ${emailError ? 'border border-danger' : isEmailCorrect ? 'border border-success' : ''}`}
                     placeholder="Email"
                     onChange={handleChange}
+                    value={inputs.email}
                     required
                 />
                 {emailError && <small className="text-danger">{emailError}</small>}
             </div>
             <div className="mb-3">
-                <input
-                    type="password"
-                    name='password'
-                    className={`form-control register ${passwordError ? 'border border-danger' : isPasswordCorrect ? 'border border-success' : ''}`}
-                    placeholder="Password"
-                    onChange={handleChange}
-                    required
-                />
+                <div className="position-relative">
+                    <input
+                        type={passwordVisible ? 'text' : 'password'}
+                        name='password'
+                        className={`form-control register ${passwordError ? 'border border-danger' : isPasswordCorrect ? 'border border-success' : ''}`}
+                        placeholder="Password"
+                        onChange={handleChange}
+                        value={inputs.password}
+                        required
+                    />
+                    <div
+                        className="position-absolute"
+                        style={{
+                            right: '18px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: '#696969',
+                            cursor: 'pointer',
+                            zIndex: 2, 
+                            pointerEvents: 'auto',
+                        }}
+                        onClick={() => setPasswordVisible(!passwordVisible)} 
+                    >
+                        <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
+                    </div>
+                </div>
                 {passwordError && <small className="text-danger">{passwordError}</small>}
             </div>
             <div className="d-flex justify-content-between mb-3">
@@ -128,6 +185,16 @@ function SignInEmployer() {
     );
 
     return (
+        <>
+        {loadingPage && (
+            <div id="preloader">
+            </div>
+        )}
+        {loading && (
+            <div id="preloader">
+                <div className="loader"></div>
+            </div>
+        )}
         <div className="container mt-5">
             <div className="row">
                 <div className="col-md-6 mt-5">
@@ -194,6 +261,7 @@ function SignInEmployer() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

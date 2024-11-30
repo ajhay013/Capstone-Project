@@ -3,21 +3,33 @@ import { Container, Row, Col, Button, Card, Modal } from 'react-bootstrap';
 import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaRegBookmark, FaArrowRight, FaBusinessTime, FaSuitcase } from 'react-icons/fa';
 import { FaLink, FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getFromEndpoint } from '../components/apiService';
 import DOMPurify from 'dompurify'; 
+import { useAuth } from '../AuthContext'; 
 import 'react-quill/dist/quill.snow.css';
+import '../css/loader.css';
 
 
 const JobPosting = () => {
+    const { user } = useAuth(); 
+    const navigate = useNavigate();
+    const location = useLocation();
   const [modalShow, setModalShow] = useState(false);
   const [jobTitle, setJobTitle] = useState("Senior UX Designer");
 
-  const handleShowModal = () => setModalShow(true);
-  const handleCloseModal = () => setModalShow(false);
   const { job_id } = useParams();
   const [job, setJob] = useState(null);
 
+  const handleShowModal = () => {
+    if (!user) {
+        navigate('/candidate_login', { state: { from: `/jobdetails/${job_id}` } });
+    } else {
+      setModalShow(true);
+    }
+  };
+
+  const handleCloseModal = () => setModalShow(false);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -26,14 +38,12 @@ const JobPosting = () => {
         if (response.data && response.data.length > 0) {
           const jobData = response.data[0];
   
-          console.log("Raw selectedBenefits:", jobData.selectedBenefits);
   
           if (jobData.selectedBenefits && jobData.selectedBenefits.trim() !== '') {
             jobData.selectedBenefits = jobData.selectedBenefits.split(',')
               .map(item => item.trim())
               .filter(item => item && item !== ' ');
   
-            console.log("Cleaned selectedBenefits:", jobData.selectedBenefits);
           } else {
             jobData.selectedBenefits = null;
           }
@@ -54,11 +64,7 @@ const JobPosting = () => {
   
   
 if (!job) return (
-  <div className="d-flex justify-content-center">
-    <div className="spinner-border" role="status">
-      <span className="visually-hidden">Loading...</span>
-    </div>
-  </div>
+      <div id="preloader"></div>
 );
     const sanitizedDescription = DOMPurify.sanitize(job.jobDescription);
 
@@ -93,7 +99,6 @@ if (!job) return (
     navigator.clipboard.writeText(window.location.href); 
     alert("Link copied to clipboard!");
   };
-  console.log("Selected Benefits:", job.selectedBenefits);
 
   
   return (
@@ -130,17 +135,17 @@ if (!job) return (
                   <Row className="text-center gx-4">
                     <Col xs={12} md={6} className="d-flex flex-column align-items-center border-end">
                       <FaMoneyBillWave
-                        style={{ color: '#0A65CC', width: '30px', height: '30px' }}
+                        style={{ color: '#2a93ff', width: '30px', height: '30px' }}
                       />
-                      <strong className="mt-2" style={{fontSize: '19px', fontWeight: '500'}}>Salary</strong>
+                      <strong className="mt-2" style={{fontSize: '19px', fontWeight: '500', color: '#4d4d4d'}}>Salary</strong>
                       <div style={{ color: '#0BA02C', fontSize: '18px' , fontWeight: '500' }}>₱{job.minSalary} - ₱{job.maxSalary}</div>
                       <div style={{ color: '#868686', fontSize: '14px' , fontWeight: '500' }}>{job.salaryType} Salary</div>
                     </Col>
                     <Col xs={12} md={6} className="d-flex flex-column align-items-center">
                       <FaMapMarkerAlt
-                        style={{ color: '#0A65CC', width: '30px', height: '30px' }}
+                        style={{ color: '#2a93ff', width: '30px', height: '30px' }}
                       />
-                      <strong className="mt-2"style={{fontSize: '19px', fontWeight: '500'}}>Job Location</strong>
+                      <strong className="mt-2"style={{fontSize: '19px', fontWeight: '500', color: '#4d4d4d'}}>Job Location</strong>
                       <div style={{ color: '#868686', fontSize: '15px', fontWeight: '500'}}>{job.city}</div>
                     </Col>
                     
@@ -150,73 +155,73 @@ if (!job) return (
               
               <Card className="job-benefits mt-4 mx-auto" style={{ width: '110%', padding: '20px' }}>
                 <Card.Body>
-                  <h4 className="text-start" style={{ fontSize: '22px' }}>Job Benefits</h4>
+                  <h4 className="text-start" style={{ fontSize: '22px', color: '#4d4d4d' }}>Job Benefits</h4>
                   <JobBenefits selectedBenefits={job.selectedBenefits} />
                 </Card.Body>
               </Card>
 
             <Card className="job-overview mt-4 mx-auto" style={{ width: '110%', padding: '20px'}}>
               <Card.Body>
-                <h4 className="text-start" style={{ fontSize: '22px'}}>Job Overview</h4> 
+                <h4 className="text-start" style={{ fontSize: '22px', color: '#4d4d4d'}}>Job Overview</h4> 
                 <Row className="text-start mt-3" style={{ fontWeight: '500'}}> 
                 <Col xs={4}>
-                  <FaCalendarAlt className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }} />
+                  <FaCalendarAlt className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
                   <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Job Posted</div>
-                  <div>{formatDate(job.job_created_at)}</div>
+                  <div style={{color:'#4d4d4d'}}>{formatDate(job.job_created_at)}</div>
                 </Col>
                   <Col xs={4}>
-                    <FaBusinessTime className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+                    <FaBusinessTime className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }}/>
                     <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px'}}>Job Expires</div>
-                    <div>{formatDate(job.expirationDate)}</div>
+                    <div style={{color:'#4d4d4d'}}>{formatDate(job.expirationDate)}</div>
                   </Col>
                   <Col xs={4}>
-                    <FaSuitcase className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+                    <FaSuitcase className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }}/>
                     <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px'}}>Job Level</div>
-                    <div>{job.jobLevel}</div>
+                    <div style={{color:'#4d4d4d'}}>{job.jobLevel}</div>
                   </Col>
                 </Row>
                 <Row className="text-start mt-3" style={{ fontWeight: '500'}}> 
                   <Col xs={4}>
-                    <FaBriefcase className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }} />
+                    <FaBriefcase className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
                     <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px'}}>Experience</div>
-                    <div>{job.experience}</div>
+                    <div style={{color:'#4d4d4d'}}>{job.experience}</div>
                   </Col>
                   <Col xs={4}>
-                    <FaGraduationCap className="me-2" style={{ color: '#0A65CC', width: '30px', height: '25px' }}/>
+                    <FaGraduationCap className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }}/>
                     <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px'}}>Education</div>
-                    <div>{job.education}</div>
+                    <div style={{color:'#4d4d4d'}}>{job.education}</div>
                   </Col>
                 </Row>
                 <hr className='text-muted'/>
                 <div className="mt-4">
-                  <h5 style={{ textAlign: 'left' }}>Share this Job:</h5>
+                  <h5 style={{ textAlign: 'left', color:'#4d4d4d' }}>Share this Job:</h5>
                   <div className="d-flex justify-content-start align-items-center" style={{marginTop: '-16px'}}>
                     <Button 
                       variant="primary" 
                       onClick={copyLink} 
                       aria-label="Copy Link" 
-                      style={{ padding: '5px 15px', marginRight: '10px', backgroundColor: '#ddf2ff', color: '#0A65CC' , border: 'none' }}
+                      style={{ padding: '5px 15px', marginRight: '10px', backgroundColor: '#ddf2ff', color: '#2a93ff' , border: 'none' }}
                     >
                       <FaLink className="me-2" style={{ width: '20px', height: '20px' }} />
                       Copy Link
                     </Button>
                     <Button variant="link" aria-label="Share on LinkedIn" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
-                      <FaLinkedin className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
+                      <FaLinkedin className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
                     </Button>
                     <Button variant="link" aria-label="Share on Facebook" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
-                      <FaFacebook className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
+                      <FaFacebook className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
                     </Button>
                     <Button variant="link" aria-label="Share on Twitter" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
-                      <FaTwitter className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
+                      <FaTwitter className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
                     </Button>
                     <Button variant="link" aria-label="Share via Email" style={{ padding: '0', maxWidth: '50px' }}>
-                      <FaEnvelope className="me-0" style={{ color: '#0A65CC', width: '20px', height: '20px' }} />
+                      <FaEnvelope className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
                     </Button>
                   </div>
                 </div>
                 <hr className='text-muted' style={{marginTop: '20px'}}/>
                 <div className="mt-4">
-                  <h5 style={{ textAlign: 'left' }}>Address</h5>
+                  <h5 style={{ textAlign: 'left', color:'#4d4d4d' }}>Address</h5>
                   <div className="d-flex justify-content-center align-items-center" style={{ textAlign: 'center' }}>
                     <div
                       style={{
@@ -264,7 +269,7 @@ if (!job) return (
 
 const FavoritesAndApplyButton = ({ handleShowModal, setJobTitle }) => {
   return (
-    <div className="d-flex mb-2 mt-5 ms-auto" style={{width: '110%', width: '236px'}}>
+    <div className="d-flex mb-2 mt-5 ms-auto" style={{width: '236px'}}>
       <Button
         variant="light"
         size="lg"
@@ -284,6 +289,7 @@ const FavoritesAndApplyButton = ({ handleShowModal, setJobTitle }) => {
         }}
       >
         Apply Now <FaArrowRight style={{ marginLeft: '15px' }} />
+        
       </Button>
     </div>
   );

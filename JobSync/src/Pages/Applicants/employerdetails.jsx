@@ -1,46 +1,120 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
-import { FaCalendarAlt, FaBuilding, FaUsers, FaIndustry, FaGlobe, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaCalendarAlt, FaBuilding, FaUsers, FaIndustry, FaGlobe, FaPhone, FaEnvelope, FaArrowRight } from 'react-icons/fa';
+import { useParams } from "react-router-dom";
+import DOMPurify from 'dompurify'; 
+import axios from "axios"; 
 
 const CompanyProfileModal = () => {
+  const { employerId } = useParams();
+  const [companyProfile, setCompanyProfile] = useState(null);
+  const [error, setError] = useState(null);
+
+
+  
+  useEffect(() => {
+    const decodedEmployerId = decodeURIComponent(employerId);  
+  
+    const fetchCompanyData = async () => {
+      if (!decodedEmployerId) {
+        setError("No Employer ID provided.");
+        return;
+      }
+  
+      try {
+        const response = await axios.get("http://localhost:80/capstone-project/jobsync/src/api/getCompanyProfile.php", {
+          params: { employerId: decodedEmployerId }
+        });
+  
+        if (response.data && response.data.status === "success" && response.data.data) {
+          setCompanyProfile(response.data.data);
+        } else {
+          setError("Invalid data format received from the API.");
+        }
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+        setError("Error fetching company data.");
+      }
+    };
+  
+    fetchCompanyData();
+  }, [employerId]);
+  
+
+  if (!employerId) {
+    return <p>No employer ID provided.</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  if (!companyProfile) {
+    return <div id="preloader">
+    </div>;
+  }
+
+  const sanitizedDescription = DOMPurify.sanitize(companyProfile.about_us);
+  const decodeHtmlEntities = (text) => {
+    const textarea = document.createElement("textarea");
+    textarea.innerHTML = text;
+    return textarea.value;
+  };
+  
+  const stripHtmlTags = (html) => html.replace(/<[^>]*>/g, "");
+  
+  const cleanText = (text) => stripHtmlTags(decodeHtmlEntities(text));
+
   return (
     <>
+    
       {/* Banner Section */}
-      <Card className="mb-3 shadow">
+      <Card 
+        className="mb-3 shadow" 
+        style={{
+          marginTop: '4.7rem', 
+          width: '110%', 
+          position: 'relative',
+          left: '50%',
+          transform: 'translateX(-50%)'
+        }}
+      >
         <Card.Img
           variant="top"
-          src="./src/assets/riotbanner.jpg"
+          src={companyProfile.banner}
           alt="Company Banner"
           style={{
             width: "100%", 
             height: "250px",
             objectFit: "cover", 
-            marginTop: "30px",
           }}
         />
       </Card>
 
       {/* Company Information Section */}
-      <Container style={{ marginTop: "-60px", width: "90%" }}>
-        <Card className="mb-3 shadow">
+      <Container style={{ marginTop: "-70px", width: "98%" }}>
+        <Card className="shadow" style={{height: '113px'}}>
           <Card.Body>
             <Row className="align-items-center">
               <Col xs="auto" className="d-flex align-items-center">
                 <img
-                  src="./src/assets/riot.png"
+                  src={companyProfile.logo}
                   alt="Company Logo"
                   className="mr-3 rounded-circle"
-                  width="50"
-                  height="50"
+                  width="75"
+                  height="75"
                 />
-                <div>
-                  <h3 className="mb-0" style={{ marginRight: "px" }}>Riot Games</h3>
-                  <p className="text-muted mb-0" style={{ marginLeft: "10px"}} >Information Technology (IT)</p>
+                <div style={{textAlign: 'left', marginLeft: '12px'}}>
+                  <h3 className="mb-0" style={{ marginRight: "px" }}>{companyProfile.company_name}</h3>
+                  <p className="text-muted mb-0">{companyProfile.industry}</p>
                 </div>
               </Col>
-              <Col className="text-right" style={{ marginLeft: "50%" }}>
-                <Button variant="primary">View Open Position</Button>
+              <Col className="text-end" style={{marginRight: '10px'}}>
+                <Button variant="primary" style={{ width: '220px', height: '50px', borderRadius: '3px' }}>
+                  View Open Position <FaArrowRight style={{ marginLeft: '10px' }} />
+                </Button>
               </Col>
+
             </Row>
           </Card.Body>
         </Card>
@@ -51,36 +125,29 @@ const CompanyProfileModal = () => {
         <Row className="mt-4">
           <Col md={8}>
             {/* Single Card for Description, Benefits, Vision, and Share Profile */}
-            <Card className="mb-4">
-              <Card.Body>
+            <Card className="mb-4" style={{border: 'none'}}>
+              <Card.Body style={{padding: '30px', paddingTop: '0'}}>
                 {/* Description Section */}
-                <h5 className="text-start">Description</h5>
-                <p className="text-start text-justify">
-                  Join our vibrant team and apply your creativity and expertise in UI/UX design in a supportive and dynamic environment. Our workplace culture is centered around mutual respect and a commitment to a healthy work/life balance.
-                  Join our vibrant team and apply your creativity and expertise in UI/UX design in a supportive and dynamic environment. Our workplace culture is centered around mutual respect and a commitment to a healthy work/life balance.
-                </p>
-
-                {/* Add space between sections */}
+                <h4 className="text-start">About us</h4>
+                <p className="text-start text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }} />
                 <div className="my-4"></div>
 
                 {/* Company Benefits Section */}
-                <h5 className="text-start">Company Benefits</h5>
+                {/* <h5 className="text-start">Company Benefits</h5>
                 <ul className="text-start text-justify">
                   <li>In hac habitasse platea dictumst.</li>
                   <li>Sed aliquet, arcu eget pretium bibendum, odio enim rutrum arcu.</li>
                   <li>Vestibulum id vestibulum odio.</li>
                   <li>Etiam libero ante accumsan id tellus venenatis rhoncus vulputate velit.</li>
                   <li>Nam condimentum sit amet ipsum id malesuada.</li>
-                </ul>
+                </ul> */}
 
                 {/* Add space between sections */}
                 <div className="my-4"></div>
 
                 {/* Company Vision Section */}
                 <h5 className="text-start">Company Vision</h5>
-                <p className="text-start text-justify">
-                  Praesent ultrices mauris at nisl euismod, ut venenatis augue blandit...
-                </p>
+                  <p className="text-start text-justify">{cleanText(companyProfile.company_vision)}</p>
 
                 {/* Add space between sections */}
                 <div className="my-4"></div>
@@ -105,22 +172,22 @@ const CompanyProfileModal = () => {
           {/* Right Column */}
           <Col md={4}>
             {/* Company Info Section inside a Card */}
-            <Card className="mb-4">
-              <Card.Body>
+            <Card className="mb-4" style={{borderColor: '#5cccff',}}>
+              <Card.Body style={{padding: '26px'}}>
                 <Row>
                   <Col xs={12} md={6} className="mb-3 text-start">
                     <div className="d-flex flex-column align-items-start">
                       <FaCalendarAlt size={20} style={{ color: '#007bff' }} />
                       <p className="mb-0" style={{ color: '#757575' }}>Founded In</p>
-                      <p className="mb-0" style={{ color: '#18191C', fontWeight: 'bold' }}>14 June, 2021</p>
+                      <p className="mb-0" style={{ color: '#18191C', fontWeight: '500' }}>{companyProfile.year_establishment}</p>
                     </div>
                   </Col>
 
                   <Col xs={12} md={6} className="mb-3 text-start">
                     <div className="d-flex flex-column align-items-start">
                       <FaBuilding size={20} style={{ color: '#007bff' }} />
-                      <p className="mb-0" style={{ color: '#757575' }}>Organization Type</p>
-                      <p className="mb-0" style={{ color: '#18191C', fontSize: '15px', fontWeight: 'bold' }}>Private Company</p>
+                      <p className="mb-0" style={{ color: '#757575' }}>Organization</p>
+                      <p className="mb-0" style={{ color: '#18191C', fontSize: '15px', fontWeight: '500' }}>{companyProfile.organization}</p>
                     </div>
                   </Col>
                 </Row>
@@ -130,15 +197,15 @@ const CompanyProfileModal = () => {
                     <div className="d-flex flex-column align-items-start">
                       <FaUsers size={20} style={{ color: '#007bff' }} />
                       <p className="mb-0" style={{ color: '#757575' }}>Team Size</p>
-                      <p className="mb-0" style={{ color: '#18191C', fontWeight: 'bold' }}>120-200 Candidates</p>
+                      <p className="mb-0" style={{ color: '#18191C', fontWeight: '500' }}>{companyProfile.team_size}</p>
                     </div>
                   </Col>
 
                   <Col xs={12} md={6} className="mb-3 text-start">
                     <div className="d-flex flex-column align-items-start">
                       <FaIndustry size={20} style={{ color: '#007bff' }} />
-                      <p className="mb-0" style={{ color: '#757575' }}>Industry Type</p>
-                      <p className="mb-0" style={{ color: '#18191C', fontWeight: 'bold' }}>Technology</p>
+                      <p className="mb-0" style={{ color: '#757575' }}>Industry</p>
+                      <p className="mb-0" style={{ color: '#18191C', fontWeight: '500' }}>{companyProfile.industry}</p>
                     </div>
                   </Col>
                 </Row>
@@ -146,7 +213,7 @@ const CompanyProfileModal = () => {
             </Card>
 
             {/* Contact Information Section */}
-            <Card className="mb-4">
+            <Card className="mb-4" style={{borderColor: '#5cccff',}}>
               <Card.Body style={{ padding: '20px' }}>
                 <h5 className="text-start mb-4">Contact Information</h5>
 
@@ -155,8 +222,8 @@ const CompanyProfileModal = () => {
                   <div className="d-flex align-items-center">
                     <FaGlobe size={25} style={{ color: '#007bff'}} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <h6 className="mb-0" style={{ marginBottom: '5px', marginRight: '100px' }}>Website</h6>
-                      <p className="mb-0" style={{ marginLeft: '15px'}}><a href="https://www.estherhoward.com">www.estherhoward.com</a></p>
+                      <h6 className="mb-0" style={{ textAlign: 'left', marginLeft: '15px' }}>Website</h6>
+                      <p className="mb-0" style={{ marginLeft: '15px'}}><a href={companyProfile.company_website} target="_blank">{companyProfile.company_website}</a></p>
                     </div>
                   </div>
                 </div>
@@ -166,8 +233,8 @@ const CompanyProfileModal = () => {
                   <div className="d-flex align-items-center">
                     <FaPhone size={25} style={{ color: '#007bff'}} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <h6 className="mb-0" style={{ marginBottom: '5px', marginRight: '55px' }}>Phone</h6>
-                      <p className="mb-0" style={{ marginLeft: '15px'}}>+1 202-555-0141</p>
+                      <h6 className="mb-0" style={{ textAlign: 'left', marginLeft: '15px' }}>Phone</h6>
+                      <p className="mb-0" style={{ marginLeft: '15px'}}>{companyProfile.contact_number}</p>
                     </div>
                   </div>
                 </div>
@@ -177,8 +244,8 @@ const CompanyProfileModal = () => {
                   <div className="d-flex align-items-center">
                     <FaEnvelope size={25} style={{ color: '#007bff'}} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <h6 className="mb-0" style={{ marginBottom: '5px', marginRight: '130px' }}>Email</h6>
-                      <p className="mb-0" style={{ marginLeft: '20px'}}>esther.howard@gmail.com</p>
+                      <h6 className="mb-0" style={{ textAlign: 'left', marginLeft: '15px' }}>Email</h6>
+                      <p className="mb-0" style={{ marginLeft: '15px'}}>{companyProfile.company_email}</p>
                     </div>
                   </div>
                 </div>
@@ -186,7 +253,7 @@ const CompanyProfileModal = () => {
             </Card>
 
               {/* Follow Us Section */}
-              <Card className="mb-4">
+              <Card className="mb-4" style={{borderColor: '#5cccff',}}>
               <Card.Body>
                 <h6 className="text-start">Follow us on:</h6>
                 <div className="d-flex" style={{ paddingTop: '5px' }}>
