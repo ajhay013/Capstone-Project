@@ -33,6 +33,16 @@ import ApplicantSettings from './Pages/Applicants/ApplicantDashboard/ApplicantSe
 
 import EmployerDetails from './Pages/Applicants/employerdetails';
 
+import ApplicantProfile from './Pages/Applicants/applicantprofile';
+
+
+{/* Applicant Profile Tabs */}
+
+import Personal from './pages/applicants/applicantprofile/personal';
+import Profile from './Pages/Applicants/ApplicantProfile/address';
+import Socmedlinks from './pages/applicants/applicantprofile/socmedlinks';
+
+
 {/* Employer Dashboard Pages */}
 import EmployerOverview from './Pages/Employer/EmployerDashboard/EmployerOverview';
 import EmployerProfile from './Pages/Employer/EmployerDashboard/EmployerProfile';
@@ -44,13 +54,16 @@ import EmployerSettings from './Pages/Employer/EmployerDashboard/EmployerSetting
 import AccountSettings from './pages/employer/employerdashboard/employersettings/accountsettings';
 
 
-import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/EmployerMessage';
+// import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/EmployerMessage';
 
 
 import ViewApplications from './Pages/Employer/EmployerDashboard/ViewApplications';
 
 import FindApplicant from './Pages/Employer/findapplicant';
 import Applications from './Pages/Employer/Applications';
+
+import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/step1';
+import Step2ScreeningQuestions from './Pages/Employer/EmployerDashboard/step2';
 
 {/* Employer Settings Pages */}
 import CompanySettings from './pages/employer/employerdashboard/employersettings/companysettings';
@@ -120,6 +133,7 @@ function Layout({ userId, setUserId }) {
     }
   };
 
+
   const renderHomePage = () => {
     if (!user) {
       return <Home />;
@@ -182,6 +196,15 @@ function Layout({ userId, setUserId }) {
         <Route path='/applicants/applicantsettings' element={<ProtectedRoute> <ApplicantSettings /> </ProtectedRoute>} />
 
         <Route path='/employerdetails' element={<ProtectedRoute> <EmployerDetails /> </ProtectedRoute>} />
+
+        <Route path='/applicantprofile' element={<ProtectedRoute> <ApplicantProfile /> </ProtectedRoute>} />
+
+
+        {/* Applicant Profile Tabs Routing*/}
+
+        <Route path='/personal' element={<ProtectedRoute> <Personal /> </ProtectedRoute>} />
+        <Route path='/profile' element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
+        <Route path='/socmedlinks' element={<ProtectedRoute> <Socmedlinks /> </ProtectedRoute>} />
   
 
       {/* Employer Dashboard Routing */}
@@ -198,6 +221,8 @@ function Layout({ userId, setUserId }) {
 
 
         <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
+        <Route path='/step1' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
+        <Route path='/step2' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} />
       
       {/* Employer Settings Routing */}
         <Route path='/employer/employersettings/companysettings' element={<ProtectedRoute> <CompanySettings /> </ProtectedRoute> } />

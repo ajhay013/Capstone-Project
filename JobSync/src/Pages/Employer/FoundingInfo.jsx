@@ -105,36 +105,50 @@ function FoundingInfo() {
         }}
       >
         <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' , marginBottom: '210px' }}>
-          <Row className="mb-4" style={{ margin: '0' }}>
-            <Col xs={12} md={4}>
-              <Form.Group controlId="formOrganizationType">
-                <strong><Form.Label>Organization Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
-                <Form.Select className='register1'
-                  value={organizationType}
-                  onChange={(e) => setOrganizationType(e.target.value)}
-                >
-                  <option value="">Select organization type</option>
-                  <option value="Private">Private</option>
-                  <option value="Public">Public</option>
-                  <option value="Non-profit">Non-profit</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
+  <Row className="mb-4" style={{ margin: '0' }}>
+    {/* Organization Type */}
+    <Col xs={12} md={4}>
+      <Form.Group controlId="formOrganizationType">
+        <strong><Form.Label>Organization Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
+        <Form.Select className='register1'
+          value={organizationType}
+          onChange={(e) => setOrganizationType(e.target.value)}
+        >
+          <option value="">Select organization type</option>
+          <option value="Private">Private</option>
+          <option value="Public">Public</option>
+          <option value="Non-profit">Non-profit</option>
+          <option value="Government">Government</option>
+          <option value="Start-up">Start-up</option>
+          <option value="Educational">Educational</option>
+        </Form.Select>
+      </Form.Group>
+    </Col>
 
-            <Col xs={12} md={4}>
-              <Form.Group controlId="formIndustryType">
-                <strong><Form.Label>Industry Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
-                <Form.Select className='register1'
-                  value={industryType}
-                  onChange={(e) => setIndustryType(e.target.value)}
-                >
-                  <option value="">Select industry type</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Healthcare">Healthcare</option>
-                  <option value="Finance">Finance</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
+    {/* Industry Type */}
+    <Col xs={12} md={4}>
+      <Form.Group controlId="formIndustryType">
+        <strong><Form.Label>Industry Type <span style={{ color: 'red' }}>*</span></Form.Label></strong>
+        <Form.Select className='register1'
+          value={industryType}
+          onChange={(e) => setIndustryType(e.target.value)}
+        >
+          <option value="">Select industry type</option>
+          <option value="Technology">Technology</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Finance">Finance</option>
+          <option value="Education">Education</option>
+          <option value="Retail">Retail</option>
+          <option value="Manufacturing">Manufacturing</option>
+          <option value="Hospitality">Hospitality</option>
+          <option value="Agriculture">Agriculture</option>
+          <option value="Energy">Energy</option>
+        </Form.Select>
+      </Form.Group>
+    </Col>
+
+
+
 
             <Col xs={12} md={4}>
               <Form.Group controlId="formTeamSize">
