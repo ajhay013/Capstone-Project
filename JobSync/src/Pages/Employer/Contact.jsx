@@ -17,6 +17,9 @@ const CompanyProfile = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [location, setLocation] = useState('');
   const [contactError, setContactError] = useState('');
+  const [loading, setLoading] = useState(false); 
+  const [city, setCity] = useState('');
+
 
   const isFormValid = contactNumber && emailAddress && location;
 
@@ -34,27 +37,35 @@ const CompanyProfile = () => {
 
     setContactNumber(value);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
+  
     try {
       const response = await postToEndpoint('/companyContact.php', {
         employer_id: user?.id,
         contactNumber,
         emailAddress,
         location,
+        city,  
       });
-
+  
+      setLoading(false);
+  
       if (response.data.success) {
         navigate('/complete');
       } else {
         alert('Failed to save data');
       }
     } catch (error) {
+      setLoading(false);
       console.error('Error saving data:', error);
       alert('An error occurred while saving data');
     }
   };
+  
+
 
   return (
     <Container
@@ -73,12 +84,12 @@ const CompanyProfile = () => {
           <Col xs={12}>
             <Form.Group controlId="formLocation">
               <Form.Label>
-                <strong>Map Location <span style={{ color: 'red' }}>*</span></strong>
+                <strong>Address <span style={{ color: 'red' }}>*</span></strong>
               </Form.Label>
               <Form.Control
                 className="register1"
                 type="text"
-                placeholder="Enter company location"
+                placeholder="Enter company address"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 style={{ padding: '10px', width: '100%' }}
@@ -86,6 +97,25 @@ const CompanyProfile = () => {
             </Form.Group>
           </Col>
         </Row>
+
+        <Row className="mb-4">
+          <Col xs={12}>
+            <Form.Group controlId="formCity">
+              <Form.Label>
+                <strong>City <span style={{ color: 'red' }}>*</span></strong>
+              </Form.Label>
+              <Form.Control
+                className="register1"
+                type="text"
+                placeholder="Enter city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                style={{ padding: '10px', width: '100%' }}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
         
         <Row className="mb-4">
           <Col xs={12}>

@@ -4,7 +4,7 @@ import JobDetailsModal from '../components/jobdetailsmodal';
 import Pagination from '../components/Pagination'; // Import Pagination
 
 const jobData = [
-    { id: 1, logo: '../../src/assets/riot.png', name: 'Visual Designer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 100,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Active' },
+    { id: 1, logo: '../../src/assets/riot.png', name: 'Visual Designer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 100k- 120k', dateApplied: 'Dec 7, 2019 23:26', status: 'Active' },
     { id: 2, logo: '../../src/assets/riot.png', name: 'Product Manager', location: 'San Francisco, CA', jobType: 'Part-time', salary: '₱ 80,000', dateApplied: 'Feb 2, 2019 19:28', status: 'Active' },
     { id: 3, logo: '../../src/assets/riot.png', name: 'Graphic Designer', location: 'Caloocan City', jobType: 'Freelance', salary: '₱ 60,000', dateApplied: 'Feb 2, 2019 19:28', status: 'Expired' },
     { id: 4, logo: '../../src/assets/riot.png', name: 'Software Engineer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 100,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Active' },
@@ -41,7 +41,7 @@ const JobRow = ({ job, onViewDetails }) => {
 
     return (
         <tr key={job.id} className="border-bottom">
-            <td>
+            <td style={{padding: '17px'}}>
                 <div className="d-flex align-items-center">
                     <img
                         src={job.logo}
@@ -51,27 +51,27 @@ const JobRow = ({ job, onViewDetails }) => {
                     />
                     <div>
                         <div className="d-flex justify-content-between align-items-center flex-wrap">
-                            <h6 className="mb-0" style={{ padding: '5px' }}>{job.name}</h6>
+                            <h6 className="mb-0" style={{ padding: '5px', color: '#373737' }}>{job.name}</h6>
                             <span className="badge"
                                   style={{
                                     background: '#cde8ff',
                                     padding: '7px 13px',
-                                    color: '#656565',
-                                    fontWeight: '700',
+                                    color: '#0076df',
+                                    fontWeight: '600',
                                     borderRadius: '50px',
-                                    fontSize: '12px'
+                                    fontSize: '11px'
                                   }}
                             >{job.jobType}</span>
                         </div>
                         <div className="d-flex align-items-center flex-wrap">
-                            <i className="fas fa-location-dot text-muted me-1"></i>
-                            <small className="text-muted me-2">{job.location}</small>
-                            <span className="ms-auto">{job.salary}</span>
+                            <i className="fas fa-location-dot me-1" style={{color: '#4198e5'}}></i>
+                            <small className="text-muted me-2">{job.location}</small> <span className='text-muted'>|</span>
+                            <span className="text-muted" style={{marginLeft: '10px'}}>{job.salary}</span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td><span 
+            <td style={{padding: '17px'}}><span 
                 style={{
                     marginTop: '15px',
                     display: 'inline-block',
@@ -80,7 +80,7 @@ const JobRow = ({ job, onViewDetails }) => {
                     fontSize: '14px'
                 }}
             >{job.dateApplied}</span></td>
-            <td>
+            <td style={{padding: '17px'}}>
                 <span
                     style={{
                         color: statusColor,
@@ -95,7 +95,7 @@ const JobRow = ({ job, onViewDetails }) => {
                     {job.status}
                 </span>
             </td>
-            <td>
+            <td style={{padding: '17px'}}>
                 <button 
                     className="btn btn-sm btn-light text-primary" 
                     style={{
@@ -144,10 +144,10 @@ function AppliedJobsTable() {
                 <table className="table" style={{ width: '100%', minWidth: '1000px' }}>
                     <thead className="thead-light">
                         <tr>
-                            <th style={{color: '#676767', background: '#ebebebc2'}}>Job</th>
-                            <th style={{color: '#676767', background: '#ebebebc2'}}>Date Applied</th>
-                            <th style={{color: '#676767', background: '#ebebebc2'}}>Status</th>
-                            <th style={{color: '#676767', background: '#ebebebc2'}}>Action</th>
+                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>JOB</th>
+                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>DATE APPLIED</th>
+                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>STATUS</th>
+                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>

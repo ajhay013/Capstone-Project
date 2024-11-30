@@ -39,16 +39,18 @@ function RegistrationForm() {
     const handleChange = (event) => {
         const { name, value } = event.target;
         setInputs(values => ({ ...values, [name]: value }));
-
-        if (name === 'firstname' || name === 'lastname' || name === 'middlename' || name === 'suffix') {
+    
+        if (name === 'firstname' || name === 'lastname') {
+            setNameError(prevErrors => ({ ...prevErrors, [name]: '' }));
             const nameRegex = /^[A-Za-z\s]*$/;
             if (!nameRegex.test(value) && value !== '') {
                 setNameError(prevErrors => ({ ...prevErrors, [name]: "Name cannot contain numbers." }));
-            } else {
-                setNameError(prevErrors => ({ ...prevErrors, [name]: '' }));
+            }
+            if (value.length < 2) {
+                setNameError(prevErrors => ({ ...prevErrors, [name]: `${name.charAt(0).toUpperCase() + name.slice(1)} must be at least 2 characters.` }));
             }
         }
-    
+        
         if (name === 'password') {
             const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
             setPasswordError(passwordRegex.test(value) ? '' : "Password must be at least 8 characters, one uppercase, lowercase, numbers, and a special character.");
@@ -59,13 +61,13 @@ function RegistrationForm() {
         }
     
         if (name === 'contact') {
-            const contactRegex = /^[1-9]\d{0,9}$/; 
+            const contactRegex = /^[1-9]\d{0,9}$/;
             if (value.length === 10) {
                 setContactError('');
             } else if (!contactRegex.test(value) && value !== '') {
                 setContactError("Contact number must be 10 digits long and cannot start with 0");
             } else {
-                setContactError(''); 
+                setContactError('');
             }
         }
     };
@@ -76,16 +78,24 @@ function RegistrationForm() {
         const nameRegex = /^([A-Z][a-zA-Z]*(\s[A-Z][a-zA-Z]*)?)$/;
         let errors = { firstname: '', lastname: '' };
     
+        if (inputs.firstname.length < 2) {
+            errors.firstname = "Must be at least 2 characters.";
+        }
+        if (inputs.lastname.length < 2) {
+            errors.lastname = "Must be at least 2 characters.";
+        }
+    
         if (!nameRegex.test(inputs.firstname || '')) {
-            errors.firstname = "Must start with a capital letter";
+            errors.firstname = "Must start with a capital letter.";
         }
         if (!nameRegex.test(inputs.lastname || '')) {
-            errors.lastname = "Must start with a capital letter";
+            errors.lastname = "Must start with a capital letter.";
         }
     
         setNameError(errors);
         return errors.firstname === '' && errors.lastname === '';
     };
+    
     
     const handleSubmit = (event) => {
         event.preventDefault();

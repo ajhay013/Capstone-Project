@@ -162,13 +162,13 @@ const ApplicantsTable = () => {
             {/* Pagination with left and right arrows */}
             <nav aria-label="Page navigation">
                 <ul className="pagination justify-content-center">
-                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`} style={{ borderRadius: '50%', margin: '0 5px' }}>
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`} style={{ borderRadius: '50%', margin: '0 5px', padding: '7px 15px' }}>
                         <button
                             className="page-link"
                             onClick={() => currentPage > 1 && paginate(currentPage - 1)} // Go to the previous page
-                            style={{ backgroundColor: '#ebebebc2', color: '#0A65CC', borderRadius: '50%', fontWeight: 'bold', padding: '10px 15px' }}
+                            style={{ backgroundColor: '#ebebebc2', color: '#0A65CC', borderRadius: '50%', fontWeight: '500', padding: '10px 15px' }}
                         >
-                            <FaArrowLeft />
+                            <FaArrowLeft style={{marginTop: '-3px'}}/>
                         </button>
                     </li>
 
@@ -181,8 +181,8 @@ const ApplicantsTable = () => {
                                     backgroundColor: currentPage === index + 1 ? '#0A65CC' : 'white',
                                     color: currentPage === index + 1 ? 'white' : 'black',
                                     borderRadius: '50%',
-                                    fontWeight: 'bold',
-                                    padding: '10px 15px',
+                                    fontWeight: '500',
+                                    padding: '7px 15px',
                                 }}
                             >
                                 {index + 1}
@@ -190,13 +190,13 @@ const ApplicantsTable = () => {
                         </li>
                     ))}
 
-                    <li className={`page-item ${currentPage === Math.ceil(applicantData.length / itemsPerPage) ? 'disabled' : ''}`} style={{ borderRadius: '50%', margin: '0 5px' }}>
+                    <li className={`page-item ${currentPage === Math.ceil(applicantData.length / itemsPerPage) ? 'disabled' : ''}`} style={{ borderRadius: '50%', margin: '0 5px', padding: '7px 15px' }}>
                         <button
                             className="page-link"
                             onClick={() => currentPage < Math.ceil(applicantData.length / itemsPerPage) && paginate(currentPage + 1)} // Go to the next page
-                            style={{ backgroundColor: '#ebebebc2', color: '#0A65CC', borderRadius: '50%', fontWeight: 'bold', padding: '10px 15px' }}
+                            style={{ backgroundColor: '#ebebebc2', color: '#0A65CC', borderRadius: '50%', fontWeight: '500', padding: '10px 15px' }}
                         >
-                            <FaArrowRight />
+                            <FaArrowRight style={{marginTop: '-3px'}}/>
                         </button>
                     </li>
                 </ul>

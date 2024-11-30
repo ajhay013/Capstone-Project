@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { Button, Row, Col, Container } from "react-bootstrap";
 import FindApplicantTable from "../../components/findapplicanttable";
-import Pagination from "../../components/pagination";
+import Pagination from "../../components/Pagination";
 
 export default function FindApplicant() {
   const [jobSearch, setJobSearch] = useState("");
@@ -44,97 +44,122 @@ export default function FindApplicant() {
   return (
     <div className="container-fluid d-flex flex-column min-vh-100" style={{ marginRight: "450px" }}>
       {/* Search Bar with Find Job Button */}
-      <div className="my-5" style={{ maxWidth: "1200px", width: "100%" }}>
-        <Row className="mb-5">
-          <Col md={12}>
-            <form onSubmit={handleSearch} className="d-flex mb-4 mt-4">
-              {/* Job Search Input */}
-              <div className="input-group" style={{ maxWidth: "600px", flexGrow: "1", marginTop: "25px" }}>
-                <div className="input-group-prepend">
-                  <span
-                    className="input-group-text"
-                    style={{
-                      border: "none",
-                      backgroundColor: "transparent",
-                      color: "#0A65CC",
-                      padding: "15px",
-                      fontSize: "18px",
-                    }}
+      <div style={{ backgroundColor: "#f1f2f4", width: "100vw", margin: "0", padding: "0", position: 'absolute', left: '0', height: '180px' }}>
+        <div style={{background: 'white', height: '69px', marginTop: '79px', width: '61%', borderRadius: '10px', marginLeft: '378px'}}>
+          <div className="my-5 mx-auto" style={{ maxWidth: "1145px", width: "100%", position: 'absolute', right: '0', left: '0', top: '-10px'}}>
+            <Row className="mb-5">
+              <Col md={12}>
+                <form onSubmit={handleSearch} className="d-flex mb-4 mt-4">
+                  {/* Job Search Input */}
+                  <div
+                    className="input-group"
+                    style={{ maxWidth: "600px", flexGrow: "1", marginTop: "25px" }}
                   >
-                    <FontAwesomeIcon icon={faSearch} />
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control search-input"
-                  placeholder="Applicant Name, Skills, or Job Title"
-                  value={jobSearch}
-                  onChange={(e) => setJobSearch(e.target.value)}
-                  style={{
-                    paddingLeft: "45px",
-                    fontSize: "16px",
-                    borderRadius: "10px 0 0 10px",
-                    paddingRight: "10px",
-                    height: "45px",
-                  }}
-                />
-              </div>
+                    <div className="input-group-prepend">
+                      <span
+                        className="input-group-text"
+                        style={{
+                          border: "none",
+                          backgroundColor: "transparent",
+                          color: "#0A65CC",
+                          padding: "15px",
+                          fontSize: "18px",
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faSearch} />
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      className="form-control search-input"
+                      placeholder="Applicant Name, Skills, or Job Title"
+                      value={jobSearch}
+                      onChange={(e) => setJobSearch(e.target.value)}
+                      style={{
+                        paddingLeft: "50px",
+                        fontSize: "16px",
+                        borderRadius: "10px 0 0 10px",
+                        paddingRight: "10px",
+                        height: "50px",
+                        border: 'none'
+                      }}
+                    />
+                  </div>
 
-              {/* Location Search Input */}
-              <div className="input-group" style={{ maxWidth: "600px", flexGrow: "1", marginTop: "25px" }}>
-                <div className="input-group-prepend">
-                  <span
-                    className="input-group-text"
-                    style={{
-                      border: "none",
-                      backgroundColor: "transparent",
-                      color: "#0A65CC",
-                      padding: "15px",
-                      fontSize: "18px",
-                    }}
+                  {/* Location Search Input */}
+                  <div
+                    className="input-group"
+                    style={{ maxWidth: "600px", flexGrow: "1", marginTop: "25px" }}
                   >
-                    <FontAwesomeIcon icon={faMapMarkerAlt} />
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  className="form-control search-input"
-                  placeholder="City, state, or zip code"
-                  value={locationSearch}
-                  onChange={(e) => setLocationSearch(e.target.value)}
-                  style={{
-                    paddingLeft: "45px",
-                    fontSize: "16px",
-                    borderRadius: "0 10px 10px 0",
-                    paddingRight: "10px",
-                    height: "45px",
-                  }}
-                />
-              </div>
+                    <div className="input-group-prepend">
+                      <span
+                        className="input-group-text"
+                        style={{
+                          border: "none",
+                          backgroundColor: "transparent",
+                          color: "#0A65CC",
+                          padding: "15px",
+                          fontSize: "18px",
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faMapMarkerAlt} />
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      className="form-control search-input"
+                      placeholder="City, state, or zip code"
+                      value={locationSearch}
+                      onChange={(e) => setLocationSearch(e.target.value)}
+                      style={{
+                        paddingLeft: "50px",
+                        fontSize: "16px",
+                        borderRadius: "0 10px 10px 0",
+                        paddingRight: "10px",
+                        height: "50px",
+                        borderLeft: 'groove',
+                        borderRightColor: '#ffffff',
+                        borderTopColor: '#ffffff',
+                        borderBottomColor: '#ffffff'
+                      }}
+                    />
+                  </div>
 
-              {/* Find Job Button on the Right */}
-              <Button
-                variant="primary"
-                className="ms-2"
-                style={{ fontSize: "16px", height: "45px", width: "250px", marginTop: "25px" }}
-                type="submit"
-              >
-                Find Applicant
-              </Button>
-            </form>
-          </Col>
-        </Row>
+                  {/* Find Job Button on the Right */}
+                  <Button
+                    className="ms-2"
+                    style={{
+                      fontSize: "16px",
+                      height: "47px",
+                      width: "145px",
+                      marginTop: "28px",
+                      marginRight: '-4px',
+                      background: '#0a65cc',
+                      color: 'white',
+                      fontWeight: '500'
+                    }}
+                    type="submit"
+                  >
+                    Find 
+                  </Button>
+                </form>
+              </Col>
+            </Row>
+          </div>
+        </div>  
       </div>
 
+
       {/* Main content area */}
-      <div className="d-flex flex-grow-1 ms-3">
+      <div className="d-flex flex-grow-1 ms-3" style={{marginTop: '260px'}}>
         {/* Sidebar */}
         <div
           className="sidebar border p-3"
           style={{
             width: "350px",
-            marginTop: "-50px",
             borderRadius: "10px",
+            marginTop: '-35px',
+            height: '356px',
             boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
           }}
         >

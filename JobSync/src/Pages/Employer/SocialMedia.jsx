@@ -37,27 +37,25 @@ const CompanyProfile = () => {
 
   useEffect(() => {
     const fetchSocialLinks = async () => {
-      if (!user?.id) {
-        console.error('User ID is missing');
-        return;
-      }
-      try {
-        const response = await getFromEndpoint(`/getSocialMedia.php?employer_id=${user.id}`);
-        console.log('Fetched social links:', response.data);
-        if (response.data.socialLinks) {
-          const formattedLinks = response.data.socialLinks.map(socialLink => ({
-            platform: socialLink.social_media,
-            link: socialLink.media_link
-          }));
-          setSocialLinks(formattedLinks);
+        if (!user?.id) {
+            console.error('User ID is missing');
+            return;
         }
-      } catch (error) {
-        console.error('Error fetching social links:', error);
-      }
+        try {
+            const response = await getFromEndpoint(`/getSocialMedia.php?employer_id=${user.id}`);
+            console.log('Fetched social links:', response.data);
+
+            if (response.data.socialLinks) {
+                setSocialLinks(response.data.socialLinks);
+            }
+        } catch (error) {
+            console.error('Error fetching social links:', error);
+        }
     };
 
     fetchSocialLinks();
-  }, [user]);
+}, [user]);
+
 
   const handleSocialLinkChange = (index, field, value) => {
     const updatedLinks = socialLinks.map((socialLink, i) =>
@@ -79,23 +77,31 @@ const CompanyProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    const selectedSocialLinks = socialLinks.filter(
+      (socialLink) => socialLink.platform?.trim() && socialLink.link?.trim()
+    );
+  
+    if (selectedSocialLinks.length === 0) {
+      console.error('No valid social media links to save');
+      return;
+    }
     try {
       await postToEndpoint('/socialmedia.php', {
         employer_id: user?.id,
-        socialLinks
+        socialLinks: selectedSocialLinks,
       });
       navigate('/employer/contact');
     } catch (error) {
       console.error('Error saving social links:', error);
     }
   };
+  
 
   const isButtonEnabled = socialLinks.length > 0 && socialLinks.every(
     (socialLink) => socialLink.platform?.trim() && socialLink.link?.trim()
   );
   
 
-  // Create a Set of already selected platforms
   const selectedPlatforms = new Set(socialLinks.map((socialLink) => socialLink.platform));
 
   return (
@@ -125,7 +131,7 @@ const CompanyProfile = () => {
                       <Dropdown.Item
                         key={option.name}
                         eventKey={option.name}
-                        disabled={selectedPlatforms.has(option.name)} // Disable if the platform is already selected
+                        disabled={selectedPlatforms.has(option.name)} 
                         style={{
                           backgroundColor: 'transparent',
                           border: 'none',
@@ -143,7 +149,7 @@ const CompanyProfile = () => {
                   <Form.Control
                     type="url"
                     placeholder={`Enter ${socialLink.platform} link`}
-                    value={socialLink.link || ''} // Ensure it's set to an empty string if undefined
+                    value={socialLink.link || ''} 
                     onChange={(e) => handleSocialLinkChange(index, 'link', e.target.value)}
                     style={{ flexGrow: 1 }}
                   />
@@ -185,7 +191,7 @@ const CompanyProfile = () => {
             <Button
               type="submit"
               style={{ width: '200px', backgroundColor: '#0A65CC', height: '50px' }}
-              disabled={!isButtonEnabled} // Enable only if there’s a link in the input field
+              disabled={!isButtonEnabled}
             >
               Save & Next <FontAwesomeIcon icon={faArrowRight} />
             </Button>

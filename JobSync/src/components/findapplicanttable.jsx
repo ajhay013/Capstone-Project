@@ -10,70 +10,70 @@ const applicantData = [
         name: 'John Doe',
         desiredPosition: 'Marketing Officer',
         location: 'New York, NY',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 2,
         name: 'Jane Smith',
         desiredPosition: 'UI/UX Designer',
         location: 'Los Angeles, CA',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 3,
         name: 'Mike Johnson',
         desiredPosition: 'Software Engineer',
         location: 'San Francisco, CA',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 4,
         name: 'Emily Davis',
         desiredPosition: 'Graphic Designer',
         location: 'Chicago, IL',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 5,
         name: 'David Wilson',
         desiredPosition: 'Data Analyst',
         location: 'Austin, TX',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 6,
         name: 'Sophia Brown',
         desiredPosition: 'Project Manager',
         location: 'Seattle, WA',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 7,
         name: 'James Taylor',
         desiredPosition: 'Backend Developer',
         location: 'Denver, CO',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 8,
         name: 'Olivia Martinez',
         desiredPosition: 'Front-end Developer',
         location: 'Miami, FL',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 9,
         name: 'Lucas Anderson',
         desiredPosition: 'Sales Representative',
         location: 'Dallas, TX',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
     {
         id: 10,
         name: 'Mia Thomas',
         desiredPosition: 'Content Writer',
         location: 'Boston, MA',
-        image: '../../src/assets/user.png',
+        image: '../../../src/assets/berns.jpg',
     },
 ];
 
@@ -94,9 +94,16 @@ const ApplicantRow = ({ applicant, handleShowModal }) => (
         </td>
         <td style={{ textAlign: 'right' }}>
             <div className="d-flex align-items-center justify-content-end">
-                <FaBookmark className="me-2" />
+                <FaBookmark className="me-2" 
+                style={{
+                    width: '17px',
+                    height: '17px',
+                    marginTop: '18px'
+                }}
+                />
                 <button
-                    className="btn btn-sm btn-light text-primary fw-bold"
+                    className="btn btn-sm btn-light text-primary"
+                    style={{marginTop: '17px', padding: '10px', width: '156px', background: '#ddf2ff', fontWeight: '500', marginLeft: '12px'}}
                     onClick={() => handleShowModal(applicant)}
                 >
                     View Profile <FaArrowRight className="ms-1" />
@@ -114,17 +121,17 @@ const ApplicantsTable = () => {
     const modalRef = useRef();
 
     const handleShowModal = (applicant, event) => {
-        setSelectedApplicant(applicant); // Set the selected applicant
-        setShowModal(true); // Show modal
+        setSelectedApplicant(applicant);
+        setShowModal(true);
     };
 
     const handleCloseModal = () => {
-        setShowModal(false); // Close the modal
+        setShowModal(false);
     };
 
     const handleOutsideClick = (event) => {
         if (modalRef.current && !modalRef.current.contains(event.target)) {
-            setShowModal(false); // Close modal if clicked outside
+            setShowModal(false); 
         }
     };
 
@@ -138,8 +145,7 @@ const ApplicantsTable = () => {
     }, [showModal]);
 
     return (
-        <div className="container" style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginTop: '-50px', boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px" }}>
-            <h5 className="mb-3">Applicants List</h5>
+        <div className="container" style={{padding: '16px', marginTop: '-50px'}}>
             <div className="table-responsive">
                 <table className="table" style={{ width: '100%', tableLayout: 'auto' }}>
                     <tbody>

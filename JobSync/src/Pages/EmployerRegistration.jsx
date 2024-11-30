@@ -56,17 +56,113 @@ export default function EmployerRegistrationForm() {
         return documentImage && backImage && faceImage;
     };
 
-    const handleNext = (e) => {
-        e.preventDefault();
-        if (isFirstStepValid()) {
-            setStep(2);
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const [positionError, setPositionError] = useState('');
+    const [contactError, setContactError] = useState('');
+    const [showValidation, setShowValidation] = useState(false); 
+
+    const handleContactChange = (e) => {
+        const value = e.target.value;
+        setContactError('');
+
+        if (value.length <= 10 && /^[0-9]*$/.test(value)) {
+            setContactNumber(value);
+        }
+
+        if (value.length === 10) {
+            if (!contactRegex.test(value)) {
+                setContactError("Contact number must be 10 digits long and cannot start with 0");
+            } else {
+                setContactError(''); 
+            }
+        } else if (value.length > 10) {
+            setContactError("Contact number cannot exceed 10 digits");
+        } else if (value.length < 10) {
+            setContactError("Contact number must be exactly 10 digits");
         }
     };
+
+    const validateFirstName = () => {
+        if (firstName.trim() === '' || firstName.length <= 1) {
+            setFirstNameError('Must be at least 2 characters long');
+            return false;
+        } else if (firstName.charAt(0) !== firstName.charAt(0).toUpperCase()) {
+            setFirstNameError('Must start with an uppercase letter');
+            return false;
+        } else {
+            setFirstNameError('');
+            return true;
+        }
+    };
+
+    const validateLastName = () => {
+        if (lastName.trim() === '' || lastName.length <= 1) {
+            setLastNameError('Must be at least 2 characters long');
+            return false;
+        } else if (lastName.charAt(0) !== lastName.charAt(0).toUpperCase()) {
+            setLastNameError('Must start with an uppercase letter');
+            return false;
+        } else {
+            setLastNameError('');
+            return true;
+        }
+    };
+
+    const validatePosition = () => {
+        if (position.trim() === '' || position.length <= 1) {
+            setPositionError('Position must be at least 2 characters.');
+            return false;
+        } else if (position.charAt(0) !== position.charAt(0).toUpperCase()) {
+            setPositionError('Position name must start with an uppercase letter.');
+            return false;
+        } else {
+            setPositionError('');
+            return true;
+        }
+    };
+
+    const handleTextInput = (e) => {
+        if (/[^a-zA-Z-]/.test(e.key)) {
+            e.preventDefault();
+        }
+    };
+    
+    
+    const handleNext = (e) => {
+        e.preventDefault();
+        
+        setShowValidation(true);
+
+        const isFirstNameValid = validateFirstName();
+        const isLastNameValid = validateLastName();
+        const isPositionValid = validatePosition();
+        const isContactValid = !contactError && contactNumber.length === 10;
+
+        if (!isFirstNameValid || !isLastNameValid || !isPositionValid || !isContactValid) {
+            return; 
+        }
+
+        if (firstName.trim() !== '' && lastName.trim() !== '' && position.trim() !== '' && contactNumber.trim() !== '') {
+            setStep(2); 
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please fill out all required fields.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
+    
+
     useEffect(() => {
         if (user) {
             navigate('/employer/dashboard');
         }
     }, [user, navigate]);
+
     const isFirstStepValid = () => {
         return firstName.trim() !== '' && 
                lastName.trim() !== '' && 
@@ -295,39 +391,50 @@ export default function EmployerRegistrationForm() {
         </>
     );
 
-
     const renderFormFieldsStep1 = () => (
         <>
-            <h6 style={{textAlign: 'left', color: '#505050'}}>Personal Information:</h6>
+            <h6 style={{ textAlign: 'left', color: '#505050' }}>Personal Information:</h6>
             <div className="row mb-3">
                 <div className="col">
                     <input 
                         type="text" 
-                        className="form-control register" 
+                        className={`form-control register ${firstNameError && showValidation ? 'is-invalid' : ''}`} 
                         placeholder="First Name *" 
                         value={firstName} 
-                        onChange={(e) => setFirstName(e.target.value)} 
+                        onChange={(e) => {
+                            setFirstName(e.target.value);
+                            if (showValidation) setFirstNameError('');
+                        }} 
+                        onKeyDown={handleTextInput} 
                     />
+                    {firstNameError && showValidation && <div style={{ color: 'red', fontSize: '0.8em' }}>{firstNameError}</div>}
                 </div>
                 <div className="col">
                     <input 
                         type="text" 
                         className="form-control register" 
-                        placeholder="Middle Name" 
+                        placeholder="Middle Name (Optional)" 
                         value={middleName} 
                         onChange={(e) => setMiddleName(e.target.value)} 
+                        onKeyDown={handleTextInput} 
                     />
                 </div>
             </div>
+    
             <div className="row mb-3">
                 <div className="col">
                     <input 
                         type="text" 
-                        className="form-control register" 
+                        className={`form-control register ${lastNameError && showValidation ? 'is-invalid' : ''}`} 
                         placeholder="Last Name *"     
                         value={lastName} 
-                        onChange={(e) => setLastName(e.target.value)} 
+                        onChange={(e) => {
+                            setLastName(e.target.value);
+                            if (showValidation) setLastNameError('');
+                        }} 
+                        onKeyDown={handleTextInput} // Add this to block numbers and special chars
                     />
+                    {lastNameError && showValidation && <div style={{ color: 'red', fontSize: '0.8em' }}>{lastNameError}</div>}
                 </div>
                 <div className="col">
                     <input 
@@ -336,6 +443,7 @@ export default function EmployerRegistrationForm() {
                         placeholder="Suffix (Optional)" 
                         value={suffix} 
                         onChange={(e) => setSuffix(e.target.value)} 
+                        onKeyDown={handleTextInput} // Add this to block numbers and special chars
                     />
                 </div>
             </div>
@@ -343,25 +451,48 @@ export default function EmployerRegistrationForm() {
                 <div className="col">
                     <input 
                         type="text" 
-                        className="form-control register" 
+                        className={`form-control register ${positionError && showValidation ? 'is-invalid' : ''}`} 
                         placeholder="Position *" 
                         value={position} 
-                        onChange={(e) => setPosition(e.target.value)} 
+                        onChange={(e) => {
+                            setPosition(e.target.value);
+                            if (showValidation) setPositionError('');
+                        }} 
+                        onKeyDown={handleTextInput} // Add this to block numbers and special chars
                     />
+                    {positionError && showValidation && <div style={{ color: 'red', fontSize: '0.8em' }}>{positionError}</div>}
                 </div>
             </div>
             <div className="row mb-3">
-                <div className="col">
+                <div className="col d-flex">
                     <input 
                         type="text" 
                         className="form-control register" 
+                        style={{ backgroundColor: '#e6e6e6', width: '65px', marginRight: '-1px', borderRadius: '10px 0px 0px 10px', textAlign: 'center' }} 
+                        value="+63" 
+                        disabled 
+                    />
+                    <input 
+                        type="text" 
+                        className={`form-control register ${contactError && showValidation ? 'is-invalid' : ''}`} 
+                        style={{ borderRadius: '0px 10px 10px 0px' }} 
                         placeholder="Contact Number *" 
                         value={contactNumber} 
-                        onChange={(e) => setContactNumber(e.target.value)} 
+                        onChange={handleContactChange}
+                        onKeyDown={(e) => {
+                            if (contactNumber.length === 0 && e.key === '0') {
+                                e.preventDefault();
+                            }
+                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace') {
+                                e.preventDefault();
+                            }
+                        }} 
+                        maxLength={10} 
+                        required 
                     />
                 </div>
+                {contactError && showValidation && <div style={{ color: 'red', fontSize: '0.8em' }}>{contactError}</div>}
             </div>
-            {/* Next button */}
             <div className="d-flex justify-content-center">
                 <button 
                     type="button" 
@@ -375,6 +506,7 @@ export default function EmployerRegistrationForm() {
             </div>
         </>
     );
+    
     const renderFormFieldsStep3 = () => (
         <>
         <h6 style={{textAlign: 'left', color: '#505050'}}>Account Setup:</h6>

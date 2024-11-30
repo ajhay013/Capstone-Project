@@ -1,0 +1,50 @@
+/* Preloader Base Styles */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background-color: var(--background-color);
+  width: 100%;
+  height: 100vh;
+  visibility: visible; 
+  opacity: 1;
+  transition: visibility 0s linear 0.6s, opacity 0.6s ease-out;
+}
+
+#preloader.hidden {
+  visibility: hidden; 
+  opacity: 0; 
+  transition: visibility 0s linear 0.6s, opacity 0.6s ease-out;
+}
+
+#preloader:before,
+#preloader:after {
+  content: "";
+  position: absolute;
+  border: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: animate-preloader 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+#preloader:after {
+  animation-delay: -0.5s;
+}
+
+@keyframes animate-preloader {
+  0% {
+      width: 10px;
+      height: 10px;
+      top: calc(50% - 5px);
+      left: calc(50% - 5px);
+      opacity: 1;
+  }
+
+  100% {
+      width: 72px;
+      height: 72px;
+      top: calc(50% - 36px);
+      left: calc(50% - 36px);
+      opacity: 0;
+  }
+}

@@ -55,16 +55,18 @@ try {
     $stmt = $conn->prepare("SELECT * FROM js_social_media_company WHERE employer_id = :employer_id");
     $stmt->execute([':employer_id' => $employer_id]);
     $social_media = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     if ($social_media) {
-        $profileIncomplete = false;
+        $profileIncomplete = true; 
         foreach ($social_media as $column_value) {
-            if (empty($column_value) || is_null($column_value)) {
-                $profileIncomplete = true;
+            if (!empty($column_value) && !is_null($column_value)) {
+                $profileIncomplete = false; 
                 break;
             }
         }
-        $response['socialMedia'] = !$profileIncomplete;
+        $response['socialMedia'] = !$profileIncomplete; 
     }
+    
 
     $stmt = $conn->prepare("SELECT * FROM js_company_contact WHERE employer_id = :employer_id");
     $stmt->execute([':employer_id' => $employer_id]);

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import EmployerSidebar from '../../../components/EmployerSidebar';
 import { FaSearch, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import Pagination from '../../../components/pagination';
+import Pagination from '../../../components/Pagination';
 
 export default function ViewApplications() {
   const { jobId } = useParams();
@@ -64,7 +64,7 @@ export default function ViewApplications() {
           <nav aria-label="breadcrumb" style={{ marginLeft: '20px' }}>
             <ol className="breadcrumb">
               <li className="breadcrumb-item">
-                <a href="/employer/myjobs" style={{ color: 'inherit', textDecoration: 'none', color: '#757575' }} >My Jobs</a>
+                <a href="/employer/myjobs" style={{textDecoration: 'none', color: '#757575' }} >My Jobs</a>
               </li>
               <li className="breadcrumb-item active" aria-current="page" style={{ color: '#0A65CC', fontWeight: '500' }}>Applications</li>
             </ol> 
@@ -125,13 +125,13 @@ export default function ViewApplications() {
 
           {/* Applications Table */}
           <div className="table-responsive">
-            <table className="table table-striped" style={{ width: '95%', marginLeft: '20px', tableLayout: 'fixed' }}>
+            <table className="table table-striped" style={{ width: '100%', marginLeft: '20px', tableLayout: 'fixed', maxWidth: '970px' }}>
               <thead className="thead-light">
                 <tr>
-                  <th style={{ color: '#676767', background: '#ebebebc2' }}>ID</th>
+                  <th style={{ color: '#676767', background: '#ebebebc2', width: '80px' }}>ID</th>
                   <th style={{ color: '#676767', background: '#ebebebc2' }}>Name</th>
                   <th style={{ color: '#676767', background: '#ebebebc2' }}>Date Applied</th>
-                  <th style={{ color: '#676767', background: '#ebebebc2' }}>Contact</th>
+                  <th style={{ color: '#676767', background: '#ebebebc2', width: '110px' }}>Contact</th>
                   <th style={{ color: '#676767', background: '#ebebebc2' }}>Status</th>
                   <th style={{ color: '#676767', background: '#ebebebc2' }}>Actions</th>
                 </tr>
@@ -178,13 +178,15 @@ export default function ViewApplications() {
             </table>
           </div>
 
-          {/* Pagination Component */}
-          <Pagination
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            totalItems={filteredApplications.length}
-            paginate={paginate}
-          />
+            {/* Pagination Component */}
+            <div style={{width: '80%'}}>
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredApplications.length}
+              paginate={paginate}
+            />
+            </div>
         </div>
       </div>
     </div>

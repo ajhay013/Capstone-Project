@@ -207,7 +207,7 @@ const PostedJobTable = () => {
             console.log(`${option} for job: ${selectedJob?.jobTitle}`);
             setShowModal(false);
         }
-    };
+    };  
     
 
     const handlePromoteSubmit = async () => {
@@ -253,23 +253,29 @@ const PostedJobTable = () => {
     return (
         <div className="container-fluid px-0">
             <div className="table-responsive">
-                
-                <table className="table" style={{ width: '100%', minWidth: '1000px' }}>
-                    <thead className="thead-light">
-                        <tr>
-                            <th style={{ color: '#676767', background: '#ebebebc2' }}>Jobs</th>
-                            <th style={{ color: '#676767', background: '#ebebebc2' }}>Status</th>
-                            <th style={{ color: '#676767', background: '#ebebebc2' }}>Applications</th>
-                            <th style={{ color: '#676767', background: '#ebebebc2' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {displayedJobs.map((job, index) => (
-                        <JobRow key={job.job_id || `${job.jobTitle}-${index}`} job={job} handleShowModal={handleShowModal} />
-                    ))}
-                    </tbody>
-                </table>
+                {jobs.length === 0 ? (
+                    <div className="text-center p-5" style={{ width: '100%', minWidth: '1000px' }}>
+                        <h5>No job posts available</h5>
+                    </div>
+                ) : (
+                    <table className="table" style={{ width: '100%', minWidth: '1000px' }}>
+                        <thead className="thead-light">
+                            <tr>
+                                <th style={{ color: '#676767', background: '#ebebebc2' }}>Jobs</th>
+                                <th style={{ color: '#676767', background: '#ebebebc2' }}>Status</th>
+                                <th style={{ color: '#676767', background: '#ebebebc2' }}>Applications</th>
+                                <th style={{ color: '#676767', background: '#ebebebc2' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displayedJobs.map((job, index) => (
+                                <JobRow key={job.job_id || `${job.jobTitle}-${index}`} job={job} handleShowModal={handleShowModal} />
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
+
 
            {/* Main modal */}
 {showModal && (

@@ -17,17 +17,14 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'], $_POST['for
         switch ($formType) {
             case 'candidate':
                 $stmt_applicant = $conn->prepare("
-                    SELECT 
-                        a.applicant_id, 
-                        a.firstname, 
-                        p.profile_picture,
-                        a.password
-                    FROM 
-                        js_applicants a 
-                    JOIN 
-                        js_personal_info p ON a.applicant_id = p.applicant_id 
-                    WHERE 
-                        a.email = :email
+                SELECT 
+                    a.applicant_id, 
+                    a.firstname, 
+                    a.password
+                FROM 
+                    js_applicants a
+                WHERE 
+                    a.email = :email
                 ");
                 $stmt_applicant->bindParam(':email', $email, PDO::PARAM_STR);
                 $stmt_applicant->execute();
@@ -36,7 +33,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'], $_POST['for
                     $applicant = $stmt_applicant->fetch(PDO::FETCH_ASSOC);
                     $id = $applicant['applicant_id'];
                     $firstname = $applicant['firstname'];
-                    $profile_picture = $applicant['profile_picture'];
                     $hashed_password = $applicant['password'];
 
                     if (password_verify($password, $hashed_password)) {
@@ -47,7 +43,6 @@ if ($method === 'POST' && isset($_POST['email'], $_POST['password'], $_POST['for
                             "success" => true,
                             "applicant_id" => $id,
                             "firstname" => $firstname,
-                            "profile_picture" => $profile_picture,
                             "userType" => 'applicant',
                             "message" => "Login successful."
                         ]);

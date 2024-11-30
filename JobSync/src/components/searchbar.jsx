@@ -7,6 +7,8 @@ import { faSearch, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import ph from '../assets/ph.png';
 import { useAuth } from '../AuthContext';
 import defaultProfilePicture from '../assets/user_default.png';
+import { postToEndpoint } from '../components/apiService';
+
 
 function SearchJobs() {
     const [selected] = useState("Philippines");
@@ -28,6 +30,29 @@ function SearchJobs() {
     }, []);
 
     const handleOptionClick = () => setDropdownOpen(false);
+
+    const [profile, setprofile] = useState(null);
+
+    useEffect(() => {
+        const fetchCompanyInfo = async () => {
+          if (user?.id) {
+            try {
+              const response = await postToEndpoint('/getApplicantinfo.php', {
+                applicant_id: user.id,
+              });
+              if (response.data) {
+                const { profile } = response.data;
+                setprofile(profile ? profile : null);
+              }
+            } catch (error) {
+              console.error('Error fetching company info:', error);
+            }
+          }
+        };
+        fetchCompanyInfo();
+      }, [user]);
+
+    const profileUrl = profile instanceof File ? URL.createObjectURL(profile) : profile;
 
     return (
         <header className="job-sync-header p-3 border-bottom">
@@ -102,13 +127,9 @@ function SearchJobs() {
                     {/* User Actions Section */}
                     <div className="actions d-flex align-items-center">
                         {user ? (
-                            <div
-                                className="profile-pic position-relative d-flex align-items-center"
-                                ref={dropdownRef}
-                                style={{ cursor: 'pointer' , position: 'relative' , zIndex: '9999'}}
-                            >
-                                <img
-                                    src={user.profilePicture || defaultProfilePicture}
+                            <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
+                                 <img 
+                                    src={profileUrl || defaultProfilePicture} 
                                     alt="Profile"
                                     style={{
                                         width: '40px',

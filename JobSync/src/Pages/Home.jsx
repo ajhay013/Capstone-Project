@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 import { FaBriefcase, FaBuilding, FaUser, FaPlus } from 'react-icons/fa';
@@ -6,8 +6,31 @@ import { Link } from 'react-router-dom';
 import JobSyncFlow from '../components/jobsyncflow.jsx';
 import PopularCategories from '../components/popularcategories';
 import JobCards from '../components/jobcards';
+import { getFromEndpoint } from '../components/apiService.jsx';
 
 export default function Home() {
+    const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+      const fetchJobs = async () => {
+        try {
+          setLoading(true); 
+          const response = await getFromEndpoint('/get_jobs.php');
+          setJobs(response.data);
+        } catch (error) {
+          console.error('There was an error fetching the jobs!', error);
+        } finally {
+          setLoading(false); 
+        }
+      };
+  
+      fetchJobs();
+    }, []);
+
+    if(loading) {
+        <div id='preloader'></div>
+    }
+
     return (
         <div> 
             <header className="container text-center py-4">
@@ -70,7 +93,7 @@ export default function Home() {
                 <div>
             {/* Featured Job Header */}
             <div className="d-flex justify-content-between align-items-center my-5">
-                <h4>Featured Jobs</h4>
+                <h4>Newest Jobs</h4>
                 <Link to="/findjob" style={{ textDecoration: 'none', color: '#0A65CC' }}>
                     <div className="d-flex align-items-center">
                         <span>View All</span>
@@ -81,7 +104,7 @@ export default function Home() {
 
             {/* Job Cards Section */}
             <div>
-                <JobCards />
+                <JobCards jobs={jobs.slice(0, 6)} />
             </div>
         </div>
 
