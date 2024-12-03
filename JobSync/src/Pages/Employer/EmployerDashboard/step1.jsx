@@ -41,19 +41,35 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
     };
 
     const deleteQuestion = (id) => {
+        // Find the question being deleted
+        const questionToDelete = localQuestions.find((q) => q.id === id);
+    
+        // Update the questions list
         const updatedQuestions = localQuestions.filter((q) => q.id !== id);
         setLocalQuestions(updatedQuestions);
         setQuestions(updatedQuestions);
-
-        // Check if the section still has questions after deletion
-        const sectionsWithQuestions = new Set(updatedQuestions.map((q) => q.section));
-        const newDisabledSections = disabledSections.filter((section) =>
-            sectionsWithQuestions.has(section)
-        );
-
-        setDisabledSections(newDisabledSections);
+    
+        // Check if the section for the deleted question still has other questions
+        if (questionToDelete) {
+            const sectionToRestore = Object.keys(sectionQuestions).find(
+                (section) => sectionQuestions[section].question === questionToDelete.question
+            );
+    
+            if (sectionToRestore) {
+                const hasOtherQuestionsInSection = updatedQuestions.some(
+                    (q) => q.question === sectionQuestions[sectionToRestore].question
+                );
+    
+                // If no other questions exist in this section, restore it to clickable
+                if (!hasOtherQuestionsInSection) {
+                    setDisabledSections((prev) =>
+                        prev.filter((section) => section !== sectionToRestore)
+                    );
+                }
+            }
+        }
     };
-
+    
     const sectionQuestions = {
         education: {
             question: 'Have you completed any level of education?',
