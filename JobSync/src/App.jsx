@@ -37,8 +37,7 @@ import ApplicantProfile from './Pages/Applicants/applicantprofile';
 
 
 {/* Applicant Profile Tabs */}
-
-import Personal from './pages/applicants/applicantprofile/personal';
+import Personal from './Pages/Applicants/ApplicantProfile/personal';
 import Profile from './Pages/Applicants/ApplicantProfile/address';
 import Socmedlinks from './pages/applicants/applicantprofile/socmedlinks';
 
@@ -271,9 +270,9 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/applications' element={<ProtectedRoute> <Applications /> </ProtectedRoute>} />  
 
 
-        <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
-        <Route path='/step1' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
-        <Route path='/step2' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} />
+        {/* <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} /> */}
+        <Route path='/step2' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
+        <Route path='/step1' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} />
       
       {/* Employer Settings Routing */}
         <Route path='/employer/employersettings/companysettings' element={<ProtectedRoute> <CompanySettings /> </ProtectedRoute> } />

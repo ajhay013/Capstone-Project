@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../assets/logo3.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,12 +9,46 @@ import { useAuth } from '../AuthContext';
 import defaultProfilePicture from '../assets/user_default.png';
 import { postToEndpoint } from '../components/apiService';
 
-
 function SearchJobs() {
     const [selected] = useState("Philippines");
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const navigate = useNavigate();
+    const handleLogout = async () => {
+        await logout();
+        navigate('/');
+    };
+
+    const [profile, setProfile] = useState(null);
+
+    const fetchCompanyInfo = async () => {
+        if (user?.id) {
+            try {
+                const response = await postToEndpoint('/getApplicantinfo.php', {
+                    applicant_id: user.id,
+                });
+                if (response.data) {
+                    const { profile } = response.data;
+                    setProfile(profile ? profile : null);
+                }
+            } catch (error) {
+                console.error('Error fetching company info:', error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (user?.id) {
+            fetchCompanyInfo();  
+
+            const intervalId = setInterval(() => {
+                fetchCompanyInfo(); 
+            }, 100); 
+
+            return () => clearInterval(intervalId); 
+        }
+    }, [user?.id]); 
 
     const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
@@ -30,27 +64,6 @@ function SearchJobs() {
     }, []);
 
     const handleOptionClick = () => setDropdownOpen(false);
-
-    const [profile, setprofile] = useState(null);
-
-    useEffect(() => {
-        const fetchCompanyInfo = async () => {
-          if (user?.id) {
-            try {
-              const response = await postToEndpoint('/getApplicantinfo.php', {
-                applicant_id: user.id,
-              });
-              if (response.data) {
-                const { profile } = response.data;
-                setprofile(profile ? profile : null);
-              }
-            } catch (error) {
-              console.error('Error fetching company info:', error);
-            }
-          }
-        };
-        fetchCompanyInfo();
-      }, [user]);
 
     const profileUrl = profile instanceof File ? URL.createObjectURL(profile) : profile;
 
@@ -128,7 +141,7 @@ function SearchJobs() {
                     <div className="actions d-flex align-items-center">
                         {user ? (
                             <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
-                                 <img 
+                                <img 
                                     src={profileUrl || defaultProfilePicture} 
                                     alt="Profile"
                                     style={{
@@ -161,7 +174,7 @@ function SearchJobs() {
                                             Settings
                                         </Link>
                                         <div className="dropdown-divider"></div>
-                                        <Link to="/logout" className="dropdown-item" onClick={handleOptionClick}>
+                                        <Link className="dropdown-item" onClick={handleLogout}>
                                             Logout
                                         </Link>
                                     </div>

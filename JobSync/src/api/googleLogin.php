@@ -71,7 +71,6 @@ try {
                                         VALUES (:applicant_id)";
             $insertPersonalInfoStmt = $conn->prepare($insertPersonalInfoQuery);
             $insertPersonalInfoStmt->bindParam(':applicant_id', $lastInsertedId, PDO::PARAM_INT);
-            $insertPersonalInfoStmt->bindParam(':profile_picture', $profile_picture, PDO::PARAM_STR);
             $insertPersonalInfoStmt->execute();
 
             $_SESSION['applicant_id'] = $lastInsertedId;

@@ -177,7 +177,25 @@ export default function PostJobs() {
     };
     
     const handleNextClick = () => {
-        navigate('/step1');
+        const Jobdata = {
+            jobTitle,
+            jobTags,
+            jobRole,
+            minSalary,
+            maxSalary,
+            salaryType,
+            education,
+            experience,
+            jobType,
+            expirationDate,
+            jobLevel,
+            address,
+            city,
+            selectedBenefits,
+            jobDescription,
+        };
+        navigate('/step2', { state: Jobdata }); // Pass data as state
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     return (
         <div className="d-flex">
@@ -497,15 +515,16 @@ export default function PostJobs() {
 
 
                     {/* Next Button */}
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    style={{ marginLeft: '50px', marginTop: '15px', width: '150px', padding: '11px' }}
-                    onClick={handleNextClick}
-                >
-                    Next
-                </button>
-
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' , marginTop: '40px'}}>
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            style={{ marginLeft: '50px', marginTop: '15px', width: '150px', padding: '11px' }}
+                            onClick={handleNextClick}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
