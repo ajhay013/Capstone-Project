@@ -1,51 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EmployerSidebar from '../../../components/EmployerSidebar';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAuth } from '../../../AuthContext'; 
 import { useNavigate } from 'react-router-dom';
-import { postToEndpoint } from '../../../components/apiService';
-import Swal from 'sweetalert2';
-
+import { useJobContext } from '../../../JobContext';
 
 export default function PostJobs() {
-    const { user } = useAuth(); 
     const navigate = useNavigate();
-    const [jobTitle, setJobTitle] = useState('');
-    const [jobTags, setJobTags] = useState('');
-    const [jobRole, setJobRole] = useState('');
     const [minSalary, setMinSalary] = useState('');
     const [maxSalary, setMaxSalary] = useState('');
-    const [salaryType, setSalaryType] = useState('');
-    const [education, setEducation] = useState('');
-    const [experience, setExperience] = useState('');
-    const [jobType, setJobType] = useState('');
     const [expirationDate, setExpirationDate] = useState(new Date());
-    const [jobLevel, setJobLevel] = useState('');
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
     const [selectedBenefits, setSelectedBenefits] = useState([]);
-    const [jobDescription, setJobDescription] = useState('');
-
+    const { jobData, setJobData } = useJobContext();
+    const [formData, setFormData] = useState(jobData || {}); 
 
 
     const handleBenefitSelect = (benefit) => {
-        if (selectedBenefits.includes(benefit)) {
-            setSelectedBenefits(selectedBenefits.filter(item => item !== benefit));
-        } else {
-            setSelectedBenefits([...selectedBenefits, benefit]);
-        }
+        setSelectedBenefits((prev) => {
+            const newSelection = prev.includes(benefit)
+                ? prev.filter((item) => item !== benefit)  
+                : [...prev, benefit];  
+    
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                selectedBenefits: newSelection, 
+            }));
+    
+            return newSelection;
+        });
     };
+    useEffect(() => {
+        if (formData.selectedBenefits) {
+            setSelectedBenefits(formData.selectedBenefits);  
+        }
+    }, [formData.selectedBenefits]);
+    
     const handleMinSalaryChange = (e) => {
         let value = e.target.value;
-        value = value.replace(/[^0-9]/g, '');
+        value = value.replace(/[^0-9]/g, ''); 
     
         if (value.length > 3) {
             value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
+    
         setMinSalary(value); 
+        setFormData((prev) => ({ ...prev, minSalary: value })); 
     };
     
     const handleKeyDown = (e) => {
@@ -67,93 +68,10 @@ export default function PostJobs() {
         if (value.length > 3) {
             value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
+    
         setMaxSalary(value);
+        setFormData((prev) => ({ ...prev, maxSalary: value }));
     };
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        const cleanedBenefits = selectedBenefits
-            .map(benefit => benefit.trim())  
-            .filter(benefit => benefit !== "") 
-            .join(', '); 
-        const jobData = {
-            employer_id: user?.id,
-            jobTitle,
-            jobTags,
-            jobRole,
-            minSalary,
-            maxSalary,
-            salaryType,
-            education,
-            experience,
-            jobType,
-            expirationDate,
-            jobLevel,
-            address,
-            city,
-            selectedBenefits: cleanedBenefits,
-            jobDescription,
-        };
-        try {
-            await postToEndpoint('/postJobs.php', jobData);
-            Swal.fire({
-                icon: 'success',
-                title: 'Job Saved!',
-                text: 'Your job was posted successfully.',
-                showCancelButton: true,
-                cancelButtonText: 'Close',
-                confirmButtonText: 'Go to My Jobs',
-                allowOutsideClick: false, 
-                allowEscapeKey: false     
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    navigate('/employer/myjobs');
-                    setTimeout(() => {
-                        window.scrollTo(0, 0);
-                    }, 300);
-                } else {
-                    Swal.close();
-                    setTimeout(() => {
-                        window.scrollTo(0, 0);
-                    }, 300);
-                }
-            });
-    
-            resetForm();
-        } catch (error) {
-            console.error('Error saving job:', error);
-    
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'There was an issue saving the job. Please try again.',
-                confirmButtonText: 'Close',
-            });
-        }
-    };
-    
-    
-    
-    const resetForm = () => {
-        setJobTitle('');
-        setJobTags('');
-        setJobRole('');
-        setMinSalary('');
-        setMaxSalary('');
-        setSalaryType('');
-        setEducation('');
-        setExperience('');
-        setJobType('');
-        setExpirationDate(new Date());
-        setJobLevel('');
-        setAddress('');
-        setCity('');
-        setSelectedBenefits([]);
-        setJobDescription('');
-    };
-
     const jobBenefits = [
         'Health Insurance', 'Paid Time Off', '401(k)', 'Bonuses', 'Work from Home',
         'Paid Holidays', 'Gym Membership', 'Stock Options', 'Retirement Plans', 'Child Care',
@@ -175,28 +93,29 @@ export default function PostJobs() {
             ['clean'],
         ],
     };
-    
-    const handleNextClick = () => {
-        const Jobdata = {
-            jobTitle,
-            jobTags,
-            jobRole,
-            minSalary,
-            maxSalary,
-            salaryType,
-            education,
-            experience,
-            jobType,
-            expirationDate,
-            jobLevel,
-            address,
-            city,
-            selectedBenefits,
-            jobDescription,
-        };
-        navigate('/step2', { state: Jobdata }); // Pass data as state
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const handleChange = (e) => {
+        const { name, value } = e.target || e;  
+        
+        if (name === 'minSalary') {
+            handleMinSalaryChange(e); 
+        } else if (name === 'maxSalary') {
+            handleMaxSalaryChange(e);
+        } else if (name === 'expirationDate') {
+            setExpirationDate(value);
+            setFormData((prev) => ({ ...prev, expirationDate: value })); 
+        } else if (name === 'selectedBenefits') {
+            setFormData((prev) => ({ ...prev, selectedBenefits }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
+
+    const handleNext = () => {
+        setJobData(formData); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        navigate('/step2', { state: { jobData: formData } });
+    };
+
     return (
         <div className="d-flex">
             <div className="sidebar" style={{ width: '20%', minWidth: '250px' }}>
@@ -209,20 +128,20 @@ export default function PostJobs() {
                 }}>
                     Post Jobs
                 </h2>
-                <form onSubmit={handleSubmit} style={{ marginLeft: '20px', textAlign: 'left' }}>
-                    {/* Job Title and Tags */}
+                <form style={{ marginLeft: '20px', textAlign: 'left' }}>
                     <div className="form-group" style={{ padding: '0 20px' }}>
                         <label htmlFor="jobTitle" style={{ fontWeight: '500', color: '#454545', fontSize: '14px'}}>Job Title</label>
-                        <input
-                            type="text"
-                            id="jobTitle"
-                            value={jobTitle}
-                            onChange={(e) => setJobTitle(e.target.value)}
-                            className="form-control register1"
-                            style={{ width: '100%' }}
-                            placeholder="Add job title"
-                            required
-                        />
+                            <input
+                                type="text"
+                                id="jobTitle"
+                                name="jobTitle" 
+                                value={formData.jobTitle || ''} 
+                                onChange={handleChange}
+                                className="form-control register1"
+                                style={{ width: '100%' }}
+                                placeholder="Add job title"
+                                required
+                            />
                     </div>
                     <div className="form-row" style={{ display: 'flex', gap: '30px', padding: '20px',}}>
                         <div className="form-group" style={{ flex: '1.5', marginRight: '30px' }}>
@@ -230,8 +149,9 @@ export default function PostJobs() {
                             <input
                                 type="text"
                                 id="jobTags"
-                                value={jobTags}
-                                onChange={(e) => setJobTags(e.target.value)}
+                                name="jobTags"
+                                value={formData.jobTags || ''}
+                                onChange={handleChange}
                                 className="form-control register1"
                                 style={{ width: '100%' }}
                                 placeholder="Job keywords, tags"
@@ -243,8 +163,9 @@ export default function PostJobs() {
                             <input
                                 type="text"
                                 id="jobRole"
-                                value={jobRole}
-                                onChange={(e) => setJobRole(e.target.value)}
+                                name="jobRole"
+                                value={formData.jobRole || ''}
+                                onChange={handleChange}
                                 className="form-control register1"
                                 style={{ width: '100%' }}
                                 placeholder="Add job role"
@@ -269,8 +190,8 @@ export default function PostJobs() {
                                     <input
                                         id="minSalary"
                                         name="minSalary"
-                                        value={minSalary}
-                                        onChange={handleMinSalaryChange}
+                                        value={formData.minSalary || ''}
+                                        onChange={handleChange}                                                                               
                                         onKeyDown={handleKeyDown}
                                         className="form-control register1"
                                         style={{ flex: '1', appearance: 'textfield', borderRadius: '0px 10px 10px 0px' }}
@@ -293,8 +214,8 @@ export default function PostJobs() {
                                     <input
                                         id="maxSalary"
                                         name="maxSalary"
-                                        value={maxSalary}
-                                        onChange={handleMaxSalaryChange}
+                                        value={formData.maxSalary || ''}
+                                        onChange={handleChange}           
                                         onKeyDown={handleKeyDown}
                                         className="form-control register1"
                                         style={{ flex: '1', appearance: 'textfield', borderRadius: '0px 10px 10px 0px' }}
@@ -309,8 +230,9 @@ export default function PostJobs() {
                                 <label htmlFor="salaryType" style={{ fontWeight: '500', color: '#454545', fontSize: '14px'}}>Salary Type</label>
                                 <select
                                     id="salaryType"
-                                    value={salaryType}
-                                    onChange={(e) => setSalaryType(e.target.value)}
+                                    name="salaryType" 
+                                    value={formData.salaryType || ''}
+                                    onChange={handleChange}                         
                                     className="form-control register1"
                                     required
                                 >
@@ -322,8 +244,6 @@ export default function PostJobs() {
                             </div>
                         </div>
                     </div>
-
-                    {/* Advanced Information Section */}
                     <div
                         className="form-group"
                         style={{
@@ -333,18 +253,17 @@ export default function PostJobs() {
                     >
                         <label style={{ fontWeight: '500', color: '#454545', fontSize: '19px'}}>Advanced Information</label>
 
-                        {/* First Row: Min Salary, Max Salary, and Job Type */}
                         <div
                             className="form-row"
                             style={{ display: 'flex', gap: '20px', marginTop: '10px' }}
                         >
-                        {/* Education Dropdown */}
                             <div className="form-group" style={{ flex: '1' }}>
                                 <label htmlFor="education" style={{ fontWeight: '500', fontSize: '14px', color: '#454545' }}>Education</label>
                                 <select
                                     id="education"
-                                    value={education}
-                                    onChange={(e) => setEducation(e.target.value)}
+                                    name="education"
+                                    value={formData.education || ''}
+                                    onChange={handleChange}                              
                                     className="form-control register1"
                                     required
                                 >
@@ -356,14 +275,13 @@ export default function PostJobs() {
                                     <option value="Doctorate">Doctorate</option>
                                 </select>
                             </div>
-
-                            {/* Experience Dropdown */}
                             <div className="form-group" style={{ flex: '1' }}>
                                 <label htmlFor="experience" style={{ fontWeight: '500', fontSize: '14px', color: '#454545' }}>Experience</label>
                                 <select
                                     id="experience"
-                                    value={experience}
-                                    onChange={(e) => setExperience(e.target.value)}
+                                    name='experience'
+                                    value={formData.experience || ''}
+                                    onChange={handleChange}                        
                                     className="form-control register1"
                                     required
                                 >
@@ -374,14 +292,13 @@ export default function PostJobs() {
                                     <option value="7 years and Above">7 years and Above</option>
                                 </select>
                             </div>
-
-                            {/* Job Type Dropdown */}
                             <div className="form-group" style={{ flex: '1' }}>
                                 <label htmlFor="jobType" style={{ fontWeight: '500', color: '#454545', fontSize: '14px'}}>Job Type</label>
                                 <select
                                     id="jobType"
-                                    value={jobType}
-                                    onChange={(e) => setJobType(e.target.value)}
+                                    name='jobType'
+                                    value={formData.jobType || ''}
+                                    onChange={handleChange}                        
                                     className="form-control register1"
                                     required
                                 >
@@ -396,30 +313,33 @@ export default function PostJobs() {
                             </div>
                         </div>
 
-                            {/* Second Row: Expiration Date and Job Level */}
-                            <div className="form-row" style={{ display: 'flex', gap: '20px', marginTop: '20px' }}
-    
-    
-                            >
-                            {/* Expiration Date */}
-                            <div className="form-group" style={{ flex: '1' }}>
-                                <label htmlFor="expirationDate" style={{ fontWeight: '500', display: 'block', fontSize: '14px'}}>Expiration Date</label>
+                            <div className="form-row" style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
+                                <div className="form-group" style={{ flex: '1' }}>
+                                    <label 
+                                        htmlFor="expirationDate" 
+                                        style={{ fontWeight: '500', display: 'block', fontSize: '14px' }}
+                                    >
+                                        Expiration Date
+                                    </label>
                                     <DatePicker
                                         id="expirationDate"
-                                        selected={expirationDate}
-                                        onChange={(date) => setExpirationDate(date)}
+                                        name="expirationDate"
+                                        selected={formData.expirationDate}
+                                        onChange={(date) => handleChange({ target: { name: 'expirationDate', value: date } })}
                                         className="form-control register1"
                                         required
+                                        dateFormat="MM-dd-yyyy" 
+                                        placeholderText="Select a date" 
                                     />
-                            </div>
 
-                            {/* Job Level */}
+                                </div>
                             <div className="form-group" style={{ flex: '1' }}>
                                 <label htmlFor="jobLevel" style={{ fontWeight: '500', color: '#454545', fontSize: '14px'}}>Job Level</label>
                                     <select
                                         id="jobLevel"
-                                        value={jobLevel}
-                                        onChange={(e) => setJobLevel(e.target.value)}
+                                        name='jobLevel'
+                                        value={formData.jobLevel || ''}
+                                        onChange={handleChange}                                  
                                         className="form-control register1"
                                         required
                                     >
@@ -434,9 +354,6 @@ export default function PostJobs() {
                                 </div>
                             </div>
                         </div>
-
-
-                    {/* Location Section */}
                     <div className="form-group" style={{ padding: '20px', backgroundColor: '#f4f4f4', borderRadius: '8px' }}>
                         <label style={{ fontWeight: '500', color: '#454545', fontSize: '19px'}}>Location</label>
                         <div className="form-row" style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
@@ -445,8 +362,9 @@ export default function PostJobs() {
                                 <input
                                     type="text"
                                     id="address"
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
+                                    name='address'
+                                    value={formData.address || ''}
+                                    onChange={handleChange}                        
                                     className="form-control register1"
                                     placeholder="Enter address"
                                     required
@@ -457,8 +375,9 @@ export default function PostJobs() {
                                 <input
                                     type="text"
                                     id="city"
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
+                                    name='city'
+                                    value={formData.city  || ''}
+                                    onChange={handleChange}                   
                                     className="form-control register1"
                                     placeholder="Enter city"
                                     required
@@ -466,16 +385,14 @@ export default function PostJobs() {
                             </div>
                         </div>
                     </div>
-
-                    {/* Job Benefits Section */}
                     <div className="form-group" style={{ padding: '20px' }}>
-                        <label style={{ fontWeight: '500', color: '#454545', fontSize: '19px'}}>Job Benefits</label>
+                        <label style={{ fontWeight: '500', color: '#454545', fontSize: '19px' }}>Job Benefits</label>
                         <div className="d-flex flex-wrap" style={{ gap: '10px', marginTop: '10px' }}>
                             {jobBenefits.map((benefit, index) => (
                                 <button
                                     key={index}
                                     type="button"
-                                    onClick={() => handleBenefitSelect(benefit)}
+                                    onClick={() => handleBenefitSelect(benefit)}  
                                     className={`btn btn-outline-secondary ${selectedBenefits.includes(benefit) ? 'active' : ''}`}
                                     style={{
                                         marginBottom: '10px',
@@ -497,13 +414,11 @@ export default function PostJobs() {
                             ))}
                         </div>
                     </div>
-
-                     {/* Job Description Section */}
-                     <div className="form-group" style={{ padding: '0px 20px' }}>
+                    <div className="form-group" style={{ padding: '0px 20px' }}>
                         <label htmlFor="jobDescription" className='mb-2' style={{ fontWeight: '500', color: '#454545', fontSize: '19px'}}>Job Description</label>
                         <ReactQuill
-                            value={jobDescription}
-                            onChange={setJobDescription}
+                            value={formData.jobDescription || ''}
+                            onChange={(value) => handleChange({ target: { name: 'jobDescription', value } })}
                             theme="snow"
                             placeholder="Describe the job"
                             className="form-control"
@@ -511,16 +426,12 @@ export default function PostJobs() {
                             modules={modules} 
                         />
                     </div>
-
-
-
-                    {/* Next Button */}
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' , marginTop: '40px'}}>
                         <button
                             type="button"
                             className="btn btn-primary"
                             style={{ marginLeft: '50px', marginTop: '15px', width: '150px', padding: '11px' }}
-                            onClick={handleNextClick}
+                            onClick={handleNext}
                         >
                             Next
                         </button>

@@ -62,7 +62,7 @@ import FindApplicant from './Pages/Employer/findapplicant';
 import Applications from './Pages/Employer/Applications';
 
 import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/step1';
-import Step2ScreeningQuestions from './Pages/Employer/EmployerDashboard/step2';
+// import Step2ScreeningQuestions from './Pages/Employer/EmployerDashboard/step2';
 
 {/* Employer Settings Pages */}
 import CompanySettings from './pages/employer/employerdashboard/employersettings/companysettings';
@@ -79,7 +79,7 @@ import JobsAlert from './Pages/Applicants/ApplicantDashboard/JobsAlert';
 import HeaderProgress from './components/headerProgress';
 import CompletedProfile from './Pages/Employer/CompletedProfile';
 import SemiFooter from './components/SemiFooter';
-
+import { JobProvider } from './JobContext';
 
 
 function Layout({ userId, setUserId }) {
@@ -260,7 +260,7 @@ function Layout({ userId, setUserId }) {
       {/* Employer Dashboard Routing */}
         <Route path='/employer/overview' element={<ProtectedRoute> <EmployerOverview /> </ProtectedRoute>} />
         <Route path='/employer/profile' element={<ProtectedRoute> <EmployerProfile /> </ProtectedRoute>} />
-        <Route path='/employer/postjob' element={ <ProtectedRoute> <PostJobs /> </ProtectedRoute> } />
+        <Route path='/employer/postjob' element={ <ProtectedRoute> <PostJobs  key={useLocation().pathname}/> </ProtectedRoute> } />
         <Route path='/employer/myjobs' element={<ProtectedRoute> <MyJobs /> </ProtectedRoute>} />
         <Route path='/employer/message' element={<ProtectedRoute> <EmployerMessage /> </ProtectedRoute>} />
         <Route path='/employer/savedapplicant' element={<ProtectedRoute> <SavedApplicant /> </ProtectedRoute>} />  
@@ -272,7 +272,7 @@ function Layout({ userId, setUserId }) {
 
         {/* <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} /> */}
         <Route path='/step2' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
-        <Route path='/step1' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} />
+        {/* <Route path='/step1' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} /> */}
       
       {/* Employer Settings Routing */}
         <Route path='/employer/employersettings/companysettings' element={<ProtectedRoute> <CompanySettings /> </ProtectedRoute> } />
@@ -291,9 +291,11 @@ function Layout({ userId, setUserId }) {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-          <Layout />
-      </BrowserRouter>
+      <JobProvider>
+        <BrowserRouter>
+            <Layout />
+        </BrowserRouter>
+      </JobProvider>
     </AuthProvider>
   );
 }

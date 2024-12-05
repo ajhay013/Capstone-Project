@@ -3,16 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import EmployerSidebar from '../../../components/EmployerSidebar';
 import { FaTimes , FaPlus } from 'react-icons/fa';
 import { FaQuestionCircle } from 'react-icons/fa';
-import HiringNotification from '../../../components/hiringnotification';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../../AuthContext'; 
+import Swal from 'sweetalert2';
+import { useJobContext } from '../../../JobContext';
+import { postToEndpoint } from '../../../components/apiService';
 
 export default function Step1ScreeningQuestions({ questions = [], setQuestions = () => {} }) {
+    const { user } = useAuth(); 
     const [disabledSections, setDisabledSections] = useState([]);
+    const [qualificationMessage, setQualificationMessage] = useState('');
     const location = useLocation();
     const jobData = location.state; 
-
-    console.log(jobData);
-    
+    const { resetJobData } = useJobContext();
     const navigate = useNavigate();
     const [localQuestions, setLocalQuestions] = useState([
         {
@@ -81,19 +84,17 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
         if (!disabledSections.includes(section)) {
             setCurrentSection(section);
     
-            // Disable the section after it is clicked
             setDisabledSections((prevDisabledSections) => [...prevDisabledSections, section]);
     
-            // Create a new question with default values for answerType and idealAnswer
             const newQuestion = {
                 id: localQuestions.length + 1,
                 question: sectionQuestions[section].question,
-                answerType: 'yesno', // Default answerType to yes/no
-                idealAnswer: 'Yes', // Default idealAnswer to Yes
+                answerType: 'yesno', 
+                idealAnswer: 'Yes',
                 mustHave: false,
                 isEdited: false,
                 section: section,
-                isCustom: false, // Indicating this is not a custom question
+                isCustom: false,
             };
     
             const updatedQuestions = [...localQuestions, newQuestion];
@@ -105,84 +106,117 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
     const sectionQuestions = {
         education: {
             question: 'Have you completed any level of education?',
-            
         },
         skills: {
             question: 'Do you possess any relevant skills for this job?',
-            
         },
         experience: {
             question: 'Do you have relevant experience for this job?',
-            
         },
         availability: {
             question: 'Are you available to start immediately?',
-            
         },
         motivation: {
             question: 'Are you interested in applying for this position?',
-            
         },
         location: {
             question: 'Are you located in the required area?',
-            
         },
         workPreference: {
             question: 'Do you have a preference for a work environment?',
-            
         },
         certifications: {
             question: 'Do you hold any relevant certifications?',
-            
         },
         languages: {
             question: 'Do you speak any of the required languages fluently?',
-            
         },
         salaryExpectation: {
             question: 'Does the offered salary range meet your expectations?',
-            
         },
         travelWillingness: {
             question: 'Are you willing to travel for work?',
-            
         },
         relocation: {
             question: 'Are you open to relocating for this job?',
-            
         },
         reference: {
             question: 'Do you have professional references available?',
-            
         },
         portfolio: {
             question: 'Do you have a portfolio or work samples to share?',
-            
         },
         interviewAvailability: {
             question: 'Are you available for an interview?',
-            
         },
         projectExperience: {
             question: 'Have you worked on relevant projects?',
-            
         },
         teamExperience: {
             question: 'Have you worked in a team-based environment?',
-            
         },
         leadershipExperience: {
             question: 'Do you have leadership experience?',
-            
         },
         diversityAndInclusion: {
             question: 'Do you contribute to a diverse and inclusive work environment?',
-            
         },
         workStyle: {
             question: 'Do you consider yourself to be detail-oriented?',
-            
         },
+    };
+    const handlePostJob = async () => {
+        try {
+            const jobPostData = {
+                jobData,
+                employer_id: user.id,
+                screeningQuestions: localQuestions,
+                qualificationMessage,
+            };
+            const response = await postToEndpoint('/postJobs.php', jobPostData);
+            if (response.data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Job Saved!',
+                    text: 'Your job was posted successfully.',
+                    showCancelButton: true,
+                    cancelButtonText: 'Close',
+                    confirmButtonText: 'Go to My Jobs',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resetJobData();
+                        navigate('/employer/myjobs');
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                        }, 300);
+                    } else {
+                        resetJobData();
+                        Swal.close();
+                        navigate('/employer/postjob');
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                        }, 300);
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Failed to post the job. Please try again.',
+                    confirmButtonText: 'Okay',
+                });
+            }
+        } catch (error) {
+            console.error('Error posting job:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'An error occurred',
+                text: 'There was an issue posting the job. Please try again later.',
+                confirmButtonText: 'Okay',
+            });
+        }
     };
 
     return (
@@ -198,7 +232,6 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
             >
                 <EmployerSidebar />
             </div>
-
             <div
                 style={{
                     flex: 1,
@@ -209,8 +242,6 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
                     minWidth: '800px',
                 }}
             >
-             
-
                 <div
                     style={{
                         flex: 1,
@@ -231,9 +262,9 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
                    </p>
 
                     <div>
-                        {localQuestions.map((q) => (
+                        {localQuestions.map((q, index) => (
                             <div
-                                key={q.id}
+                                key={`${q.id}-${index}`} 
                                 style={{
                                     border: '1px solid #ddd',
                                     padding: '45px',
@@ -368,9 +399,6 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
                             </div>
                         ))}
                     </div>
-
-
-
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: '20px' }}>
                         <button
                             onClick={addScreeningQuestion}
@@ -401,9 +429,9 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
                             
                         }}
                     >
-                    {Object.keys(sectionQuestions).map((section) => (
+                    {Object.keys(sectionQuestions).map((section, index) => (
                         <div
-                            key={section}
+                            key={`${section}-${index}`}
                             onClick={() => handleClick(section)}
                             style={{
                                 padding: '15px',
@@ -460,6 +488,8 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
                             <h3 style={{ marginBottom: '10px' }}>Qualification Setting</h3>
                             <textarea
                                 placeholder="Thank you for your interest in..."
+                                value={qualificationMessage}
+                                onChange={(e) => setQualificationMessage(e.target.value)}
                                 rows="4"
                                 style={{
                                     width: '100%',
@@ -491,6 +521,7 @@ export default function Step1ScreeningQuestions({ questions = [], setQuestions =
                     <button
                         className="btn btn-primary"
                         style={{width: '150px', padding: '11px'}}
+                        onClick={handlePostJob}
                     >
                         Post Job
                     </button>
