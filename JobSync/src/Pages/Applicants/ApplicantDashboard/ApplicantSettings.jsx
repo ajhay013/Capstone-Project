@@ -1,10 +1,17 @@
 import React, { useState, useRef } from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Tabs, Tab } from 'react-bootstrap';
+import { FaKey, FaUser } from 'react-icons/fa'; 
 import ApplicantsSidebar from '../../../components/applicantsidebar';
+import PasswordSettings from './PasswordSettings';
+import AccountSettings from './AccountSettings';
 
 export default function ApplicantSettings() {
-  const [biography, setBiography] = useState('');
+  const [activeKey, setActiveKey] = useState('passwordsettings');
   const fileInputRef = useRef(null);
+
+  const tabStyles = (isActive) => ({
+    color: isActive ? '#0A65CC' : '#757575',
+  });
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -23,39 +30,39 @@ export default function ApplicantSettings() {
         <ApplicantsSidebar />
       </div>
 
-      <div style={{ flex: 1, padding: 0, marginRight: '220px', marginTop: '35px' }}>
-        <h3 className="px-4 pt-3">Settings</h3>
-        <div className="px-4">
-          <h4 style={{ textAlign: 'left' }}><i className="bi bi-lock"></i> Password Settings</h4>
-          <Form style={{ marginTop: '30px', marginRight: '466px' }}>
-            <h4>Change Password</h4>
-            <Row className="mb-4">
-              <Col md={6}>
-                <Form.Group controlId="currentPassword">
-                  <Form.Label>Current Password</Form.Label>
-                  <Form.Control type="password" placeholder="Enter current password" style={{ width: '350%' }} />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="mb-4">
-              <Col md={6}>
-                <Form.Group controlId="newPassword">
-                  <Form.Label>New Password</Form.Label>
-                  <Form.Control type="password" placeholder="Enter new password" style={{ width: '350%' }} />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="mb-4">
-              <Col md={6}>
-                <Form.Group controlId="confirmNewPassword">
-                  <Form.Label>Confirm New Password</Form.Label>
-                  <Form.Control type="password" placeholder="Confirm new password" style={{ width: '350%' }} />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Button variant="primary" type="submit">Save Changes</Button>
-          </Form>
-        </div>
+      <div style={{ flex: 1, padding: 0, marginTop: '1px' }}>
+
+        <Tabs
+          activeKey={activeKey}
+          onSelect={(k) => setActiveKey(k)}
+          id="employer-tabs"
+          className="px-4"
+          style={{ marginTop: '50px' }}
+        >
+          <Tab
+            eventKey="passwordsettings"
+            title={
+              <>
+                <FaKey style={{ marginRight: '8px', ...tabStyles(activeKey === 'passwordsettings') }} />
+                <span style={tabStyles(activeKey === 'passwordsettings')}>Password Settings</span>
+              </>
+            }
+          >
+            <PasswordSettings />
+          </Tab>
+
+          <Tab
+            eventKey="accountsettings"
+            title={
+              <>
+                <FaUser style={{ marginRight: '8px', ...tabStyles(activeKey === 'accountsettings') }} />
+                <span style={tabStyles(activeKey === 'accountsettings')}>Account Settings</span>
+              </>
+            }
+          >
+            <AccountSettings />
+          </Tab>
+        </Tabs>
       </div>
     </div>
   );
