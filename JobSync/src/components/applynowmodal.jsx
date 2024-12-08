@@ -8,9 +8,15 @@ const ApplyModal = ({ show, handleClose }) => {
     const [progress, setProgress] = useState(0); 
     const [selectedOption, setSelectedOption] = useState(null); 
     const [preferredContact, setPreferredContact] = useState(null);
-    const [selectedResume, setSelectedResume] = useState(''); 
+    const [selectedResume, setSelectedResume] = useState('');
     const [isChecked, setIsChecked] = useState(false);
     const [coverLetter, setCoverLetter] = useState('');
+
+    const handleResumeSelect = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedResume(selectedValue); 
+        console.log("Selected Resume: ", selectedValue);
+    };
 
     const handleNext = () => {
         if (currentStep < 4) {
@@ -228,15 +234,21 @@ const ApplyModal = ({ show, handleClose }) => {
         <h5 style={{ marginTop: '20px' }}>Upload Resume & Cover Letter</h5>
 
         <Form>
-            {/* Resume Upload */}
-            <Form.Group className="mb-3" controlId="resumeUpload">
-                <Form.Label>Upload Resume</Form.Label>
-                <Form.Control 
-                    type="file" 
-                    accept=".pdf"
-                    onChange={handleResumeUpload}
-                />
-            </Form.Group>
+    {/* Resume Dropdown */}
+    <Form.Group className="mb-3" controlId="resumeSelect">
+        <Form.Label>Select Resume</Form.Label>
+        <Form.Control 
+            as="select"
+            onChange={handleResumeSelect}
+        >
+            <option value="">Select a resume</option>
+            <option value="resume1.pdf">Resume 1</option>
+            <option value="resume2.pdf">Resume 2</option>
+            <option value="resume3.pdf">Resume 3</option>
+        </Form.Control>
+    </Form.Group>
+
+
 
             {/* Cover Letter */}
             <Form.Group className="mb-3" controlId="coverLetter">
