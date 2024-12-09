@@ -4,12 +4,15 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { postToEndpoint } from '../../../components/apiService';
 import { useAuth } from '../../../AuthContext';
+import Swal from 'sweetalert2';
+
 export default function AddressInfo() {
   const [biography, setBiography] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [barangay, setBarangay] = useState('');
   const [postal, setPostal] = useState('');
+  const [initialData, setInitialData] = useState(null); // To store the initial fetched data
   const { user } = useAuth();
 
   useEffect(() => {
@@ -19,7 +22,7 @@ export default function AddressInfo() {
           const response = await postToEndpoint('/getApplicantinfo.php', {
             applicant_id: user.id,
           });
-  
+
           if (response.data) {
             const {
               biography,
@@ -27,7 +30,6 @@ export default function AddressInfo() {
               address,
               barangay,
               postal,
-
             } = response.data;
             setBiography(biography || '');
             setCity(city || '');
@@ -35,6 +37,13 @@ export default function AddressInfo() {
             setBarangay(barangay || '');
             setPostal(postal || '');
 
+            setInitialData({
+              biography,
+              city,
+              address,
+              barangay,
+              postal,
+            });
           }
         } catch (error) {
           console.error('Error fetching applicant info:', error);
@@ -42,19 +51,81 @@ export default function AddressInfo() {
       }
     };
     fetchApplicantInfo();
-  }, [user]); 
+  }, [user]);
 
   const handleBiographyChange = (value) => {
-    setBiography(value); 
+    setBiography(value);
   };
 
+  const isChanged = () => {
+    if (!initialData) return false;
+    return (
+      biography !== initialData.biography ||
+      city !== initialData.city ||
+      address !== initialData.address ||
+      barangay !== initialData.barangay ||
+      postal !== initialData.postal
+    );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (user?.id) {
+      try {
+        const response = await postToEndpoint('/updateApplicantAddress.php', {
+          applicant_id: user.id,
+          biography,
+          city,
+          address,
+          barangay,
+          postal,
+        });
+  
+        if (response.data.success) {
+          Swal.fire({
+            title: 'Success!',
+            text: 'Your information has been updated successfully!',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          });
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: response.data.message || 'Failed to update your information. Please try again.',
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          });
+        }
+      } catch (error) {
+        console.error('Error updating applicant info:', error);
+        Swal.fire({
+          title: 'Oops!',
+          text: 'An error occurred. Please try again later.',
+          icon: 'error',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false
+        });
+      }
+    }
+  };
   return (
     <Container
       fluid="md"
       className="pb-5"
       style={{
         maxWidth: '1200px',
-        background: '#fbfbfb',
+        background: 'transparent',
         borderRadius: '8px',
         padding: '2rem',
         paddingLeft: '10px',
@@ -63,7 +134,7 @@ export default function AddressInfo() {
         justifyContent: 'flex-end',
       }}
     >
-      <Form style={{ width: '100%' }}>
+      <Form style={{ width: '100%' }} onSubmit={handleSubmit}>
         <h4 style={{ marginBottom: '30px', fontSize: '28px', textAlign: 'left' }}>Address Information</h4>
 
         {/* Address and City Fields */}
@@ -86,7 +157,6 @@ export default function AddressInfo() {
               placeholder="Enter your city"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              
             />
           </Col>
         </Row>
@@ -101,7 +171,6 @@ export default function AddressInfo() {
               placeholder="Enter your barangay"
               value={barangay}
               onChange={(e) => setBarangay(e.target.value)}
-
             />
           </Col>
           <Col md={6}>
@@ -130,8 +199,11 @@ export default function AddressInfo() {
             >
               Biography
             </Form.Label>
-            <div style={{textAlign: 'left', textWrap: 'balance', marginBottom: '10px'}}>
-            <small style={{fontStyle: 'italic'}}>Note: Make sure to include a well-written biography that showcases your unique abilities, experiences, and accomplishments, offering prospective employers a compelling reason to consider you for the position.</small>
+            <div style={{ textAlign: 'left', textWrap: 'balance', marginBottom: '10px' }}>
+              <small style={{ fontStyle: 'italic' }}>
+                Note: Make sure to include a well-written biography that showcases your unique abilities, experiences,
+                and accomplishments, offering prospective employers a compelling reason to consider you for the position.
+              </small>
             </div>
             <ReactQuill
               value={biography}
@@ -152,10 +224,11 @@ export default function AddressInfo() {
         <Row className="mt-5">
           <Col md={12} className="d-flex justify-content-end">
             <Button
-              type='submit'
+              type="submit"
               variant="primary"
               className="mt-3"
               style={{ width: '185px', height: '55px' }}
+              disabled={!isChanged()}
             >
               Save Changes
             </Button>

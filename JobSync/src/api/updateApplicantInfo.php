@@ -7,13 +7,12 @@ $conn = $objDb->connect();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    $profile_picture = isset($data['profile_picture']) ? $data['profile_picture'] : null;
-    
+    $profile_picture = $data['profile_picture'] ?? null;
+    $profile_picture_path = null;
+
     if ($profile_picture) {
         $profile_picture_path = 'uploads/profile_' . uniqid() . '.png'; 
         file_put_contents($profile_picture_path, base64_decode($profile_picture));
-    } else {
-        $profile_picture_path = null;
     }
 
     $applicant_id = $data['applicant_id'];
@@ -33,28 +32,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $conn->beginTransaction();
 
-        $stmt = $conn->prepare("
-        UPDATE js_applicants 
-        SET firstname = :firstname, 
-            middlename = :middlename, 
-            lastname = :lastname, 
-            suffix = :suffix, 
-            gender = :gender, 
-            contact = :contact, 
-            profile_picture = :profile_picture 
-        WHERE applicant_id = :applicant_id
-        ");
-        
-        $stmt->execute([
+        $updateApplicantsQuery = "
+            UPDATE js_applicants 
+            SET firstname = :firstname, 
+                middlename = :middlename, 
+                lastname = :lastname, 
+                suffix = :suffix, 
+                gender = :gender, 
+                contact = :contact";
+
+        $applicantsParams = [
             ':firstname' => $firstname,
             ':middlename' => $middlename,
             ':lastname' => $lastname,
             ':suffix' => $suffix,
             ':gender' => $gender,
             ':contact' => $contact,
-            ':profile_picture' => $profile_picture_path,
             ':applicant_id' => $applicant_id
-        ]);
+        ];
+
+        if ($profile_picture_path) {
+            $updateApplicantsQuery .= ", profile_picture = :profile_picture";
+            $applicantsParams[':profile_picture'] = $profile_picture_path;
+        }
+
+        $updateApplicantsQuery .= " WHERE applicant_id = :applicant_id";
+
+        $stmt = $conn->prepare($updateApplicantsQuery);
+        $stmt->execute($applicantsParams);
 
         $stmt2 = $conn->prepare("
             UPDATE js_personal_info 

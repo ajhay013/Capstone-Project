@@ -6,7 +6,7 @@ export default function Header({ pageTitle, breadcrumbs }) {
     <div>
       <header
         className="py-4 fixed-top head d-flex align-items-center"
-        style={{ marginTop: "130px", backgroundColor: "#F1F2F4" }}
+        style={{ marginTop: "137px", backgroundColor: "#F1F2F4", zIndex: '999'  }}
       >
         <h1
           style={{

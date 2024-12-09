@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { getFromEndpoint } from '../components/apiService';
-import Pagination from '../components/Pagination'; // Import the Pagination component
+import Pagination from '../components/Pagination';
 
 const FindEmployer = () => {
   const [jobSearch, setJobSearch] = useState("");
@@ -41,7 +41,6 @@ const FindEmployer = () => {
     console.log("Searching for jobs:", jobSearch, "in location:", locationSearch);
   };
 
-  // Pagination logic
   const indexOfLastCompany = currentPage * itemsPerPage;
   const indexOfFirstCompany = indexOfLastCompany - itemsPerPage;
   const currentCompanies = companies.slice(indexOfFirstCompany, indexOfLastCompany);
@@ -65,6 +64,7 @@ const FindEmployer = () => {
                     color: "#0A65CC",
                     padding: "15px",
                     fontSize: "18px",
+                    zIndex: '1'
                   }}
                 >
                   <FontAwesomeIcon icon={faSearch} />
@@ -82,6 +82,7 @@ const FindEmployer = () => {
                   borderRadius: "10px 0 0 10px",
                   paddingRight: "10px",
                   height: "45px",
+                  
                 }}
               />
             </div>
@@ -96,9 +97,10 @@ const FindEmployer = () => {
                     color: "#0A65CC",
                     padding: "15px",
                     fontSize: "18px",
+                    zIndex: '1'
                   }}
                 >
-                  <FontAwesomeIcon icon={faMapMarkerAlt} />
+                  <FontAwesomeIcon icon={faMapMarkerAlt}/>
                 </span>
               </div>
               <input

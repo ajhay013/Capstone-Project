@@ -1,13 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const JobCards = ({ jobs }) => {
+const JobCards = ({ jobs, applicantId }) => {
+    const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+    const navigate = useNavigate(); 
+
+    useEffect(() => {
+        const fetchBookmarkedJobs = async () => {
+            try {
+                const response = await axios.get('http://localhost:80/capstone-project/jobsync/src/api/getFavoriteJobs.php', {
+                    params: { applicant_id: applicantId },
+                });
+
+                if (response.data.success) {
+                    setBookmarkedJobs(response.data.bookmarkedJobs); 
+                }
+            } catch (error) {
+                console.error('Error fetching bookmarked jobs:', error);
+            }
+        };
+
+        if (applicantId) {
+            fetchBookmarkedJobs();
+        }
+    }, [applicantId]);
+
+    const handleBookmarkClick = async (jobId) => {
+        if (!applicantId) {
+            navigate('/candidate_login');
+            return;
+        }
+    
+        try {
+            const isBookmarked = bookmarkedJobs.includes(jobId);
+    
+            const endpoint = isBookmarked
+                ? 'http://localhost:80/capstone-project/jobsync/src/api/deleteFavoriteJob.php'
+                : 'http://localhost:80/capstone-project/jobsync/src/api/saveFavoriteJob.php';
+    
+            const response = await axios.post(endpoint, {
+                applicant_id: applicantId,
+                job_id: jobId,
+            });
+    
+            if (response.data.success) {
+                if (isBookmarked) {
+                    setBookmarkedJobs((prevBookmarkedJobs) =>
+                        prevBookmarkedJobs.filter((id) => id !== jobId)
+                    );
+                } else {
+                    setBookmarkedJobs((prevBookmarkedJobs) => [...prevBookmarkedJobs, jobId]);
+                }
+            } else {
+                alert(response.data.message || 'An error occurred.');
+            }
+        } catch (error) {
+            console.error('Error adding/removing job from favorites:', error);
+            alert('An error occurred while updating the job favorites.');
+        }
+    };
     if (!jobs || jobs.length === 0) {
-        return <p>No jobs available.</p>;
+        return(
+            <div className='my-5 container' style={{width: '1190px', height: '27vh'}}>
+                    <h5 style={{marginTop: '135px', fontWeight: '400', color: '#4d4d4d'}}>This employer has not posted any job openings at this time.</h5>
+            </div>
+        );
     }
+
     return (
         <div style={{ width: '1215px' }}>
             <div className="row justify-content-center">
@@ -27,7 +90,6 @@ const JobCards = ({ jobs }) => {
                                 }}
                                 onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
                                 onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-
                             >
                                 <Link to={`/jobdetails/${job.job_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <h5 className="mb-3 font-weight-bold text-start text-dark">{job.jobTitle}</h5>
@@ -64,15 +126,19 @@ const JobCards = ({ jobs }) => {
                                         </div>
                                     </div>
                                 </Link>
+                                
                                 <i
-                                    className="far fa-bookmark position-absolute"
-                                    style={{ right: '15px', top: '15px', fontSize: '20px', color: '#bbbbbb' }}
+                                    className={`fa-bookmark position-absolute ${
+                                        bookmarkedJobs.includes(job.job_id) ? 'fas text-primary' : 'far'
+                                    }`}
+                                    style={{ right: '15px', top: '15px', fontSize: '20px', cursor: 'pointer',  color: '#bbbbbb' }}
+                                    onClick={() => handleBookmarkClick(job.job_id)}
                                 ></i>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p>No jobs available.</p> 
+                    <p>No jobs available.</p>
                 )}
             </div>
         </div>

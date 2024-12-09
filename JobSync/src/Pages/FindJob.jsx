@@ -6,8 +6,11 @@ import JobCards from '../components/jobcards';
 import Pagination from '../components/Pagination';
 import Filter from '../components/Filter'; 
 import { getFromEndpoint } from '../components/apiService';
+import { useAuth } from '../AuthContext'; 
+
 
 export default function FindJob() {
+  const { user } = useAuth(); 
   const [jobSearch, setJobSearch] = useState('');
   const [locationSearch, setLocationSearch] = useState('');
   const [showFilter, setShowFilter] = useState(false);
@@ -144,6 +147,7 @@ export default function FindJob() {
                       color: '#0A65CC',
                       padding: '15px',
                       fontSize: '18px',
+                      zIndex: '1'
                     }}
                   >
                     <FontAwesomeIcon icon={faSearch} />
@@ -176,6 +180,7 @@ export default function FindJob() {
                       color: '#0A65CC',
                       padding: '15px',
                       fontSize: '18px',
+                      zIndex: '1'
                     }}
                   >
                     <FontAwesomeIcon icon={faMapMarkerAlt} />
@@ -240,7 +245,7 @@ export default function FindJob() {
         <Row className="mt-5">
           <Col>
           {currentJobs.length > 0 ? (
-            <JobCards jobs={currentJobs} jobType={jobType} salaryRange={salaryRange} />
+            <JobCards jobs={currentJobs} jobType={jobType} salaryRange={salaryRange}  {...(user?.id && { applicantId: user.id })}/>
           ) : (
               <div
               style={{

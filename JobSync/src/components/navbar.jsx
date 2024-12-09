@@ -118,11 +118,11 @@ const MyNavbar = () => {
                         </Nav>
                         <Nav className="ms-auto">
                             <Nav.Link href="#">jobsync@gmail.com</Nav.Link>
-                            {user && (
+                            {/* {user && (
                                 <>
                                     {renderName()}
                                 </>
-                            )}
+                            )} */}
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

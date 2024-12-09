@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Form, Row, Col, Button, Container } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faFileAlt } from '@fortawesome/free-solid-svg-icons';
-import { postToEndpoint } from '../../../components/apiService';
+import { faPlus, faFileLines, faDownload, faEllipsisV, faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { postToEndpoint, getFromEndpoint } from '../../../components/apiService';
 import { useAuth } from '../../../AuthContext';
 import Swal from 'sweetalert2';
-
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 export default function Personal() {
   const [profileImage, setProfileImage] = useState(null);
@@ -28,69 +30,47 @@ export default function Personal() {
   const [headline, setHeadline] = useState('');
   const [showModal, setShowModal] = useState(false); 
 
-  const [cvName, setCvName] = useState(''); // Store the resume name input
-  const [isFileUploaded, setIsFileUploaded] = useState(false); // Track if file is uploaded
+  const [cvName, setCvName] = useState(''); 
+  const [isFileUploaded, setIsFileUploaded] = useState(false); 
 
-  // Toggle modal visibility
+  const [initialValues, setInitialValues] = useState({});
+  const [profilePictureChanged, setProfilePictureChanged] = useState(false);
+
   const handleModalClose = () => setShowModal(false);
   const handleModalShow = () => setShowModal(true);
 
-  // Handle file upload
   const handleCvUpload = (e) => {
     const file = e.target.files[0];
     setCvFile(file);
     setIsFileUploaded(true);
   };
 
-  // Trigger file input click when the plus icon is clicked
   const triggerFileInput = () => {
     if (cvInputRef.current) {
-      cvInputRef.current.click(); // This will open the file picker
+      cvInputRef.current.click();
     }
   };
 
-  // Handle CV name input change
   const handleCvNameChange = (e) => {
     setCvName(e.target.value);
   };
 
-  // Handle modal submission (saving CV name and showing file upload option)
   const handleModalSubmit = () => {
     if (cvName && isFileUploaded) {
-      setShowModal(false); // Close the modal after submitting
+      setShowModal(false); 
     }
   };
-
-
 
   useEffect(() => {
     const fetchApplicantInfo = async () => {
       if (user?.id) {
         try {
-          const response = await postToEndpoint('/getApplicantinfo.php', {
-            applicant_id: user.id,
-          });
-
+          const response = await postToEndpoint('/getApplicantinfo.php', { applicant_id: user.id });
           if (response.data) {
-            const {
-              profile,
-              firstname,
-              middlename,
-              lastname,
-              suffix,
-              experience,
-              education,
-              gender,
-              marital_status,
-              contact,
-              birthplace,
-              headline,
-              birthday,
-            } = response.data;
-
+            const { profile, firstname, middlename, lastname, suffix, experience, education, gender, marital_status, contact, birthplace, headline, birthday } = response.data;
+  
             setProfile(profile || null);
             setFirstname(firstname || '');
-            setContact(contact || '');
             setMiddlename(middlename || '');
             setLastname(lastname || '');
             setSuffix(suffix || '');
@@ -98,9 +78,25 @@ export default function Personal() {
             setEducation(education || '');
             setGender(gender || '');
             setMaritalStatus(marital_status || '');
+            setContact(contact || '');
             setBirthplace(birthplace || '');
             setHeadline(headline || '');
             setBirthday(birthday || '');
+  
+            setInitialValues({
+              firstname,
+              middlename,
+              lastname,
+              suffix,
+              experience,
+              education,
+              gender,
+              maritalStatus: marital_status,
+              contact,
+              birthplace,
+              headline,
+              birthday
+            });
           }
         } catch (error) {
           console.error('Error fetching applicant info:', error);
@@ -108,21 +104,39 @@ export default function Personal() {
       }
     };
     fetchApplicantInfo();
+    const intervalId = setInterval(fetchApplicantInfo, 500000);
+    return () => clearInterval(intervalId);
   }, [user]);
+  
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setProfile(file);
-      reader.readAsDataURL(file); 
+      setProfilePictureChanged(true);
     }
   };
-  
+
+  const isFormChanged = () => {
+    return (
+      initialValues.firstname !== firstname ||
+      initialValues.middlename !== middlename ||
+      initialValues.lastname !== lastname ||
+      initialValues.suffix !== suffix ||
+      initialValues.experience !== experience ||
+      initialValues.education !== education ||
+      initialValues.gender !== gender ||
+      initialValues.maritalStatus !== maritalStatus ||
+      initialValues.contact !== contact ||
+      initialValues.birthplace !== birthplace ||
+      initialValues.headline !== headline ||
+      initialValues.birthday !== birthday ||
+      profilePictureChanged 
+    );
+  };
 
   const handleButtonClick = () => fileInputRef.current.click();
-
+  
   const handleSaveChanges = async () => {
     if (!user?.id) return;
   
@@ -133,16 +147,18 @@ export default function Personal() {
         const reader = new FileReader();
         reader.onload = () => {
           profilePictureBase64 = reader.result.split(',')[1];
-          sendPayload(profilePictureBase64);
+          sendPayload(profilePictureBase64); 
         };
         reader.readAsDataURL(profileImage);
+        return; 
       } else {
-        profilePictureBase64 = profileImage.split(',')[1];
-        sendPayload(profilePictureBase64);
+        profilePictureBase64 = profileImage.split(',')[1]; 
       }
-    } else {
-      sendPayload(profilePictureBase64);
+    } else if (profileUrl) {
+      profilePictureBase64 = null; 
     }
+  
+    sendPayload(profilePictureBase64);
   };
   
   const sendPayload = async (profilePictureBase64) => {
@@ -194,14 +210,100 @@ export default function Personal() {
         icon: 'error',
         title: 'An error occurred',
         text: 'An error occurred while saving changes.',
-            owConfirmButton: false,
-            mer: 1500,
-            timerProgressBar: true,
-            allowOutsideClick: false,
-            allowEscapeKey: false
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false
       });
     }
   };
+
+  const handleModalSubmitmodal = async () => {
+    if (!cvName || !cvFile) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Oops!',
+        text: 'Please provide a CV name and select a file to upload.',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('applicant_id', user.id);
+    formData.append('cv_name', cvName);
+    formData.append('file', cvFile);
+  
+    try {
+      const response = await postToEndpoint('/InsertResume.php', formData, {
+        'Content-Type': 'multipart/form-data',
+      });
+  
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false
+        });
+        handleModalClose();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          allowOutsideClick: false,
+          allowEscapeKey: false
+        });
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: 'An error occurred while uploading the CV.',
+        confirmButtonText: 'OK',
+      });
+    }
+  };
+
+  const [cvDetails, setCvDetails] = useState(null);
+  
+  useEffect(() => {
+    let intervalId;
+    const fetchResume = async () => {
+      try {
+        if (user && user.id) {
+          const response = await getFromEndpoint(`/FetchResume.php?applicant_id=${user.id}`);
+    
+          if (response.data.success) {
+            setCvDetails(response.data.data);
+          } else {
+            console.log('No resumes found for this applicant.');
+          }
+        } else {
+          console.log('User ID is missing.');
+        }
+      } catch (error) {
+        console.error('Error fetching resumes:', error);
+      }
+    };
+    if (user && user.id) {
+      fetchResume();
+      intervalId = setInterval(fetchResume, 100); 
+    }
+    return () => {
+      clearInterval(intervalId); 
+    };
+  }, [user]);
   
   const profileUrl = profileImage ? (typeof profileImage === 'string' ? profileImage : URL.createObjectURL(profileImage)) : profile;
 
@@ -420,103 +522,116 @@ export default function Personal() {
             fontSize: '18px',
           }}
         >
-          Upload CV/Resume
+          Your Cv/Resume
         </Form.Label>
-        <Col md={4}>
-          {cvFile && isFileUploaded ? (
-            // If CV file is uploaded and the modal was completed
-            <>
-              <div
+        {cvDetails && cvDetails.length > 0 && (
+  cvDetails.map((cv, index) => (
+    <Col 
+      md={4} 
+      className="d-flex flex-column" 
+      key={cv.resumeId || index} // Use resumeId if available, fallback to index
+    >
+      <div
+        style={{
+          border: '1px solid #ccc',
+          padding: '20px',
+          borderRadius: '8px',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          width: '100%',
+          height: '90px',
+          marginBottom: '10px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', flexDirection: 'row', position: 'relative', top: '15px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              top: '8px',
+              position: 'relative',
+              width: '40px',
+              height: '40px',
+              borderRadius: '4px',
+              marginTop: '5px',
+            }}
+          >
+            <FontAwesomeIcon icon={faFileLines} size="xl" style={{ color: '#47a0ff', width: '25px', height: '29px' }} />
+          </div>
+          <span
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: 'calc(100% - 100px)',
+              cursor: 'default'
+            }}
+          >
+            {cv.resumeName}
+          </span>
+        </div>
+        <div
+          className="dropdown"
+          style={{ position: 'relative', alignSelf: 'flex-end', top: '-10px' }}
+        >
+          <FontAwesomeIcon
+            icon={faEllipsisV}
+            size="lg"
+            style={{ cursor: 'pointer', color: 'gray', width: '20px' }}
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          />
+          <ul
+            className="dropdown-menu"
+            aria-labelledby="dropdownMenuButton"
+            style={{ minWidth: '150px' }}
+          >
+            <li>
+              <button
+                className="dropdown-item d-flex align-items-center text-danger"
+                onClick={() => handleDeleteResume(cv.resumeId)}
                 style={{
-                  border: '1px solid #ccc',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                  width: '100%',
-                  height: '90px',
+                  fontWeight: '500',
+                  fontSize: '14px'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = '#cfe7ff';
+                  e.target.style.color = '#0955b7';
+                  e.target.style.fontWeight = '500';
+                  e.target.style.fontSize = '14px';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = '#212529';
+                  e.target.style.borderRadius = '0';
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <FontAwesomeIcon icon={faFileAlt} size="lg" style={{ color: '#007bff' }} />
-                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                    {cvName}
-                  </span>
-                </div>
-              </div>
-            </>
-          ) : (
-            // If no CV file is uploaded yet
-            <>
-              <div
-                style={{
-                  border: '1px solid #ccc',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'flex-start',
-                  width: '100%',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  <div
-                    onClick={handleModalShow}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '40px',
-                      height: '40px',
-                      border: '2px solid #007bff',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      marginTop: '5px',
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faPlus} size="lg" style={{ color: '#007bff' }} />
-                  </div>
-                  <span
-                    style={{
-                      fontWeight: 'bold',
-                      fontSize: '16px',
-                      color: '#000',
-                      marginTop: '-10px',
-                      marginLeft: '10px',
-                    }}
-                  >
-                    Upload CV
-                  </span>
-                </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: '#6c757d',
-                    marginTop: '-18px',
-                    marginLeft: '58px',
-                  }}
-                >
-                  Browse file
-                </div>
-              </div>
-            </>
-          )}
-        </Col>
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  className="me-2"
+                />
+                Delete
+              </button>
+            </li>
+          </ul>
+        </div>
+        <a href={`src/api/${cv.resumePath}`} target="_blank" rel="noopener noreferrer" style={{ position: 'relative', left: '50px', top: '-20px' }}>
+          <FontAwesomeIcon icon={faDownload} size="lg" style={{ color: '#0955b7', marginRight: '10px', width: '13px' }} />
+          <small style={{ fontWeight: '400', color: '#0955b7' }}>Download Cv/Resume</small>
+        </a>
+      </div>
+    </Col>
+  ))
+)}
 
-        {cvFile && (
-          <Col md={4}>
+        <Col md={4}>
             <div
               style={{
                 border: '1px solid #ccc',
@@ -546,7 +661,7 @@ export default function Personal() {
                     justifyContent: 'center',
                     width: '40px',
                     height: '40px',
-                    border: '2px solid #007bff',
+                    border: '1px solid #007bff',
                     borderRadius: '4px',
                     cursor: 'pointer',
                     marginTop: '5px',
@@ -563,7 +678,7 @@ export default function Personal() {
                     marginLeft: '10px',
                   }}
                 >
-                  Update CV
+                  Add Cv/Resume
                 </span>
               </div>
               <div
@@ -574,36 +689,26 @@ export default function Personal() {
                   marginLeft: '58px',
                 }}
               >
-                Browse file
+                Browse file. Only pdf
               </div>
             </div>
-          </Col>
-        )}
+        </Col>
       </Row>
 
-
-
-      
-
- 
-    {/* Save Changes and Back Buttons */}
     <Row className="mt-3">
       <Col md={12} className="d-flex justify-content-end">    
         {/* Save Changes Button */}
-        <Button variant="primary"  onClick={handleSaveChanges} className="mt-3" style={{width: '185px', height: '55px'}}>
+        <Button variant="primary"  onClick={handleSaveChanges}  disabled={!isFormChanged()} className="mt-3" style={{width: '185px', height: '55px'}}>
           Save Changes
         </Button>
       </Col>
     </Row>
-
-
       </Form>
-
       <Modal show={showModal} onHide={handleModalClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Upload CV</Modal.Title>
+        <Modal.Header closeButton style={{paddingLeft: '1.5rem', paddingRight: '1.5rem', fontSize: '10px'}}>
+          <Modal.Title>Add Cv/Resume</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{paddingLeft: '1.5rem', paddingRight: '1.5rem'}}>
           <Form.Group controlId="cvName" style={{ marginBottom: '20px' }}>
             <Form.Label>Cv/Resume Name</Form.Label>
             <Form.Control
@@ -614,8 +719,6 @@ export default function Personal() {
               placeholder="Enter the name for your resume"
             />
           </Form.Group>
-
-          {/* Display file name if uploaded */}
           <Form.Label>Upload Cv/Resume</Form.Label>
           {cvFile ? (
             <div
@@ -628,7 +731,7 @@ export default function Personal() {
               }}
             >
               <FontAwesomeIcon
-                icon={faFileAlt}
+                icon={faFileLines}
                 size="lg"
                 style={{ color: '#007bff', marginBottom: '10px' }}
               />
@@ -637,7 +740,6 @@ export default function Personal() {
               </div>
             </div>
           ) : (
-            // Display plus icon if no file is uploaded
             <div
               style={{
                 textAlign: 'center',
@@ -651,30 +753,29 @@ export default function Personal() {
                 icon={faPlus}
                 size="2x"
                 style={{ color: '#007bff', cursor: 'pointer' }}
-                onClick={triggerFileInput} // Open file picker when clicked
+                onClick={triggerFileInput} 
               />
             </div>
           )}
 
-          {/* Hidden file input */}
           <input
             type="file"
             accept=".pdf"
             ref={cvInputRef}
-            style={{ display: 'none' }} // Hide the input field
+            style={{ display: 'none' }} 
             onChange={handleCvUpload}
           />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
+        <Modal.Footer style={{paddingLeft: '1.5rem', paddingRight: '1.5rem', justifyContent: 'space-between'}}>
+          <Button onClick={handleModalClose} style={{height: '38px', fontSize: '12px', borderRadius: '3px', width: '75px', color: '#156ad7', background: '#bce0ff', border: 'none', fontWeight: '700'}}>
             Close
           </Button>
           <Button
-            variant="primary"
-            onClick={handleModalSubmit} // Submit modal after entering CV name
-            disabled={!cvName || !cvFile} // Disable button if no name or file
+            onClick={handleModalSubmitmodal} 
+            disabled={!cvName || !cvFile} 
+            style={{width: '120px', height: '38px', fontSize: '12px', borderRadius: '3px', background: '#156ad7', fontWeight: '500'}}
           >
-            Upload
+            Add Cv/Resume
           </Button>
         </Modal.Footer>
       </Modal>

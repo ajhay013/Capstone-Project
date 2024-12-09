@@ -107,7 +107,7 @@ function Layout({ userId, setUserId }) {
                              location.pathname === '/complete' ||
                              location.pathname === '/employer/contact';
 
-  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts', '/employerdetails' , '/employer/findapplicant' , '/employer/applications' ].some((path) =>
+  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts', '/employerdetails', '/employer/findapplicant', '/employer/applications', '/applicantprofile'].some((path) =>
     location.pathname.startsWith(path.replace(':job_id', '').replace(':employerId', ''))
   );
 
@@ -118,6 +118,9 @@ function Layout({ userId, setUserId }) {
     }
     if (location.pathname.startsWith('/employerdetails/')) {
       return 'Single Employer';
+    }
+    if (location.pathname.startsWith('/applicantprofile')) {
+      return 'Profile'; 
     }
     switch (location.pathname) {
       case '/findjob':
@@ -149,6 +152,12 @@ function Layout({ userId, setUserId }) {
         { label: 'Home', path: '/' },
         { label: 'Employers', path: '/findemployer' },
         { label: 'Single Employer', path: location.pathname },
+      ];
+    }
+    if (location.pathname.startsWith('/applicantprofile')) {
+      return [
+        { label: "Home", path: "/" },
+        { label: "Profile", path: location.pathname },
       ];
     }
     switch (location.pathname) {

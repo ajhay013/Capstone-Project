@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'address' => $row['address'] ?? null,
                     'city' => $row['city'] ?? null,
                     'barangay' => $row['barangay'] ?? null,
+                    'email' => $row['email'] ?? null,
                     'postal' => $row['postal'] ?? null,
                 ]);
             } else {

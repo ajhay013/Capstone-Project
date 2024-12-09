@@ -20,6 +20,11 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
 
   const pageNumbers = getPageNumbers();
 
+  // Function to format page numbers with leading zero
+  const formatPageNumber = (number) => {
+    return number < 10 ? `0${number}` : number;
+  };
+
   return (
     <nav aria-label="Page navigation" className="mt-4">
       <ul className="pagination justify-content-center">
@@ -68,11 +73,11 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
                 color: currentPage === number ? 'white' : 'black',
                 borderRadius: '50%',
                 fontWeight: 'bold',
-                padding: '7px 15px',
+                padding: '8px 11px',
                 transition: 'background-color 0.3s, color 0.3s',
               }}
             >
-              {number}
+              {formatPageNumber(number)} {/* Display page number with leading zero */}
             </button>
           </li>
         ))}

@@ -1,22 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, ProgressBar } from 'react-bootstrap';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
+import axios from 'axios';
 
-const ApplyModal = ({ show, handleClose }) => {
+const ApplyModal = ({ show, handleClose, applicant_id, job_id }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [progress, setProgress] = useState(0); 
     const [selectedOption, setSelectedOption] = useState(null); 
-    const [preferredContact, setPreferredContact] = useState(null);
-    const [selectedResume, setSelectedResume] = useState('');
     const [isChecked, setIsChecked] = useState(false);
     const [coverLetter, setCoverLetter] = useState('');
-
-    const handleResumeSelect = (event) => {
-        const selectedValue = event.target.value;
-        setSelectedResume(selectedValue); 
-        console.log("Selected Resume: ", selectedValue);
-    };
+    const [ApplicantProfile, setApplicantProfile] = useState([]);
 
     const handleNext = () => {
         if (currentStep < 4) {
@@ -36,29 +30,48 @@ const ApplyModal = ({ show, handleClose }) => {
         setSelectedOption(option); 
     };
 
-    const handlePreferredContact = (option) => {
-        setPreferredContact(option); 
-    };
-
-    const handleResumeChange = (e) => {
-        setSelectedResume(e.target.value); 
-    };
-
     const handleCoverLetterChange = (value) => {
         setCoverLetter(value);
     };
 
-    const modalBodyStyle = currentStep === 4 
+    useEffect(() => {
+        const fetchApplicantProfile = async () => {
+            try {
+                const response = await axios.post(
+                    'http://localhost:80/capstone-project/jobsync/src/api/getApplicantinfo.php',
+                    { applicant_id } 
+                );
+                console.log(response.data);
+                if (response.data && !response.data.error) {
+                    setApplicantProfile(response.data); 
+                } else {
+                    console.error('Error in response:', response.data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching applicant profile:', error);
+            }
+        };
+    
+        if (applicant_id) {
+            fetchApplicantProfile();
+        }
+    }, [applicant_id]);
+    
+
+    const modalBodyStyle = currentStep === 4 ||
+    currentStep === 2
         ? { 
             position: 'relative', 
-            overflowY: 'auto', 
-            maxHeight: '700px',
-            paddingRight: '10px' 
+            overflowY: 'auto',
+            maxHeight: '740px',
+            paddingLeft: '40px',
+            paddingRight: '40px'
         } 
         : { 
             position: 'relative', 
             overflow: 'hidden', 
-            height: '500px' 
+            paddingLeft: '40px',
+            paddingRight: '40px'
         };
 
         const handleResumeUpload = (event) => {
@@ -68,32 +81,33 @@ const ApplyModal = ({ show, handleClose }) => {
                
             }
         };
+
+        const handleSubmit = () => {
+            const applicationData = {
+                applicant_id,
+                job_id,
+                coverLetter,
+            };
+    
+            console.log("Application submitted:", applicationData);
+            handleClose(); 
+        };
         
 
     return (
         <Modal
-            show={show}
-            onHide={handleClose}
-            centered
-            className="modal-lg"
-            style={{
-                maxWidth: '90%',
-                height: 'auto',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                margin: 0,
-                padding: 0,
-                marginTop: '100px',
-                marginLeft: '125px',
-            }}
+        show={show}
+        onHide={handleClose}
+        aria-labelledby="contained-modal-title-vcenter"
+        className="modal-lg"
+        backdrop="static"
         >
-            <Modal.Header closeButton>
-                <Modal.Title>Apply to Job</Modal.Title>
+            <Modal.Header closeButton style={{paddingLeft: '1.5rem', paddingRight: '1.5rem', fontSize: '10px'}}>
+            <Modal.Title style={{paddingLeft: '10px'}}>Apply to Job</Modal.Title>
             </Modal.Header>
             <Modal.Body style={modalBodyStyle}>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                    <ProgressBar now={progress} label={`${Math.round(progress)}%`} className="flex-grow-1" />
+                    <ProgressBar now={progress} className="flex-grow-1" />
                     <span className="ms-2" style={{ fontSize: '0.9rem' }}>{Math.round(progress)}%</span>
                 </div>
 
@@ -103,51 +117,51 @@ const ApplyModal = ({ show, handleClose }) => {
                         <h5 style={{ marginTop: '20px' }}>Contact info</h5>
                         <div className="d-flex align-items-center mb-3">
                             <img
-                                src="../src/assets/berns.jpg"
+                                src={ApplicantProfile.profile}
                                 alt="Profile"
-                                className="rounded-circle me-2"
+                                className="rounded-circle me-3"
                                 style={{ width: '80px', height: '80px' }}
                             />
                             <div>
-                                <strong>ARENDAYEN, Ajhay R.</strong>
+                                <strong>{ApplicantProfile.firstname} {ApplicantProfile.middlename} {ApplicantProfile.lastname}</strong>
                                 <p className="mb-0" style={{ fontSize: '1rem' }}>
-                                    Student at University of Caloocan City
+                                    {ApplicantProfile.headline}
                                 </p>
                                 <p className="mb-0" style={{ fontSize: '0.9rem', color: 'gray' }}>
-                                    Caloocan City, National Capital Region, Philippines
+                                {ApplicantProfile.address} - {ApplicantProfile.city}
                                 </p>
                             </div>
                         </div>
                         <Form>
                             <Form.Group className="mb-3" controlId="email">
                                 <Form.Label>Email address*</Form.Label>
-                                <Form.Control type="email" placeholder="ajhayarendayen@gmail.com" />
+                                <Form.Control className='register1' type="email" disabled value={ApplicantProfile.email}/>
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="phoneCountryCode">
-                                <Form.Label>Phone country code*</Form.Label>
-                                <Form.Select>
-                                    <option>Philippines (+63)</option>
-                                </Form.Select>
+                                <Form.Label>City</Form.Label>
+                                <Form.Control className='register1' type="email" disabled value={ApplicantProfile.city}/>
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="mobilePhoneNumber">
                                 <Form.Label>Mobile phone number*</Form.Label>
-                                <Form.Control type="text" placeholder="Enter your mobile number" />
+                                <Form.Control className='register1' type="text" disabled  value={ApplicantProfile?.contact ? `+63${ApplicantProfile.contact}` : ''}  />
                             </Form.Group>
-                            <p className="text-muted" style={{ fontSize: '0.9rem' }}>
+                        </Form>
+                        <div>
+                            <p className="text-muted mb-0 mt-5" style={{ fontSize: '0.9rem' }}>
                                 Submitting this application won't change your JobSync profile.
                                 <br />
                                 Application powered by JobSync |{' '}
                                 <a href="#" style={{ color: '#0073b1' }}>Help Center</a>
                             </p>
-                        </Form>
+                        </div>
                     </div>
                 )}
 
                 {/* Step 2: Additional Questions */}
                 {currentStep === 2 && (
                     <div>
-                        <h5 style={{ marginTop: '20px' }}>Additional Questions</h5>
-                        <p style={{ marginTop: '20px' }}>Do you prefer to be contacted?</p>
+                        <h5 style={{ marginTop: '20px' }}>Screening Questions</h5>
+                        <p style={{ marginTop: '20px', color: '#4f4f4f' }}>Do you prefer to be contacted?</p>
                         <div className="d-flex flex-column justify-content-start mb-4">
                             {['Yes', 'No'].map((option, index) => (
                                 <div
@@ -163,8 +177,8 @@ const ApplyModal = ({ show, handleClose }) => {
                                     <div
                                         className="circle-option"
                                         style={{
-                                            width: '30px',
-                                            height: '30px',
+                                            width: '25px',
+                                            height: '25px',
                                             borderRadius: '50%',
                                             border: '2px solid #0073b1',
                                             display: 'flex',
@@ -183,9 +197,9 @@ const ApplyModal = ({ show, handleClose }) => {
                                 </div>
                             ))}
                         </div>
-                        <p>What is your preferred method of contact?</p>
+                        <p style={{ marginTop: '20px', color: '#4f4f4f' }}>Do you prefer to be contacted?</p>
                         <div className="d-flex flex-column justify-content-start mb-4">
-                            {['Email', 'Phone', 'Both'].map((option, index) => (
+                            {['Yes', 'No'].map((option, index) => (
                                 <div
                                     key={index}
                                     style={{
@@ -194,77 +208,69 @@ const ApplyModal = ({ show, handleClose }) => {
                                         marginBottom: '10px',
                                         cursor: 'pointer',
                                     }}
-                                    onClick={() => handlePreferredContact(option)}
+                                    onClick={() => handleOptionSelect(option)}
                                 >
                                     <div
                                         className="circle-option"
                                         style={{
-                                            width: '30px',
-                                            height: '30px',
+                                            width: '25px',
+                                            height: '25px',
                                             borderRadius: '50%',
                                             border: '2px solid #0073b1',
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                            backgroundColor: preferredContact === option ? '#0073b1' : 'white',
-                                            color: preferredContact === option ? 'white' : '#0073b1',
+                                            backgroundColor: selectedOption === option ? '#0073b1' : 'white',
+                                            color: selectedOption === option ? 'white' : '#0073b1',
                                             fontSize: '1.2rem',
                                         }}
                                     >
-                                        {preferredContact === option ? '✓' : ''}
+                                        {selectedOption === option ? '✓' : ''}
                                     </div>
                                     <span style={{ marginLeft: '10px', fontSize: '1rem' }}>
                                         {option}
                                     </span>
                                 </div>
                             ))}
-                            <p className="text-muted mt-3" style={{ fontSize: '0.9rem' }}>
-                                Submitting this application won't change your JobSync profile.
-                                <br />
-                                Application powered by JobSync |{' '}
-                                <a href="#" style={{ color: '#0073b1' }}>Help Center</a>
-                            </p>
                         </div>
+
+                        
                     </div>
                 )}
 
                 {/* Step 3: Resume Upload and Cover Letter */}
-{currentStep === 3 && (
-    <div>
-        <h5 style={{ marginTop: '20px' }}>Upload Resume & Cover Letter</h5>
+                {currentStep === 3 && (
+                    <div>
+                        <h5 style={{ marginTop: '20px' }}>Upload Resume & Cover Letter</h5>
 
-        <Form>
-    {/* Resume Dropdown */}
-    <Form.Group className="mb-3" controlId="resumeSelect">
-        <Form.Label>Select Resume</Form.Label>
-        <Form.Control 
-            as="select"
-            onChange={handleResumeSelect}
-        >
-            <option value="">Select a resume</option>
-            <option value="resume1.pdf">Resume 1</option>
-            <option value="resume2.pdf">Resume 2</option>
-            <option value="resume3.pdf">Resume 3</option>
-        </Form.Control>
-    </Form.Group>
+                        <Form>
+                            {/* Resume Upload */}
+                            <Form.Group className="mb-3" controlId="resumeSelect">
+                                <Form.Label>Select Resume</Form.Label>
+                                <Form.Control 
+                                    as="select"
+                                    className='register1'
+                                >
+                                    <option value="" disabled selected>Select a resume</option>
+                                    <option value="resume1.pdf">Resume 1</option>
+                                    <option value="resume2.pdf">Resume 2</option>
+                                    <option value="resume3.pdf">Resume 3</option>
+                                </Form.Control>
+                            </Form.Group>
 
-
-
-            {/* Cover Letter */}
-            <Form.Group className="mb-3" controlId="coverLetter">
-                <Form.Label>Cover Letter</Form.Label>
-                <ReactQuill
-                    value={coverLetter}
-                    onChange={handleCoverLetterChange}
-                    placeholder="Write your cover letter here"
-                    modules={{ toolbar: [['bold', 'italic', 'underline'], ['link']] }}
-                />
-            </Form.Group>
-        </Form>
-    </div>
-)}
-
-
+                            {/* Cover Letter */}
+                            <Form.Group className="mb-3" controlId="coverLetter">
+                                <Form.Label>Cover Letter (Optional)</Form.Label>
+                                <ReactQuill
+                                    value={coverLetter}
+                                    onChange={handleCoverLetterChange}
+                                    placeholder="Write your cover letter here"
+                                    modules={{ toolbar: [['bold', 'italic', 'underline'], ['link']] }}
+                                />
+                            </Form.Group>
+                        </Form>
+                    </div>
+                )}
                 {/* Step 4: Confirmation */}
                 {currentStep === 4 && (
                     <div>
@@ -290,58 +296,49 @@ const ApplyModal = ({ show, handleClose }) => {
                             Edit
                         </button>
 
-                        <h5 style={{ marginTop: '10px' , marginBottom: '15px' }}>Contact Information</h5>
+                        <h5 style={{ marginTop: '10px', marginBottom: '15px' }}>Contact Information</h5>
                         <div className="d-flex align-items-center mb-3">
                             <img
-                                src="../src/assets/berns.jpg"
+                                src={ApplicantProfile.profile}
                                 alt="Profile"
                                 className="rounded-circle me-2"
                                 style={{ width: '80px', height: '80px' }}
                             />
                             <div>
-                                <strong>ARENDAYEN, Ajhay R.</strong>
+                                <strong>{ApplicantProfile.firstname} {ApplicantProfile.middlename} {ApplicantProfile.lastname}</strong>
                                 <p className="mb-0" style={{ fontSize: '1rem' }}>
-                                    Student at University of Caloocan City
+                                    {ApplicantProfile.headline}
                                 </p>
                                 <p className="mb-0" style={{ fontSize: '0.9rem', color: 'gray' }}>
-                                    Caloocan City, National Capital Region, Philippines
+                                {ApplicantProfile.address} - {ApplicantProfile.city}
                                 </p>
                             </div>
                         </div>
-                        <Form>
-                            <Form.Group className="mb-3" controlId="email">
-                                <Form.Label>Email address*</Form.Label>
-                                <Form.Control type="email" placeholder="ajhayarendayen@gmail.com" />
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="phoneCountryCode">
-                                <Form.Label>Phone country code*</Form.Label>
-                                <Form.Select>
-                                    <option>Philippines (+63)</option>
-                                </Form.Select>
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="mobilePhoneNumber">
-                                <Form.Label>Mobile phone number*</Form.Label>
-                                <Form.Control type="text" placeholder="Enter your mobile number" />
-                            </Form.Group>
 
-                            <hr className="my-4" />
+                        <div className="mb-3">
+                            <strong>Email address</strong>
+                            <p>{ApplicantProfile.email}</p>
+                        </div>
+                        <div className="mb-3">
+                            <strong>City</strong>
+                            <p>{ApplicantProfile.city}</p>
+                        </div>
+                        <div className="mb-3">
+                            <strong>Phone number</strong>
+                            <p>+63{ApplicantProfile.contact}</p>
+                        </div>
 
-                            <Form.Group className="mb-3" controlId="resumeSelect">
-    <Form.Label>Choose Uploaded Resume</Form.Label>
-    <Form.Control 
-        type="text" 
-        placeholder="Enter resume file name (e.g., resume1.pdf)" 
-        value={selectedResume} 
-        onChange={handleResumeChange} 
-    />
-</Form.Group>
+                        <hr className="my-4" />
 
-                        </Form>
+                        <div className="mb-3">
+                            <strong>Your uploaded resume</strong>
+                            <p>resume1.pdf</p>
+                        </div>
 
                         <hr className="my-4" />
                         
                         <div className="d-flex justify-content-between align-items-center mb-3">
-                            <h5>Additional Questions</h5>
+                            <h5>Screening Questions</h5>
                             <button
                                 style={{
                                     backgroundColor: 'transparent',
@@ -357,38 +354,43 @@ const ApplyModal = ({ show, handleClose }) => {
                             </button>
                         </div>
                         <p style={{ marginTop: '20px' }}>Do you prefer to be contacted?</p>
-                        <p style={{ color:"black" , marginTop: '-20px'}}>Yes</p>
+                        <p style={{ color: "black", marginTop: '-20px' }}>Yes</p>
 
                         <hr className="my-4" />
 
                         {/* Follow JobSync Checkbox */}
-                        <Form.Check 
-                            type="checkbox" 
-                            label="Follow JobSync to stay updated with their page"
-                            checked={isChecked} 
-                            onChange={() => setIsChecked(!isChecked)} 
-                            className="mt-3"
-                        />
+                        <div className="mt-3">
+                            <strong>Follow JobSync to stay updated with their page</strong>
+                            <p>{isChecked ? 'Yes' : 'No'}</p>
+                        </div>
+
                         <p className="text-muted mt-3 mb-0" style={{ fontSize: '0.9rem' }}>
                             We will automatically save your answer and resume to pre-fill future applications and improve your experience on JobSync.
-                            You can control this in your <a href="/application-settings" style={{ color: '#0073b1' }}>Application Settings</a>.  
+                            You can control this in your <a href="/application-settings" style={{ color: '#0073b1' }}>Application Settings</a>.
                             <a href="/learn-more" style={{ color: '#0073b1' }}> Learn more</a>
                             <br />
                             Application powered by JobSync |{' '}
                             <a href="/help-center" style={{ color: '#0073b1' }}>Help Center</a>
                         </p>
                     </div>
+
                 )}
             </Modal.Body>
-            <Modal.Footer>
-                {currentStep > 1 && (
-                    <Button variant="secondary" onClick={handleBack}>
+            <Modal.Footer style={{paddingLeft: '2rem', paddingRight: '2rem', justifyContent: 'space-between'}}>
+                {currentStep > 1 ? (
+                    <Button onClick={handleBack} style={{height: '40px', fontSize: '12px', borderRadius: '3px', width: '75px', color: '#156ad7', background: '#bce0ff', border: 'none', fontWeight: '700'}}>
                         Back
                     </Button>
+                ) : (
+                    <Button onClick={handleClose} style={{height: '40px', fontSize: '12px', borderRadius: '3px', width: '75px', color: '#156ad7', background: '#bce0ff', border: 'none', fontWeight: '700'}}>
+                        Close
+                    </Button>
                 )}
-                <Button variant="primary" onClick={handleNext}>
-                    {currentStep === 4 ? 'Submit' : 'Next'}
-                </Button>
+                {currentStep < 4 ? (
+                    <Button onClick={handleNext} style={{width: '120px', height: '40px', fontSize: '12px', borderRadius: '3px', background: '#156ad7', fontWeight: '500'}}>Next</Button>
+                ) : (
+                    <Button onClick={handleSubmit} style={{width: '120px', height: '40px', fontSize: '12px', borderRadius: '3px', background: '#156ad7', fontWeight: '500'}}>Submit</Button>
+                )}
             </Modal.Footer>
         </Modal>
     );

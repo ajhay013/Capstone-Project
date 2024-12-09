@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import { FaBuilding, FaCalendar, FaLink } from 'react-icons/fa';
 import AddressInfo from '../../Pages/Applicants/ApplicantProfile/address';
@@ -7,14 +7,25 @@ import Personal from './ApplicantProfile/personal';
 
 export default function ApplicantProfile() {
   const [activeKey, setActiveKey] = useState('personal');
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer); 
+  }, []);
 
   const tabStyles = (isActive) => ({
     color: isActive ? '#0A65CC' : '#757575',
   });
 
+  if (isLoading) {
+    return (
+      <div id="preloader">
+      </div>
+    );
+  }
   return (
-    <div className='containter' style={{ padding: 0, marginTop: '70px', maxWidth: '1200px', width: '100%' }}>
+    <div className='containter' style={{ padding: 0, marginTop: '100px', maxWidth: '1200px', width: '100%' }}>
       {/* Tab Bar Container */}
       <div
         style={{
@@ -35,7 +46,7 @@ export default function ApplicantProfile() {
           <Tab
             eventKey="personal"
             style={{
-              background: '#fbfbfb',
+              background: 'linear-gradient(49deg, rgba(232,242,255,1) 0%, rgba(255,255,255,1) 45%)',
               borderRadius: '8px',
               boxShadow: '0px 4px 11px rgba(0, 0, 0, 0.2)'
             }}
@@ -54,7 +65,7 @@ export default function ApplicantProfile() {
           <Tab
             eventKey="address"
             style={{
-              background: '#fbfbfb',
+              background: 'linear-gradient(49deg, rgba(232,242,255,1) 0%, rgba(255,255,255,1) 45%)',
               borderRadius: '8px',
               boxShadow: '0px 4px 11px rgba(0, 0, 0, 0.2)'
             }}
@@ -73,7 +84,7 @@ export default function ApplicantProfile() {
           <Tab
             eventKey="socmedlinks"
             style={{
-              background: '#fbfbfb',
+              background: 'linear-gradient(49deg, rgba(232,242,255,1) 0%, rgba(255,255,255,1) 45%)',
               borderRadius: '8px',
               boxShadow: '0px 4px 11px rgba(0, 0, 0, 0.2)'
             }}
