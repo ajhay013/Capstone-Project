@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaSearch, FaDownload, FaEnvelope, FaCommentDots } from 'react-icons/fa';
-import Pagination from '../../components/pagination';
+import Pagination from '../../components/Pagination';
 
 export default function Applications() {
   const { jobId } = useParams();
@@ -54,7 +54,7 @@ export default function Applications() {
     <div className="container mt-5" style={{ paddingLeft: '0', paddingRight: '0' }}>
 
       <div className="input-group mb-4" style={{ width: '60%' , marginTop: '100px'}}>
-        <span className="input-group-text" id="search-icon" style={{ borderRadius: '20px', marginRight: '10px', color: '#0A65CC' }}>
+        <span className="input-group-text" id="search-icon" style={{ borderRadius: '20px', marginRight: '10px', color: '#0A65CC', zIndex: '1' }}>
           <FaSearch />
         </span>
         <input
@@ -63,7 +63,7 @@ export default function Applications() {
           placeholder="Search by applicant name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ borderRadius: '20px', paddingLeft: '50px' }}
+          style={{ borderRadius: '20px', paddingLeft: '50px'}}
         />
       </div>
       <div className="d-flex flex-wrap align-items-center mb-4" style={{ padding: '10px', borderRadius: '5px' }}>

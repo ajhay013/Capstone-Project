@@ -1,31 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import JobDetailsModal from '../components/jobdetailsmodal';
-import Pagination from '../components/Pagination'; // Import Pagination
-
-const jobData = [
-    { id: 1, logo: '../../src/assets/riot.png', name: 'Visual Designer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 100k- 120k', dateApplied: 'Dec 7, 2019 23:26', status: 'Active' },
-    { id: 2, logo: '../../src/assets/riot.png', name: 'Product Manager', location: 'San Francisco, CA', jobType: 'Part-time', salary: '₱ 80,000', dateApplied: 'Feb 2, 2019 19:28', status: 'Active' },
-    { id: 3, logo: '../../src/assets/riot.png', name: 'Graphic Designer', location: 'Caloocan City', jobType: 'Freelance', salary: '₱ 60,000', dateApplied: 'Feb 2, 2019 19:28', status: 'Expired' },
-    { id: 4, logo: '../../src/assets/riot.png', name: 'Software Engineer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 100,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Active' },
-    { id: 5, logo: '../../src/assets/riot.png', name: 'Product Manager', location: 'San Francisco, CA', jobType: 'Part-time', salary: '₱ 80,000', dateApplied: 'Feb 2, 2019 19:28', status: 'Active' },
-    { id: 6, logo: '../../src/assets/riot.png', name: 'Graphic Designer', location: 'Caloocan City', jobType: 'Freelance', salary: '₱ 60,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Expired' },
-    { id: 7, logo: '../../src/assets/riot.png', name: 'Software Engineer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 100,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Active' },
-    { id: 8, logo: '../../src/assets/riot.png', name: 'Product Manager', location: 'San Francisco, CA', jobType: 'Part-time', salary: '₱ 80,000', dateApplied: 'Feb 2, 2019 19:28', status: 'Active' },
-    { id: 9, logo: '../../src/assets/riot.png', name: 'Graphic Designer', location: 'Caloocan City', jobType: 'Freelance', salary: '₱ 60,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Expired' },
-    { id: 10, logo: '../../src/assets/riot.png', name: 'Graphic Designer', location: 'Caloocan City', jobType: 'Freelance', salary: '₱ 60,000', dateApplied: 'Dec 7, 2019 23:26', status: 'Expired' },
-    { id: 11, logo: '../../src/assets/riot.png', name: 'UI/UX Designer', location: 'Los Angeles, CA', jobType: 'Full-time', salary: '₱ 90,000', dateApplied: 'Jan 15, 2020 10:45', status: 'Active' },
-    { id: 12, logo: '../../src/assets/riot.png', name: 'Data Scientist', location: 'Chicago, IL', jobType: 'Freelance', salary: '₱ 85,000', dateApplied: 'Mar 9, 2020 12:30', status: 'Expired' },
-    { id: 13, logo: '../../src/assets/riot.png', name: 'Marketing Manager', location: 'San Francisco, CA', jobType: 'Part-time', salary: '₱ 75,000', dateApplied: 'Jul 6, 2020 14:15', status: 'Active' },
-    { id: 14, logo: '../../src/assets/riot.png', name: 'Web Developer', location: 'New York, NY', jobType: 'Full-time', salary: '₱ 95,000', dateApplied: 'Oct 22, 2020 16:50', status: 'Active' },
-    { id: 15, logo: '../../src/assets/riot.png', name: 'HR Specialist', location: 'Dallas, TX', jobType: 'Part-time', salary: '₱ 70,000', dateApplied: 'Feb 11, 2020 18:40', status: 'Active' },
-    { id: 16, logo: '../../src/assets/riot.png', name: 'Software Developer', location: 'Austin, TX', jobType: 'Freelance', salary: '₱ 85,000', dateApplied: 'Mar 19, 2020 11:12', status: 'Expired' },
-    { id: 17, logo: '../../src/assets/riot.png', name: 'Graphic Designer', location: 'Caloocan City', jobType: 'Freelance', salary: '₱ 60,000', dateApplied: 'Dec 7, 2020 23:26', status: 'Expired' },
-    { id: 18, logo: '../../src/assets/riot.png', name: 'Front-end Developer', location: 'Los Angeles, CA', jobType: 'Full-time', salary: '₱ 100,000', dateApplied: 'Sep 13, 2020 10:00', status: 'Active' },
-    { id: 19, logo: '../../src/assets/riot.png', name: 'Backend Engineer', location: 'San Francisco, CA', jobType: 'Freelance', salary: '₱ 80,000', dateApplied: 'Dec 12, 2020 17:20', status: 'Active' },
-    { id: 20, logo: '../../src/assets/riot.png', name: 'SEO Specialist', location: 'Chicago, IL', jobType: 'Part-time', salary: '₱ 65,000', dateApplied: 'Oct 8, 2020 14:05', status: 'Expired' },
-];
-
+import Pagination from '../components/Pagination'; 
+import { useAuth } from '../AuthContext'; 
+import axios from 'axios';
+import { postToEndpoint } from '../components/apiService';
 
 const JobRow = ({ job, onViewDetails }) => {
     const statusColor = (() => {
@@ -40,7 +19,7 @@ const JobRow = ({ job, onViewDetails }) => {
     })();
 
     return (
-        <tr key={job.id} className="border-bottom">
+        <tr key={job.job_id} className="border-bottom">
             <td style={{padding: '17px'}}>
                 <div className="d-flex align-items-center">
                     <img
@@ -50,8 +29,8 @@ const JobRow = ({ job, onViewDetails }) => {
                         style={{ width: '50px', height: '50px' }}
                     />
                     <div>
-                        <div className="d-flex justify-content-between align-items-center flex-wrap">
-                            <h6 className="mb-0" style={{ padding: '5px', color: '#373737' }}>{job.name}</h6>
+                        <div className="d-flex align-items-center flex-wrap">
+                            <h6 className="mb-0" style={{ padding: '5px', color: '#373737' }}>{job.jobTitle}</h6>
                             <span className="badge"
                                   style={{
                                     background: '#cde8ff',
@@ -59,27 +38,39 @@ const JobRow = ({ job, onViewDetails }) => {
                                     color: '#0076df',
                                     fontWeight: '600',
                                     borderRadius: '50px',
-                                    fontSize: '11px'
+                                    fontSize: '11px',
+                                    marginLeft: '7px'
                                   }}
                             >{job.jobType}</span>
                         </div>
                         <div className="d-flex align-items-center flex-wrap">
                             <i className="fas fa-location-dot me-1" style={{color: '#4198e5'}}></i>
-                            <small className="text-muted me-2">{job.location}</small> <span className='text-muted'>|</span>
-                            <span className="text-muted" style={{marginLeft: '10px'}}>{job.salary}</span>
+                            <small className="text-muted me-2">{job.city}</small> <span className='text-muted'>|</span>
+                            <span className="text-muted" style={{marginLeft: '10px'}}>₱{job.minSalary} - ₱{job.maxSalary}</span>
                         </div>
                     </div>
                 </div>
             </td>
-            <td style={{padding: '17px'}}><span 
+            <td style={{ padding: '17px' }}>
+            <span
                 style={{
                     marginTop: '15px',
                     display: 'inline-block',
                     color: '#656565',
                     fontWeight: '600',
-                    fontSize: '14px'
+                    fontSize: '14px',
                 }}
-            >{job.dateApplied}</span></td>
+            >
+                {new Intl.DateTimeFormat('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                }).format(new Date(job.applied_at))}
+            </span>
+        </td>
             <td style={{padding: '17px'}}>
                 <span
                     style={{
@@ -106,7 +97,7 @@ const JobRow = ({ job, onViewDetails }) => {
                         padding: '10px',
                         borderRadius: '6px'
                     }}
-                    onClick={() => onViewDetails(job.id)}
+                    onClick={() => onViewDetails(job.job_id)}
                 >
                     View Details
                 </button>
@@ -119,53 +110,82 @@ function AppliedJobsTable() {
     const [showModal, setShowModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-
-    const handleViewDetails = (jobId) => {
-        setShowModal(true);
-    };
+    const [applied, setAppliedJobs] = useState([]);
+    const [selectedJobId, setSelectedJobId] = useState(null);
+    const { user } = useAuth();
 
     const handleCloseModal = () => {
         setShowModal(false);
+        setSelectedJobId(null);
     };
 
-    const totalItems = jobData.length;
+    const totalItems = applied.length;
 
-    // Pagination function
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Get current jobs to display based on the page
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentJobs = jobData.slice(indexOfFirstItem, indexOfLastItem);
+    const currentJobs = applied.slice(indexOfFirstItem, indexOfLastItem);
+
+    useEffect(() => {
+        const fetchAppliedJobs = async () => {
+            try {
+                const response = await postToEndpoint('/getAppliedJobs.php', { applicant_id: user.id });
+                console.log(response.data);
+                if (response.data && !response.data.error) {
+                    setAppliedJobs(response.data);
+                } else {
+                    console.error('Error in response:', response.data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching applicant profiles:', error);
+            }
+        };
+
+        if (user) {
+            fetchAppliedJobs();
+        }
+    }, [user]);
+
+    const handleViewDetails = (job_id) => {
+        setSelectedJobId(job_id); // Store the job ID
+        setShowModal(true);
+    };
 
     return (
-        <div className="container-fluid px-0">
-            <div className="table-responsive">
+        <div className="container-fluid px-0 d-flex flex-column" style={{ minHeight: '100vh' }}>
+            <div className="flex-grow-1 table-responsive">
                 <table className="table" style={{ width: '100%', minWidth: '1000px' }}>
                     <thead className="thead-light">
                         <tr>
-                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>JOB</th>
-                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>DATE APPLIED</th>
-                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>STATUS</th>
-                            <th style={{color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px'}}>ACTION</th>
+                            <th style={{ color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px' }}>JOB</th>
+                            <th style={{ color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px' }}>DATE APPLIED</th>
+                            <th style={{ color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px' }}>STATUS</th>
+                            <th style={{ color: '#676767', background: '#ebebebc2', fontWeight: '500', fontSize: '13px' }}>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentJobs.map((job) => (
-                            <JobRow job={job} key={job.id} onViewDetails={handleViewDetails} />
+                        {currentJobs.map((applied) => (
+                            <JobRow job={applied} key={applied.job_id} onViewDetails={handleViewDetails} />
                         ))}
                     </tbody>
                 </table>
             </div>
-            {/* Pagination */}
-            <Pagination 
-                currentPage={currentPage} 
-                itemsPerPage={itemsPerPage} 
-                totalItems={totalItems} 
-                paginate={paginate} 
+            {totalItems > itemsPerPage && (
+                <div className="d-flex justify-content-center py-3">
+                    <Pagination
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        totalItems={totalItems}
+                        paginate={paginate}
+                    />
+                </div>
+            )}
+            <JobDetailsModal 
+                show={showModal} 
+                handleClose={handleCloseModal} 
+                job_id={selectedJobId}
             />
-            {/* Render the JobDetailsModal */}
-            <JobDetailsModal show={showModal} handleClose={handleCloseModal} />
         </div>
     );
 }

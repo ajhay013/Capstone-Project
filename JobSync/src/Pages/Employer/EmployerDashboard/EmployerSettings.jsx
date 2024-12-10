@@ -33,8 +33,10 @@ export default function EmployerSettings() {
             eventKey="companysettings"
             title={
               <>
+              <div style={{width: '180px', textAlign: 'left'}}>
                 <FaBuilding style={{ marginRight: '8px', ...tabStyles(activeKey === 'companysettings') }} />
                 <span style={tabStyles(activeKey === 'companysettings')}>Company Settings</span>
+              </div>
               </>
             }
           >
@@ -45,8 +47,10 @@ export default function EmployerSettings() {
             eventKey="foundingInfo"
             title={
               <>
+              <div style={{width: '180px', textAlign: 'left'}}>
                 <FaCalendar style={{ marginRight: '8px', ...tabStyles(activeKey === 'foundingInfo') }} />
                 <span style={tabStyles(activeKey === 'foundingInfo')}>Founding Info</span>
+              </div>
               </>
             }
           >
@@ -57,8 +61,10 @@ export default function EmployerSettings() {
             eventKey="socialMediaInfo"
             title={
               <>
+              <div style={{width: '180px', textAlign: 'left'}}>
                 <FaLink style={{ marginRight: '8px', ...tabStyles(activeKey === 'socialMediaInfo') }} />
                 <span style={tabStyles(activeKey === 'socialMediaInfo')}>Social Media Info</span>
+              </div>
               </>
             }
           >
@@ -69,8 +75,10 @@ export default function EmployerSettings() {
             eventKey="accountSettings"
             title={
               <>
+              <div style={{width: '180px', textAlign: 'left'}}>
                 <FaCogs style={{ marginRight: '8px', ...tabStyles(activeKey === 'accountSettings') }} />
                 <span style={tabStyles(activeKey === 'accountSettings')}>Account Settings</span>
+              </div>
               </>
             }
           >

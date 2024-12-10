@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../assets/logo3.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,52 +9,82 @@ import { useAuth } from '../AuthContext';
 import defaultProfilePicture from '../assets/user_default.png';
 import { postToEndpoint } from '../components/apiService';
 
-
 function SearchJobs() {
     const [selected] = useState("Philippines");
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(false);
+
+    const handleLogout = () => {
+        setLoading(true);
+        setTimeout(() => {
+            logout();
+            navigate('/');
+            setLoading(false);
+        }, 2000);
+    };
+
+    const [profile, setProfile] = useState(null);
+
+    const fetchCompanyInfo = async () => {
+        if (user?.id) {
+            try {
+                const response = await postToEndpoint('/getApplicantinfo.php', {
+                    applicant_id: user.id,
+                });
+                if (response.data) {
+                    const { profile } = response.data;
+                    setProfile(profile ? profile : null);
+                }
+            } catch (error) {
+                console.error('Error fetching company info:', error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (user?.id) {
+            fetchCompanyInfo();  
+
+            const intervalId = setInterval(() => {
+                fetchCompanyInfo(); 
+            }, 100); 
+
+            return () => clearInterval(intervalId); 
+        }
+    }, [user?.id]); 
 
     const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
+            // Close dropdown if the click is outside the dropdown container
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setDropdownOpen(false);
             }
         };
 
+        // Attach the event listener
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        return () => {
+            // Cleanup the event listener
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const handleOptionClick = () => setDropdownOpen(false);
 
-    const [profile, setprofile] = useState(null);
-
-    useEffect(() => {
-        const fetchCompanyInfo = async () => {
-          if (user?.id) {
-            try {
-              const response = await postToEndpoint('/getApplicantinfo.php', {
-                applicant_id: user.id,
-              });
-              if (response.data) {
-                const { profile } = response.data;
-                setprofile(profile ? profile : null);
-              }
-            } catch (error) {
-              console.error('Error fetching company info:', error);
-            }
-          }
-        };
-        fetchCompanyInfo();
-      }, [user]);
-
     const profileUrl = profile instanceof File ? URL.createObjectURL(profile) : profile;
 
     return (
+        <>
+        {loading && (
+            <div id="preloader">
+            </div>
+        )}
         <header className="job-sync-header p-3 border-bottom">
             <div className="container">
                 <div className="d-flex flex-wrap justify-content-between align-items-center">
@@ -123,50 +153,125 @@ function SearchJobs() {
                             />
                         </div>
                     </div>
-
-                    {/* User Actions Section */}
-                    <div className="actions d-flex align-items-center">
+                        {/* User Actions Section */}
+                        <div className="profile-pic actions d-flex align-items-center" style={{ position: 'relative' }}>
                         {user ? (
-                            <div className="profile-pic" style={{ display: 'flex', alignItems: 'center' }}>
-                                 <img 
-                                    src={profileUrl || defaultProfilePicture} 
+                            <>
+                                <img
+                                    src={profileUrl || defaultProfilePicture}
                                     alt="Profile"
                                     style={{
                                         width: '40px',
                                         height: '40px',
                                         borderRadius: '50%',
+                                        cursor: 'pointer', 
                                     }}
                                     onClick={toggleDropdown}
                                 />
                                 {dropdownOpen && (
                                     <div
                                         className="dropdown-menu show"
+                                        ref={dropdownRef}
                                         style={{
                                             position: 'absolute',
-                                            top: '50px',
-                                            right: '0',
-                                            zIndex: 9999,
+                                            top: '100%',
+                                            left: '0',
+                                            zIndex: 9,
                                             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                                             backgroundColor: '#fff',
+                                            borderRadius: '0.25rem',
+                                            overflow: 'hidden',
+                                            paddingTop: '5px',
+                                            paddingBottom: '5px'
                                         }}
                                     >
                                         <Link
                                             to="/applicantprofile"
-                                            className="dropdown-item"
+                                            className="dropdown-item d-flex align-items-center"
                                             onClick={handleOptionClick}
+                                            style={{
+                                                padding: '0.5rem 1rem',
+                                                transition: 'all 0.3s ease',
+                                                fontWeight: '500',
+                                                fontSize: '14px',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = '#cfe7ff';
+                                                e.target.style.color = '#0955b7';
+                                                e.target.style.fontWeight = '500';
+                                                e.target.style.fontSize = '14px';
+                                                e.target.style.borderRadius = '0.5rem';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = 'transparent';
+                                                e.target.style.color = '#212529';
+                                                e.target.style.borderRadius = '0';
+                                            }}
                                         >
+                                            <i className="fas fa-user-circle me-2" style={{ color: '#126fc1' }}></i>
                                             View Profile
                                         </Link>
-                                        <Link to="/settings" className="dropdown-item" onClick={handleOptionClick}>
+                                        <Link
+                                            to="/settings"
+                                            className="dropdown-item d-flex align-items-center"
+                                            onClick={handleOptionClick}
+                                            style={{
+                                                padding: '0.5rem 1rem',
+                                                transition: 'all 0.3s ease',
+                                                fontWeight: '500',
+                                                fontSize: '14px',
+                                                marginBottom: '5px'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = '#cfe7ff';
+                                                e.target.style.color = '#0955b7';
+                                                e.target.style.fontWeight = '500';
+                                                e.target.style.fontSize = '14px';
+                                                e.target.style.borderRadius = '0.5rem';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = 'transparent';
+                                                e.target.style.color = '#212529';
+                                                e.target.style.borderRadius = '0';
+                                            }}
+                                        >
+                                            <i className="fas fa-cog me-2" style={{ color: '#818181' }}></i>
                                             Settings
                                         </Link>
-                                        <div className="dropdown-divider"></div>
-                                        <Link to="/logout" className="dropdown-item" onClick={handleOptionClick}>
+                                        <div className="dropdown-divider" style={{ margin: '0', borderTop: 'none' }}></div>
+                                        <button
+                                            className="dropdown-item d-flex align-items-center"
+                                            onClick={handleLogout}
+                                            style={{
+                                                padding: '0.5rem 1rem',
+                                                border: 'none',
+                                                background: 'transparent',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                fontWeight: '500',
+                                                fontSize: '14px',
+                                                marginTop: '5px',
+                                                
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = '#cfe7ff';
+                                                e.target.style.color = '#0955b7';
+                                                e.target.style.fontWeight = '500';
+                                                e.target.style.fontSize = '14px';
+                                                e.target.style.borderRadius = '0.5rem';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = 'transparent';
+                                                e.target.style.color = '#212529';
+                                                e.target.style.borderRadius = '0';
+                                            }}
+                                        >
+                                            <i className="fas fa-sign-out-alt me-2" style={{ color: '#dc3545' }}></i>
                                             Logout
-                                        </Link>
+                                        </button>
                                     </div>
                                 )}
-                            </div>
+                            </>
                         ) : (
                             <>
                                 <Link to="/candidate_login" className="btn btn-outline-custom me-2 custom-btn">
@@ -184,9 +289,12 @@ function SearchJobs() {
                             </>
                         )}
                     </div>
+
+
                 </div>
             </div>
         </header>
+        </>
     );
 }
 

@@ -7,8 +7,10 @@ import JobSyncFlow from '../components/jobsyncflow.jsx';
 import PopularCategories from '../components/popularcategories';
 import JobCards from '../components/jobcards';
 import { getFromEndpoint } from '../components/apiService.jsx';
+import { useAuth } from '../AuthContext.jsx'; 
 
 export default function Home() {
+    const { user } = useAuth(); 
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -104,7 +106,7 @@ export default function Home() {
 
             {/* Job Cards Section */}
             <div>
-                <JobCards jobs={jobs.slice(0, 6)} />
+                <JobCards jobs={jobs.slice(0, 6)} {...(user?.id && { applicantId: user.id })}/>
             </div>
         </div>
 

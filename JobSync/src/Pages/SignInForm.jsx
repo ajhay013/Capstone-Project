@@ -210,8 +210,6 @@ function SignInForm() {
     
                         if (response.ok) {
                             const userProfile = await response.json();
-                            console.log("User Profile:", userProfile);
-    
                             const { email, family_name, given_name, picture } = userProfile;
     
                             try {

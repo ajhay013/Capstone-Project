@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($applicant_id) {
         try {
-            $stmt = $conn->prepare("SELECT profile_picture FROM js_applicants WHERE applicant_id = :applicant_id");
+            $stmt = $conn->prepare("SELECT * FROM applicant_details WHERE applicant_id = :applicant_id");
             $stmt->bindParam(':applicant_id', $applicant_id, PDO::PARAM_INT);
             
             $stmt->execute();
@@ -32,9 +32,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $profile_picture_url = $profile_picture ? BASE_URL . $profile_picture : null;
                 }
 
-                echo json_encode(['profile' => $profile_picture_url]);
+                echo json_encode([
+                    'profile' => $profile_picture_url,
+                    'firstname' => $row['firstname'] ?? null,
+                    'middlename' => $row['middlename'] ?? null,
+                    'lastname' => $row['lastname'] ?? null,
+                    'suffix' => $row['suffix'] ?? null,
+                    'biography' => $row['biography'] ?? null,
+                    'experience' => $row['experience'] ?? null,
+                    'education' => $row['attainment'] ?? null,
+                    'gender' => $row['gender'] ?? null,
+                    'marital_status' => $row['status'] ?? null,
+                    'contact' => $row['contact'] ?? null,
+                    'headline' => $row['headline'] ?? null,
+                    'birthday' => $row['birthday'] ?? null,
+                    'birthplace' => $row['birthplace'] ?? null,
+                    'address' => $row['address'] ?? null,
+                    'city' => $row['city'] ?? null,
+                    'barangay' => $row['barangay'] ?? null,
+                    'email' => $row['email'] ?? null,
+                    'postal' => $row['postal'] ?? null,
+                ]);
             } else {
-                echo json_encode(['profile' => null]);
+                echo json_encode(['error' => 'No record found for this applicant.']);
             }
         } catch (PDOException $e) {
             echo json_encode(['error' => 'Query execution failed: ' . $e->getMessage()]);

@@ -64,6 +64,7 @@ export default function FindApplicant() {
                           color: "#0A65CC",
                           padding: "15px",
                           fontSize: "18px",
+                          zIndex: '1'
                         }}
                       >
                         <FontAwesomeIcon icon={faSearch} />
@@ -100,6 +101,7 @@ export default function FindApplicant() {
                           color: "#0A65CC",
                           padding: "15px",
                           fontSize: "18px",
+                          zIndex: '1'
                         }}
                       >
                         <FontAwesomeIcon icon={faMapMarkerAlt} />

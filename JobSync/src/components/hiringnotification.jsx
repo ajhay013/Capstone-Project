@@ -22,7 +22,6 @@ export default function HiringNotification({ onContinue, onCancel }) {
         position: 'relative',
         marginTop: '40px',
         marginLeft: '-30px',
-        height: '120px',
         overflow: 'hidden',
         width: '110%', 
         height: isTextVisible ? 'auto' : '120px',
@@ -49,7 +48,6 @@ export default function HiringNotification({ onContinue, onCancel }) {
           />
           <div>
             <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
-              The <strong>#Hiring photo frame</strong> will be added to your profile. We’ll notify your network that you’re hiring.
             </p>
           </div>
         </div>

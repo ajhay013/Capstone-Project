@@ -71,7 +71,7 @@ export default function CompanySettings() {
         paddingTop: '15px',
       }}
     >
-      <Form onSubmit={handleSubmit} style={{ maxWidth: '800px', width: '100%' }} className="p-4">
+      <Form onSubmit={handleSubmit} style={{ width: '100%' }} className="p-4">
         
         {/* File upload section */}
         <Row className="mb-4">
