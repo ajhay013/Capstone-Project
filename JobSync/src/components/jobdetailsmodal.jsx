@@ -2,9 +2,9 @@ import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { FaGraduationCap, FaBriefcase, FaUserTie, FaCalendarAlt, FaMapMarkerAlt, FaRegClock, FaComments, FaTag, FaDollarSign, FaClock } from 'react-icons/fa';
 
-const JobDetailsModal = ({ show, handleClose }) => {
+const JobDetailsModal = ({ show, handleClose, job_id }) => {
   const iconStyle = { color: '#007bff', fontSize: '1.5em' };
-
+  console.log(job_id);
   return (
     <Modal show={show} onHide={handleClose} size="xl" centered>
       <Modal.Header closeButton>

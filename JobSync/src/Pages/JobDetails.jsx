@@ -4,7 +4,7 @@ import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMark
 import { FaLink, FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
 import ReactQuill from 'react-quill';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { getFromEndpoint } from '../components/apiService';
+import { getFromEndpoint, postToEndpoint } from '../components/apiService';
 import DOMPurify from 'dompurify'; 
 import { useAuth } from '../AuthContext'; 
 import 'react-quill/dist/quill.snow.css';
@@ -49,9 +49,7 @@ const JobPosting = () => {
     useEffect(() => {
         const fetchBookmarkStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:80/capstone-project/jobsync/src/api/getFavoriteJobs.php', {
-                    params: { applicant_id: user?.id },
-                });
+                const response = await getFromEndpoint('/getFavoriteJobs.php', { applicant_id: user?.id });
 
                 if (response.data.success) {
                     setIsBookmarked(response.data.bookmarkedJobs.includes(parseInt(job_id)));
@@ -65,26 +63,34 @@ const JobPosting = () => {
     }, [user?.id, job_id]);
 
     const handleBookmarkClick = async () => {
+        if (!user) {
+            navigate('/candidate_login', { state: { from: `/jobdetails/${job_id}` } });
+            return;
+        }
+    
+        const endpoint = isBookmarked
+            ? 'deleteFavoriteJob.php'
+            : 'saveFavoriteJob.php';
+    
+        const requestData = {
+            applicant_id: user?.id,
+            job_id,
+        };
+    
         try {
-            const endpoint = isBookmarked
-                ? 'http://localhost:80/capstone-project/jobsync/src/api/deleteFavoriteJob.php'
-                : 'http://localhost:80/capstone-project/jobsync/src/api/saveFavoriteJob.php';
-
-            const response = await axios.post(endpoint, {
-                applicant_id: user?.id,
-                job_id,
-            });
-
+            const response = await postToEndpoint(endpoint, requestData);
+    
             if (response.data.success) {
                 setIsBookmarked(!isBookmarked); 
             } else {
-                alert(response.data.message || 'Failed to update bookmark status.');
+                console.log(response.data.message || 'Failed to update bookmark status.');
             }
         } catch (error) {
             console.error('Error updating bookmark status:', error);
-            alert('An error occurred while updating the bookmark status.');
+            console.log('An error occurred while updating the bookmark status.');
         }
     };
+    
     
     const handleShowModal = () => {
         if (!user) {
@@ -293,6 +299,8 @@ const JobPosting = () => {
                 <ApplyModal 
                     {...(user?.id && { applicant_id: user.id })}
                     job_id={job_id}
+                    jobTitle={job.jobTitle}
+                    companyName={job.company_name}
                     show={modalShow} 
                     handleClose={handleCloseModal} 
                 />

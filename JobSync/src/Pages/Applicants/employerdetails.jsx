@@ -3,15 +3,17 @@ import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { FaCalendarAlt, FaBuilding, FaUsers, FaIndustry, FaGlobe, FaPhone, FaEnvelope, FaArrowRight } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
 import DOMPurify from 'dompurify'; 
-import axios from "axios"; 
 import JobCards from '../../components/jobcards';
 import Pagination from '../../components/Pagination';
+import { useAuth } from '../../AuthContext'; 
+import { getFromEndpoint } from '../../components/apiService';
 
 const CompanyProfileModal = () => {
+  const { user } = useAuth(); 
   const { employerId } = useParams();
   const [companyProfile, setCompanyProfile] = useState(null);
   const [error, setError] = useState(null);
-  const [showJobs, setShowJobs] = useState(false); // State to toggle between job listings and company profile
+  const [showJobs, setShowJobs] = useState(false); 
   const [jobs, setJobs] = useState([]); 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; 
@@ -27,9 +29,7 @@ const CompanyProfileModal = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:80/capstone-project/jobsync/src/api/getCompanyProfile.php", {
-          params: { employerId: decodedEmployerId }
-        });
+        const response = await getFromEndpoint("/getCompanyProfile.php", { employerId: decodedEmployerId });
 
         if (response.data && response.data.status === "success" && response.data.data) {
           setCompanyProfile(response.data.data);
@@ -48,18 +48,16 @@ const CompanyProfileModal = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:80/capstone-project/jobsync/src/api/getOpenPosition.php', {
-          params: { company_name: employerId }  
-        });
+        const response = await getFromEndpoint('/getOpenPosition.php', { company_name: employerId });
 
         if (response.data.status === 'success') {
           setJobs(response.data.data);
         } else {
-          setError("No jobs found for this employer.");
+          console.log("No jobs found for this employer.");
         }
       } catch (error) {
         console.error('There was an error fetching the jobs!', error);
-        setError("Error fetching jobs.");
+        console.log("Error fetching jobs.");
       } finally {
         setLoading(false);
       }
@@ -159,7 +157,7 @@ const CompanyProfileModal = () => {
 
             {showJobs ? (
             <Container className="my-5">
-                {loading ? <p>Loading...</p> : <JobCards jobs={currentJobs} />}
+                {loading ? <p>Loading...</p> : <JobCards jobs={currentJobs}  {...(user?.id && { applicantId: user.id })}/>}
                 {shouldShowPagination && (
                     <Pagination
                       currentPage={currentPage}

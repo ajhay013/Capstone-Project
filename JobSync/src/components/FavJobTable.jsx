@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Axios from 'axios';
 import Pagination from './Pagination';
 import { useAuth } from '../AuthContext'; 
+import { getFromEndpoint } from '../components/apiService';
 
 function FavoriteJob() {
   const { user } = useAuth(); 
@@ -11,27 +11,23 @@ function FavoriteJob() {
   const itemsPerPage = 10; 
 
   useEffect(() => {
-    if (!user || !user.id) {
-      console.error('Applicant ID is required');
-      return;
-    }
-
-    Axios.get('http://localhost:80/capstone-project/jobsync/src/api/getAllFavoriteJob.php', {
-      params: {
-        applicant_id: user.id,  
+      if (!user || !user.id) {
+          console.error('Applicant ID is required');
+          return;
       }
-    })
-      .then(response => {
-        console.log('Response Data:', response.data);
-
-        const fetchedJobs = Array.isArray(response.data) ? response.data : response.data.favoriteJobs || [];
-        
-        setJobs(fetchedJobs);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the jobs data!', error);
-      });
-  }, [user]);
+  
+      const fetchFavoriteJobs = async () => {
+          try {
+              const response = await getFromEndpoint('/getAllFavoriteJob.php', { applicant_id: user.id });
+              const fetchedJobs = Array.isArray(response.data) ? response.data : response.data.favoriteJobs || [];
+              setJobs(fetchedJobs); 
+          } catch (error) {
+              console.error('There was an error fetching the jobs data!', error);
+          }
+      };
+  
+      fetchFavoriteJobs(); 
+  }, [user]); 
 
   const indexOfLastJob = currentPage * itemsPerPage;
   const indexOfFirstJob = indexOfLastJob - itemsPerPage;
@@ -42,8 +38,9 @@ function FavoriteJob() {
   return (
     <div className="container-fluid p-0" style={{ marginLeft: '16px' }}>
       {currentJobs.length > 0 ? (
-        currentJobs.map((job) => (
-          <div key={job.id} className="d-flex justify-content-between align-items-start p-3 border-bottom">
+        currentJobs.map((job, index) => (
+          <div key={job.id || index} className="d-flex justify-content-between align-items-start p-3 border-bottom">
+
             <div className="d-flex align-items-start">
               <img
                 src={job.logo}

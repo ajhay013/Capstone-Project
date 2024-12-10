@@ -4,6 +4,7 @@ import '../App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getFromEndpoint, postToEndpoint } from '../components/apiService';
 
 const JobCards = ({ jobs, applicantId }) => {
     const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
@@ -12,9 +13,7 @@ const JobCards = ({ jobs, applicantId }) => {
     useEffect(() => {
         const fetchBookmarkedJobs = async () => {
             try {
-                const response = await axios.get('http://localhost:80/capstone-project/jobsync/src/api/getFavoriteJobs.php', {
-                    params: { applicant_id: applicantId },
-                });
+                const response = await getFromEndpoint('/getFavoriteJobs.php', { applicant_id: applicantId });
 
                 if (response.data.success) {
                     setBookmarkedJobs(response.data.bookmarkedJobs); 
@@ -37,24 +36,21 @@ const JobCards = ({ jobs, applicantId }) => {
     
         try {
             const isBookmarked = bookmarkedJobs.includes(jobId);
-    
             const endpoint = isBookmarked
-                ? 'http://localhost:80/capstone-project/jobsync/src/api/deleteFavoriteJob.php'
-                : 'http://localhost:80/capstone-project/jobsync/src/api/saveFavoriteJob.php';
+                ? '/deleteFavoriteJob.php'
+                : '/saveFavoriteJob.php';
     
-            const response = await axios.post(endpoint, {
+            const response = await postToEndpoint(endpoint, {
                 applicant_id: applicantId,
-                job_id: jobId,
+                job_id: jobId
             });
     
             if (response.data.success) {
-                if (isBookmarked) {
-                    setBookmarkedJobs((prevBookmarkedJobs) =>
-                        prevBookmarkedJobs.filter((id) => id !== jobId)
-                    );
-                } else {
-                    setBookmarkedJobs((prevBookmarkedJobs) => [...prevBookmarkedJobs, jobId]);
-                }
+                setBookmarkedJobs((prevBookmarkedJobs) =>
+                    isBookmarked
+                        ? prevBookmarkedJobs.filter((id) => id !== jobId)  
+                        : [...prevBookmarkedJobs, jobId] 
+                );
             } else {
                 alert(response.data.message || 'An error occurred.');
             }
