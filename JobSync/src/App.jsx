@@ -30,6 +30,8 @@ import Overview from './Pages/Applicants/ApplicantDashboard/Overview';
 import AppliedJobs from './Pages/Applicants/ApplicantDashboard/AppliedJobs';
 import FavoriteJobs from './Pages/Applicants/ApplicantDashboard/FavoriteJobs';
 import ApplicantSettings from './Pages/Applicants/ApplicantDashboard/ApplicantSettings';
+import PasswordSettings from './Pages/Applicants/ApplicantDashboard/PasswordSettings';
+import AccountSetting from './Pages/Applicants/ApplicantDashboard/AccountSettings';
 
 import EmployerDetails from './Pages/Applicants/employerdetails';
 
@@ -51,6 +53,9 @@ import EmployerMessage from './Pages/Employer/EmployerDashboard/EmployerMessage'
 import SavedApplicant from './Pages/Employer/EmployerDashboard/SavedApplicant';
 import EmployerSettings from './Pages/Employer/EmployerDashboard/EmployerSettings';
 import AccountSettings from './pages/employer/employerdashboard/employersettings/accountsettings';
+
+
+import ApplicantDetails from './Pages/Employer/EmployerDashboard/applicantdetails';
 
 
 // import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/EmployerMessage';
@@ -253,6 +258,9 @@ function Layout({ userId, setUserId }) {
         <Route path='/applicants/jobsalert' element={<ProtectedRoute> <JobsAlert /> </ProtectedRoute>} />
         <Route path='/applicants/applicantsettings' element={<ProtectedRoute> <ApplicantSettings /> </ProtectedRoute>} />
 
+        <Route path='/applicants/passwordsettings' element={<ProtectedRoute> <PasswordSettings /> </ProtectedRoute>} />
+        <Route path='/applicants/accountsettings' element={<ProtectedRoute> <AccountSetting /> </ProtectedRoute>} />
+
         <Route path='/employerdetails' element={<ProtectedRoute> <EmployerDetails /> </ProtectedRoute>} />
 
         <Route path='/applicantprofile' element={<ProtectedRoute> <ApplicantProfile /> </ProtectedRoute>} />
@@ -278,9 +286,11 @@ function Layout({ userId, setUserId }) {
         <Route path='/viewapplications/:job_id' element={<ProtectedRoute> <ViewApplications /> </ProtectedRoute>} />
         <Route path='/employer/applications' element={<ProtectedRoute> <Applications /> </ProtectedRoute>} />  
 
+        <Route path='/applicantdetails/:id' element={<ProtectedRoute> <ApplicantDetails /> </ProtectedRoute>} />
+
 
         {/* <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} /> */}
-        <Route path='/step2' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
+  
         {/* <Route path='/step1' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} /> */}
       
       {/* Employer Settings Routing */}
