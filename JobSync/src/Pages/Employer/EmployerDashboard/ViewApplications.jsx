@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; 
+import { useParams, useNavigate, Link } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import EmployerSidebar from '../../../components/EmployerSidebar';
-import { FaSearch, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { FaSearch, FaArrowLeft } from 'react-icons/fa';
 import Pagination from '../../../components/Pagination';
 
 export default function ViewApplications() {
@@ -29,7 +29,6 @@ export default function ViewApplications() {
     { id: 19, name: "Luis Alberto Garcia", date: "October 1, 2024", status: "On hold" },
     { id: 20, name: "Benjamin Ortiz", date: "July 19, 2024", status: "Pending" },
   ]);
- 
 
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
@@ -141,7 +140,14 @@ export default function ViewApplications() {
                   currentApplications.map((app) => (
                     <tr key={app.id}>
                       <td>{app.id}</td>
-                      <td>{app.name}</td>
+                      <td>
+                        <Link 
+                          to={`/applicantdetails/${app.id}`} 
+                          style={{ textDecoration: 'none', color: '#0A65CC' }}
+                        >
+                          {app.name}
+                        </Link>
+                      </td>
                       <td>{app.date}</td>
                       <td>
                         <button className="btn btn-sm btn-link">
@@ -178,15 +184,15 @@ export default function ViewApplications() {
             </table>
           </div>
 
-            {/* Pagination Component */}
-            <div style={{width: '80%'}}>
+          {/* Pagination Component */}
+          <div style={{width: '80%'}}>
             <Pagination
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
               totalItems={filteredApplications.length}
               paginate={paginate}
             />
-            </div>
+          </div>
         </div>
       </div>
     </div>
