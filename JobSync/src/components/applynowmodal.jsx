@@ -16,6 +16,7 @@ const ApplyModal = ({ show, handleClose, applicant_id, job_id, jobTitle, company
     const [isStep3Valid, setIsStep3Valid] = useState(false);
     const [screeningQuestions, setScreeningQuestions] = useState([]);
     const [selectedOption, setSelectedOption] = useState({}); 
+    const [loading, setLoading] = useState(false);
 
     const resetApplicationData = () => {
         setCurrentStep(1); 
@@ -184,8 +185,9 @@ const ApplyModal = ({ show, handleClose, applicant_id, job_id, jobTitle, company
                         text: 'Your application has been submitted successfully!',
                         confirmButtonText: 'OK',
                     }).then(() => {
-                        resetApplicationData();
+                        resetApplicationData(); 
                         handleClose(); 
+                        window.location.reload(); 
                     });
                 } else {
                     Swal.fire({
@@ -209,6 +211,12 @@ const ApplyModal = ({ show, handleClose, applicant_id, job_id, jobTitle, company
         };
         
     return (
+        <>
+        {loading && (
+            <div id="preloader">
+            </div>
+        )}
+
         <Modal
         show={show}
         onHide={handleModalClose}
@@ -561,6 +569,7 @@ const ApplyModal = ({ show, handleClose, applicant_id, job_id, jobTitle, company
                 )}
             </Modal.Footer>
         </Modal>
+        </>
     );
 };
 

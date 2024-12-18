@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, Modal } from 'react-bootstrap';
-import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaRegBookmark, FaArrowRight, FaBusinessTime, FaSuitcase, FaBookmark } from 'react-icons/fa';
+import { FaCalendarAlt, FaBriefcase, FaGraduationCap, FaMoneyBillWave, FaMapMarkerAlt, FaRegBookmark, FaArrowRight, FaBusinessTime, FaSuitcase, FaBookmark, FaUserTie, FaArrowLeft, FaUserClock  } from 'react-icons/fa';
 import { FaLink, FaLinkedin, FaFacebook, FaTwitter, FaEnvelope } from 'react-icons/fa';
-import ReactQuill from 'react-quill';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getFromEndpoint, postToEndpoint } from '../components/apiService';
 import DOMPurify from 'dompurify'; 
 import { useAuth } from '../AuthContext'; 
 import 'react-quill/dist/quill.snow.css';
 import '../css/loader.css';
-import axios from 'axios';
+import Swal from 'sweetalert2';
 import ApplyModal from '../components/applynowmodal';
 
 const JobPosting = () => {
@@ -18,6 +17,23 @@ const JobPosting = () => {
     const { job_id } = useParams();
     const [job, setJob] = useState(null);
     const [modalShow, setModalShow] = useState(false);  
+    const [applied, setApplied] = useState([]);
+
+    useEffect(() => {
+        const fetchAppliedJob = async () => {
+            try {
+                const response = await getFromEndpoint('/getApplied.php', { applicant_id: user?.id, job_id});
+                console.log(response.data.apply)
+                if (response.data.success) {
+                    setApplied(response.data.apply);
+                }
+            } catch (error) {
+                console.error('Error fetching bookmark status:', error);
+            }
+        };
+
+        fetchAppliedJob();
+    }, [user?.id, job_id]);
 
     useEffect(() => {
         const fetchJobDetails = async () => {
@@ -91,14 +107,43 @@ const JobPosting = () => {
         }
     };
     
-    
-    const handleShowModal = () => {
+    const handleShowModal = async () => {
         if (!user) {
             navigate('/candidate_login', { state: { from: `/jobdetails/${job_id}` } });
-        } else {
-            setModalShow(true);
+            return;
+        }
+    
+        try {
+            const response = await postToEndpoint('/checkApplicantProfile.php', { applicant_id: user?.id });
+            
+            console.log("Backend response:", response.data); 
+            
+            if (response.data.success) {
+                const { isCompleteSocialMedia, message } = response.data; 
+                if (isCompleteSocialMedia === true) {
+                    console.log("Profile is complete. Showing modal.");
+                    setModalShow(true);
+                } else {
+                    Swal.fire({
+                        title: 'Profile Incomplete',
+                        text: message || "Please complete your profile before applying.",
+                        icon: 'warning',
+                        confirmButtonText: 'Go to Profile',
+                        preConfirm: () => {
+                            navigate('/applicantprofile');
+                        }
+                    });
+                }
+            } else {
+                console.error('Failed to check profile completeness:', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error checking applicant profile:', error);
         }
     };
+    
+    
+    
     const handleCloseModal = () => {
         setModalShow(false); 
     };
@@ -139,12 +184,33 @@ const JobPosting = () => {
           alert("Link copied to clipboard!");
       };
 
+
       return (
           <div>
               <Container className="mt-5 pt-5 job-posting custom-container" style={{ minWidth: '10%' }}>
+              <Button
+                    className="mt-3 no-hover-bg"
+                    onClick={() => {
+                        window.history.back();
+                        window.scrollTo({ top: 0});
+                    }}
+                    style={{
+                        position: 'relative',
+                        top: '0px',
+                        right: '0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#0d6efd'
+                    }}
+                >
+                    <FaArrowLeft /> 
+                </Button>
                   <Row className="mb-4">
                       <Col md={7}>
-                      <Container style={{ padding: '16px', height: 'auto', width: '100%', marginLeft: '-40px' }}>
+                      <Container style={{ padding: '16px', height: 'auto', width: '100%', marginLeft: '-40px', paddingTop: '0' }}>
                             <div className="text-start">
                                 <Row className="align-items-center no-margin m-0">
                                     <Col xs={3} className="no-padding">
@@ -171,13 +237,14 @@ const JobPosting = () => {
                             handleShowModal={handleShowModal} 
                             isBookmarked={isBookmarked} 
                             handleBookmarkClick={handleBookmarkClick} 
+                            applied={applied[0]?.applied_status}
                         />
                           <Card className="salary-location mt-4" style={{ width: '110%', padding: '15px' }}>
                               <Card.Body>
                                   <Row className="text-center gx-4">
                                       <Col xs={12} md={6} className="d-flex flex-column align-items-center border-end">
                                           <FaMoneyBillWave
-                                              style={{ color: '#2a93ff', width: '30px', height: '30px' }}
+                                              style={{ color: '#0a60bb', width: '30px', height: '30px' }}
                                           />
                                           <strong className="mt-2" style={{ fontSize: '19px', fontWeight: '500', color: '#4d4d4d' }}>Salary</strong>
                                           <div style={{ color: '#0BA02C', fontSize: '18px', fontWeight: '500' }}>₱{job.minSalary} - ₱{job.maxSalary}</div>
@@ -185,7 +252,7 @@ const JobPosting = () => {
                                       </Col>
                                       <Col xs={12} md={6} className="d-flex flex-column align-items-center">
                                           <FaMapMarkerAlt
-                                              style={{ color: '#2a93ff', width: '30px', height: '30px' }}
+                                              style={{ color: '#0a60bb', width: '30px', height: '30px' }}
                                           />
                                           <strong className="mt-2" style={{ fontSize: '19px', fontWeight: '500', color: '#4d4d4d' }}>Job Location</strong>
                                           <div style={{ color: '#868686', fontSize: '15px', fontWeight: '500' }}>{job.city}</div>
@@ -206,29 +273,41 @@ const JobPosting = () => {
                                   <h4 className="text-start" style={{ fontSize: '22px', color: '#4d4d4d' }}>Job Overview</h4>
                                   <Row className="text-start mt-3" style={{ fontWeight: '500' }}>
                                       <Col xs={4}>
-                                          <FaCalendarAlt className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
+                                          <FaCalendarAlt className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
                                           <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Job Posted</div>
                                           <div style={{ color: '#4d4d4d' }}>{formatDate(job.job_created_at)}</div>
                                       </Col>
                                       <Col xs={4}>
-                                          <FaBusinessTime className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
+                                          <FaBusinessTime className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
                                           <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Job Expires</div>
                                           <div style={{ color: '#4d4d4d' }}>{formatDate(job.expirationDate)}</div>
                                       </Col>
                                       <Col xs={4}>
-                                          <FaSuitcase className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
+                                          <FaSuitcase className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
                                           <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Job Level</div>
                                           <div style={{ color: '#4d4d4d' }}>{job.jobLevel}</div>
                                       </Col>
                                   </Row>
                                   <Row className="text-start mt-3" style={{ fontWeight: '500' }}>
                                       <Col xs={4}>
-                                          <FaBriefcase className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
+                                          <FaBriefcase className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
+                                          <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Job Type</div>
+                                          <div style={{ color: '#4d4d4d' }}>{job.jobType}</div>
+                                      </Col>
+                                      <Col xs={4}>
+                                        <FaUserClock  className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
                                           <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Experience</div>
                                           <div style={{ color: '#4d4d4d' }}>{job.experience}</div>
                                       </Col>
                                       <Col xs={4}>
-                                          <FaGraduationCap className="me-2" style={{ color: '#2a93ff', width: '30px', height: '25px' }} />
+                                          <FaUserTie className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
+                                          <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Job Role</div>
+                                          <div style={{ color: '#4d4d4d' }}>{job.jobRole}</div>
+                                      </Col>
+                                  </Row>
+                                  <Row className="text-start mt-3" style={{ fontWeight: '500' }}>
+                                      <Col xs={4}>
+                                          <FaGraduationCap className="me-2" style={{ color: '#0a60bb', width: '30px', height: '25px' }} />
                                           <div style={{ color: '#767F8C', marginTop: '10px', marginBottom: '3px' }}>Education</div>
                                           <div style={{ color: '#4d4d4d' }}>{job.education}</div>
                                       </Col>
@@ -241,22 +320,22 @@ const JobPosting = () => {
                                     variant="primary" 
                                     onClick={copyLink} 
                                     aria-label="Copy Link" 
-                                    style={{ padding: '5px 15px', marginRight: '10px', backgroundColor: '#ddf2ff', color: '#2a93ff' , border: 'none' }}
+                                    style={{ padding: '5px 15px', marginRight: '10px', backgroundColor: '#ddf2ff', color: '#0a60bb' , border: 'none' }}
                                   >
                                     <FaLink className="me-2" style={{ width: '20px', height: '20px' }} />
                                     Copy Link
                                   </Button>
                                   <Button variant="link" aria-label="Share on LinkedIn" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
-                                    <FaLinkedin className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
+                                    <FaLinkedin className="me-0" style={{ color: '#0a60bb', width: '20px', height: '20px' }} />
                                   </Button>
                                   <Button variant="link" aria-label="Share on Facebook" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
-                                    <FaFacebook className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
+                                    <FaFacebook className="me-0" style={{ color: '#0a60bb', width: '20px', height: '20px' }} />
                                   </Button>
                                   <Button variant="link" aria-label="Share on Twitter" style={{ padding: '0', maxWidth: '50px', marginRight: '10px' }}>
-                                    <FaTwitter className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
+                                    <FaTwitter className="me-0" style={{ color: '#0a60bb', width: '20px', height: '20px' }} />
                                   </Button>
                                   <Button variant="link" aria-label="Share via Email" style={{ padding: '0', maxWidth: '50px' }}>
-                                    <FaEnvelope className="me-0" style={{ color: '#2a93ff', width: '20px', height: '20px' }} />
+                                    <FaEnvelope className="me-0" style={{ color: '#0a60bb', width: '20px', height: '20px' }} />
                                   </Button>
                                 </div>
                               </div>
@@ -311,7 +390,7 @@ const JobPosting = () => {
 
 
 
-const FavoritesAndApplyButton = ({ handleShowModal, isBookmarked, handleBookmarkClick }) => {
+const FavoritesAndApplyButton = ({ handleShowModal, isBookmarked, handleBookmarkClick, applied }) => {
     return (
         <div className="d-flex mb-2 mt-5 ms-auto" style={{ width: '238px' }}>
             <Button
@@ -334,7 +413,27 @@ const FavoritesAndApplyButton = ({ handleShowModal, isBookmarked, handleBookmark
                     <FaRegBookmark style={{ color: '#6c757d' }} />
                 )}
             </Button>
+            {applied === 'Pending' || applied === 'On hold'  ? (
             <Button
+                variant="primary"
+                size="lg"
+                className="ms-2 d-flex align-items-center justify-content-center"
+                style={{
+                    backgroundColor: '#d7ecff',
+                    borderRadius: '5px',
+                    color: '#0A65CC',
+                    width: '220px',
+                    height: '55px',
+                    fontSize: '16px',
+                    marginRight: '-110px',
+                    fontWeight: '500',
+                    border: 'none'
+                }}
+            >
+                Submitted
+            </Button>
+            ) : (
+                        <Button
                 variant="primary"
                 size="lg"
                 className="ms-2 d-flex align-items-center justify-content-center"
@@ -351,7 +450,8 @@ const FavoritesAndApplyButton = ({ handleShowModal, isBookmarked, handleBookmark
                 onClick={handleShowModal}
             >
                 Apply Now <FaArrowRight style={{ marginLeft: '15px' }} />
-            </Button>
+            </Button> 
+            )}
         </div>
     );
 };

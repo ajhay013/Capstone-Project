@@ -5,6 +5,8 @@ import 'react-quill/dist/quill.snow.css';
 import { postToEndpoint } from '../../../components/apiService';
 import { useAuth } from '../../../AuthContext';
 import Swal from 'sweetalert2';
+import { FaArrowLeft } from 'react-icons/fa';
+
 
 export default function AddressInfo() {
   const [biography, setBiography] = useState('');
@@ -222,7 +224,13 @@ export default function AddressInfo() {
 
         {/* Save Changes Button */}
         <Row className="mt-5">
-          <Col md={12} className="d-flex justify-content-end">
+          <Col md={12} className="d-flex" style={{justifyContent: 'space-between'}}>
+          <Button variant="primary"  onClick={() => {
+                window.history.back();
+                window.scrollTo({ top: 0});
+            }} className="mt-3" style={{width: '185px', height: '55px', color: '#0d6efd', background: 'transparent'}}>
+          <FaArrowLeft style={{fontSize: '14px', marginRight: '12px'}}/> Back
+        </Button>
             <Button
               type="submit"
               variant="primary"

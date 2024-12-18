@@ -66,7 +66,7 @@ import ViewApplications from './Pages/Employer/EmployerDashboard/ViewApplication
 import FindApplicant from './Pages/Employer/findapplicant';
 import Applications from './Pages/Employer/Applications';
 
-import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/step1';
+import Step1ScreeningQuestions from './Pages/Employer/EmployerDashboard/step1'; 
 // import Step2ScreeningQuestions from './Pages/Employer/EmployerDashboard/step2';
 
 {/* Employer Settings Pages */}
@@ -112,86 +112,107 @@ function Layout({ userId, setUserId }) {
                              location.pathname === '/complete' ||
                              location.pathname === '/employer/contact';
 
-  const showHeader = ['/findjob', '/jobdetails/:job_id', '/findemployer', '/jobAlerts', '/employerdetails', '/employer/findapplicant', '/employer/applications', '/applicantprofile'].some((path) =>
-    location.pathname.startsWith(path.replace(':job_id', '').replace(':employerId', ''))
-  );
+const showHeader = [
+  '/findjob', 
+  '/jobdetails/:job_id', 
+  '/findemployer', 
+  '/jobAlerts', 
+  '/employerdetails', 
+  '/employer/findapplicant', 
+  '/employer/applications', 
+  '/applicantprofile', 
+  '/applicantdetails/:application_id'
+].some((path) =>
+  location.pathname.startsWith(path.replace(':job_id', '').replace(':application_id', ''))
+);
 
-
-  const getPageTitle = () => {
-    if (location.pathname.startsWith('/jobdetails/')) {
-      return 'Job Details';
-    }
-    if (location.pathname.startsWith('/employerdetails/')) {
+const getPageTitle = () => {
+  if (location.pathname.startsWith('/jobdetails/')) {
+    return 'Job Details';
+  }
+  if (location.pathname.startsWith('/employerdetails/')) {
+    return 'Single Employer';
+  }
+  if (location.pathname.startsWith('/applicantprofile')) {
+    return 'Profile';
+  }
+  if (location.pathname.startsWith('/applicantdetails/')) {
+    return 'Applicant Details';
+  }
+  switch (location.pathname) {
+    case '/findjob':
+      return 'Find Job';
+    case '/findemployer':
+      return 'Employers';
+    case '/jobAlerts':
+      return 'Job Alert';
+    case '/employerdetails':
       return 'Single Employer';
-    }
-    if (location.pathname.startsWith('/applicantprofile')) {
-      return 'Profile'; 
-    }
-    switch (location.pathname) {
-      case '/findjob':
-        return 'Find Job';
-      case '/findemployer':
-        return 'Employers';
-      case '/jobAlerts':
-        return 'Job Alert';
-      case '/employerdetails':
-        return 'Single Employer';
-      case '/employer/findapplicant':
-        return 'Applicants';
-      case '/employer/applications':
-        return 'Applications';
-      default:
-        return '';
-    }
-  };
-  const getBreadcrumbs = () => {
-    if (location.pathname.startsWith("/jobdetails/")) {
-      return [
-        { label: "Home", path: "/" },
-        { label: "Find Job", path: "/findjob" },
-        { label: "Job Details", path: location.pathname },
-      ];
-    }
-    if (location.pathname.startsWith('/employerdetails/')) {
+    case '/employer/findapplicant':
+      return 'Applicants';
+    case '/employer/applications':
+      return 'Applications';
+    default:
+      return '';
+  }
+};
+
+const getBreadcrumbs = () => {
+  if (location.pathname.startsWith('/jobdetails/')) {
+    return [
+      { label: 'Home', path: '/' },
+      { label: 'Find Job', path: '/findjob' },
+      { label: 'Job Details', path: location.pathname },
+    ];
+  }
+  if (location.pathname.startsWith('/employerdetails/')) {
+    return [
+      { label: 'Home', path: '/' },
+      { label: 'Employers', path: '/findemployer' },
+      { label: 'Single Employer', path: location.pathname },
+    ];
+  }
+  if (location.pathname.startsWith('/applicantprofile')) {
+    return [
+      { label: 'Home', path: '/' },
+      { label: 'Profile', path: location.pathname },
+    ];
+  }
+  if (location.pathname.startsWith('/applicantdetails/')) {
+    return [
+      { label: 'Home', path: '/' },
+      { label: 'Applications', path: '/employer/applications' },
+      { label: `Applicant Details`, path: location.pathname },
+    ];
+  }
+  switch (location.pathname) {
+    case '/findjob':
+      return [{ label: 'Home', path: '/' }, { label: 'Find Job', path: '/findjob' }];
+    case '/findemployer':
+      return [{ label: 'Home', path: '/' }, { label: 'Employers', path: '/findemployer' }];
+    case '/jobAlerts':
+      return [{ label: 'Home', path: '/' }, { label: 'Job Alert', path: '/jobAlerts' }];
+    case '/employerdetails':
       return [
         { label: 'Home', path: '/' },
         { label: 'Employers', path: '/findemployer' },
-        { label: 'Single Employer', path: location.pathname },
+        { label: 'Single Employer', path: '/employerdetails' },
       ];
-    }
-    if (location.pathname.startsWith('/applicantprofile')) {
+    case '/employer/applications':
       return [
-        { label: "Home", path: "/" },
-        { label: "Profile", path: location.pathname },
+        { label: 'Home', path: '/home' },
+        { label: 'Applications', path: '/employer/applications' },
       ];
-    }
-    switch (location.pathname) {
-      case "/findjob":
-        return [{ label: "Home", path: "/" }, { label: "Find Job", path: "/findjob" }];
-      case "/findemployer":
-        return [{ label: "Home", path: "/" }, { label: "Employers", path: "/findemployer" }];
-      case "/jobAlerts":
-        return [{ label: "Home", path: "/" }, { label: "Job Alert", path: "/jobAlerts" }];
-      case "/employerdetails":
-        return [
-          { label: "Home", path: "/" },
-          { label: "Employers", path: "/findemployer" },
-          { label: "Single Employer", path: "/employerdetails" },
-        ];
-      case "/employer/applications":
-        return [
-          { label: "Home", path: "/home" },
-          { label: "Applications", path: "/employer/applications" },
-        ];
-      case "/employer/findapplicant":
-        return [
-          { label: "Home", path: "/home" },
-          { label: "Find Applicant", path: "/employer/findapplicant" },
-        ];
-      default:
-        return [];
-    }
-  };
+    case '/employer/findapplicant':
+      return [
+        { label: 'Home', path: '/home' },
+        { label: 'Find Applicant', path: '/employer/findapplicant' },
+      ];
+    default:
+      return [];
+  }
+};
+
   
 
 
@@ -283,15 +304,15 @@ function Layout({ userId, setUserId }) {
         <Route path='/employer/savedapplicant' element={<ProtectedRoute> <SavedApplicant /> </ProtectedRoute>} />  
         <Route path='/employer/settings' element={<ProtectedRoute> <EmployerSettings /> </ProtectedRoute>} />
 
-        <Route path='/viewapplications/:job_id' element={<ProtectedRoute> <ViewApplications /> </ProtectedRoute>} />
+        <Route path='/viewapplications/:job_id/:jobTitle' element={<ProtectedRoute> <ViewApplications /> </ProtectedRoute>} />
         <Route path='/employer/applications' element={<ProtectedRoute> <Applications /> </ProtectedRoute>} />  
 
-        <Route path='/applicantdetails/:id' element={<ProtectedRoute> <ApplicantDetails /> </ProtectedRoute>} />
+        <Route path='/applicantdetails/:application_id/:firstname/:lastname/:job_id' element={<ProtectedRoute> <ApplicantDetails /> </ProtectedRoute>} />
 
 
         {/* <Route path='/employer/employermessage' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} /> */}
   
-        {/* <Route path='/step1' element={<ProtectedRoute> <Step2ScreeningQuestions /> </ProtectedRoute>} /> */}
+        <Route path='/step2' element={<ProtectedRoute> <Step1ScreeningQuestions /> </ProtectedRoute>} />
       
       {/* Employer Settings Routing */}
         <Route path='/employer/employersettings/companysettings' element={<ProtectedRoute> <CompanySettings /> </ProtectedRoute> } />

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Link } from 'react-router-dom';
 import Pagination from './Pagination';
 import { useAuth } from '../AuthContext'; 
 import { getFromEndpoint } from '../components/apiService';
+import { Link } from 'react-router-dom';
 
-function FavoriteJob() {
+function JobAlers() {
   const { user } = useAuth(); 
   const [jobs, setJobs] = useState([]);  
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,9 +17,9 @@ function FavoriteJob() {
           return;
       }
   
-      const fetchFavoriteJobs = async () => {
+      const fetchAlertJobs = async () => {
           try {
-              const response = await getFromEndpoint('/getAllFavoriteJob.php', { applicant_id: user.id });
+              const response = await getFromEndpoint('/getAlertJob.php');
               const fetchedJobs = Array.isArray(response.data) ? response.data : response.data.favoriteJobs || [];
               setJobs(fetchedJobs); 
           } catch (error) {
@@ -27,7 +27,7 @@ function FavoriteJob() {
           }
       };
   
-      fetchFavoriteJobs(); 
+      fetchAlertJobs(); 
   }, [user]); 
 
   const calculateDaysLeft = (expirationDate) => {
@@ -43,6 +43,7 @@ function FavoriteJob() {
     } 
     return null;
 };
+
 
   const indexOfLastJob = currentPage * itemsPerPage;
   const indexOfFirstJob = indexOfLastJob - itemsPerPage;
@@ -79,6 +80,23 @@ function FavoriteJob() {
                   >
                     {job.jobType}
                   </span>
+
+                  {job.freshness === 'New' ? (
+                  <span
+                    className="badge" 
+                    style={{
+                      background: '#cde8ff',
+                      padding: '7px 13px',
+                      color: '#0076df',
+                      fontWeight: '600',
+                      borderRadius: '50px',
+                      fontSize: '11px',
+                      marginLeft: '6px'
+                    }}
+                  >
+                    {job.freshness}
+                  </span>
+                  ) : ('')}
                 </div>
                 <small className="d-flex align-items-center mb-1" style={{color: '#7e7b7b'}}>
                   <i className="fas fa-map-marker-alt me-1" style={{color: '#3c88cc'}}></i>
@@ -104,28 +122,52 @@ function FavoriteJob() {
                       </>
                     )}
                 </small>
+                
               </div>
             </div>
             <div className="d-flex align-items-center">
               <i className="fas fa-bookmark me-3" style={{ cursor: 'pointer' }}></i>
-              <Link to={`/jobdetails/${job.job_id}`}>
-                <button className="btn btn-primary btn-sm"
-                style={{
-                  width: '150px',
-                  height: '46px',
-                  fontWeight: '500',
-                  marginTop: '5px',
-                  background: '#ddf2ff',
-                  color: '#0064ff',
-                  padding: '10px',
-                  borderRadius: '3px',
-                  fontSize:'13px',
-                  border: 'none'
-                }}
-                >
-                  View Details <i className="fas fa-arrow-right" style={{ marginLeft: '10px' }}></i>
+              {calculateDaysLeft(job.expirationDate) ? (
+                <>
+            <Link to={`/jobdetails/${job.job_id}`}>
+              <button className="btn btn-primary btn-sm"
+              style={{
+                width: '150px',
+                height: '46px',
+                fontWeight: '500',
+                marginTop: '5px',
+                background: '#ddf2ff',
+                color: '#0064ff',
+                padding: '10px',
+                borderRadius: '3px',
+                fontSize:'13px',
+                border: 'none'
+              }}
+              >
+                View Details <i className="fas fa-arrow-right" style={{ marginLeft: '10px' }}></i>
                 </button>
-              </Link>
+            </Link>
+                </>
+              ) : (
+                <>
+              <button className="btn btn-primary btn-sm"
+              style={{
+                width: '150px',
+                height: '46px',
+                fontWeight: '500',
+                marginTop: '5px',
+                background: '#e7ebed',
+                color: '#848484',
+                padding: '10px',
+                borderRadius: '3px',
+                fontSize:'13px',
+                border: 'none'
+              }}
+              >
+                Deadline Expired
+                </button>
+                </>
+              )}
             </div>
           </div>
         ))
@@ -143,4 +185,4 @@ function FavoriteJob() {
   );
 }
 
-export default FavoriteJob;
+export default JobAlers;

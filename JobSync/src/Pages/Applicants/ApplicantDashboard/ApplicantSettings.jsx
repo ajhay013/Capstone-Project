@@ -43,8 +43,10 @@ export default function ApplicantSettings() {
             eventKey="passwordsettings"
             title={
               <>
+              <div style={{width: '300px', textAlign: 'left'}}>
                 <FaKey style={{ marginRight: '8px', ...tabStyles(activeKey === 'passwordsettings') }} />
                 <span style={tabStyles(activeKey === 'passwordsettings')}>Password Settings</span>
+                </div>
               </>
             }
           >
@@ -55,8 +57,10 @@ export default function ApplicantSettings() {
             eventKey="accountsettings"
             title={
               <>
+              <div style={{width: '300px', textAlign: 'left'}}>
                 <FaUser style={{ marginRight: '8px', ...tabStyles(activeKey === 'accountsettings') }} />
                 <span style={tabStyles(activeKey === 'accountsettings')}>Account Settings</span>
+                </div>
               </>
             }
           >

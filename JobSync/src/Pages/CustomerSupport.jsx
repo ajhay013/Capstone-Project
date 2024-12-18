@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../Responsive.css'
+// import '../Responsive.css'
 
 const CustomerSupport = () => {
   const [issueType, setIssueType] = useState('');
@@ -21,7 +21,7 @@ const CustomerSupport = () => {
 
   return (
     <>
-      <div className="container mt-5">
+      <div className="container mt-0">
         <div className="row">
           {/* Form Column (Left Side) */}
           <div className="col-md-6 col-12">
@@ -35,7 +35,7 @@ const CustomerSupport = () => {
               {/* Header Text */}
               <h3 className="mb-0">JobSync Support</h3>
             </div>
-            <p className="fw-bold mb-1">christiandave.bernalbsis2022@gmail.com</p>
+            <p className="fw-bold mb-1">me.jobsync@gmail.com</p>
             <form onSubmit={handleSubmit}>
               {/* Issue Type */}
               <div className="mb-3" style={{ textAlign: 'left' }}>

@@ -10,70 +10,70 @@ const applicantData = [
         name: 'John Doe',
         desiredPosition: 'Marketing Officer',
         location: 'New York, NY',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 2,
         name: 'Jane Smith',
         desiredPosition: 'UI/UX Designer',
         location: 'Los Angeles, CA',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 3,
         name: 'Mike Johnson',
         desiredPosition: 'Software Engineer',
         location: 'San Francisco, CA',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 4,
         name: 'Emily Davis',
         desiredPosition: 'Graphic Designer',
         location: 'Chicago, IL',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 5,
         name: 'David Wilson',
         desiredPosition: 'Data Analyst',
         location: 'Austin, TX',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 6,
         name: 'Sophia Brown',
         desiredPosition: 'Project Manager',
         location: 'Seattle, WA',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 7,
         name: 'James Taylor',
         desiredPosition: 'Backend Developer',
         location: 'Denver, CO',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 8,
         name: 'Olivia Martinez',
         desiredPosition: 'Front-end Developer',
         location: 'Miami, FL',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 9,
         name: 'Lucas Anderson',
         desiredPosition: 'Sales Representative',
         location: 'Dallas, TX',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
     {
         id: 10,
         name: 'Mia Thomas',
         desiredPosition: 'Content Writer',
         location: 'Boston, MA',
-        image: '../../../src/assets/berns.jpg',
+        image: '../../../src/assets/profes.jpg',
     },
 ];
 
@@ -81,7 +81,7 @@ const ApplicantRow = ({ applicant, handleShowModal }) => (
     <tr key={applicant.id} className="border-bottom">
         <td style={{ textAlign: 'left' }}>
             <div className="d-flex align-items-center">
-                <img src={applicant.image} alt={applicant.name} className="rounded-circle me-2" style={{ width: '50px', height: '50px' }} />
+                <img src={applicant.image} alt={applicant.name} className="rounded-circle me-2" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
                 <div>
                     <h6 className="mb-0">{applicant.name}</h6>
                     <small className="text-muted">{applicant.desiredPosition}</small>

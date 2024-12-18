@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import JobDetailsModal from '../components/jobdetailsmodal';
 import Pagination from '../components/Pagination'; 
 import { useAuth } from '../AuthContext'; 
-import axios from 'axios';
 import { postToEndpoint } from '../components/apiService';
 
 const JobRow = ({ job, onViewDetails }) => {
@@ -45,8 +44,9 @@ const JobRow = ({ job, onViewDetails }) => {
                         </div>
                         <div className="d-flex align-items-center flex-wrap">
                             <i className="fas fa-location-dot me-1" style={{color: '#4198e5'}}></i>
-                            <small className="text-muted me-2">{job.city}</small> <span className='text-muted'>|</span>
-                            <span className="text-muted" style={{marginLeft: '10px'}}>₱{job.minSalary} - ₱{job.maxSalary}</span>
+                            <small className="text-muted me-3">{job.city}</small>
+                            <i className="fas fa-peso-sign me-1" style={{color: '#9ea0a2'}}></i>
+                            <span className="text-muted" style={{fontSize: '14px'}}>₱{job.minSalary} - ₱{job.maxSalary}</span>
                         </div>
                     </div>
                 </div>
@@ -111,6 +111,7 @@ function AppliedJobsTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [applied, setAppliedJobs] = useState([]);
+    const [loading, setLoading] = useState(true); 
     const [selectedJobId, setSelectedJobId] = useState(null);
     const { user } = useAuth();
 
@@ -130,8 +131,8 @@ function AppliedJobsTable() {
     useEffect(() => {
         const fetchAppliedJobs = async () => {
             try {
+                setLoading(true); 
                 const response = await postToEndpoint('/getAppliedJobs.php', { applicant_id: user.id });
-                console.log(response.data);
                 if (response.data && !response.data.error) {
                     setAppliedJobs(response.data);
                 } else {
@@ -139,6 +140,8 @@ function AppliedJobsTable() {
                 }
             } catch (error) {
                 console.error('Error fetching applicant profiles:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -148,12 +151,19 @@ function AppliedJobsTable() {
     }, [user]);
 
     const handleViewDetails = (job_id) => {
-        setSelectedJobId(job_id); // Store the job ID
+        setSelectedJobId(job_id);
         setShowModal(true);
     };
 
+    if (loading) {
+        return (
+            <div id="preloader">
+            </div>
+        );
+    }
+
     return (
-        <div className="container-fluid px-0 d-flex flex-column" style={{ minHeight: '100vh' }}>
+        <div className="container-fluid px-0 d-flex flex-column">
             <div className="flex-grow-1 table-responsive">
                 <table className="table" style={{ width: '100%', minWidth: '1000px' }}>
                     <thead className="thead-light">
@@ -171,7 +181,6 @@ function AppliedJobsTable() {
                     </tbody>
                 </table>
             </div>
-            {totalItems > itemsPerPage && (
                 <div className="d-flex justify-content-center py-3">
                     <Pagination
                         currentPage={currentPage}
@@ -180,7 +189,6 @@ function AppliedJobsTable() {
                         paginate={paginate}
                     />
                 </div>
-            )}
             <JobDetailsModal 
                 show={showModal} 
                 handleClose={handleCloseModal} 

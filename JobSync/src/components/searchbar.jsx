@@ -212,7 +212,7 @@ function SearchJobs() {
                                             View Profile
                                         </Link>
                                         <Link
-                                            to="/settings"
+                                            to="/applicants/applicantsettings"
                                             className="dropdown-item d-flex align-items-center"
                                             onClick={handleOptionClick}
                                             style={{

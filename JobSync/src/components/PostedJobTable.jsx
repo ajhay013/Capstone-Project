@@ -12,7 +12,7 @@ const JobRow = ({ job, handleShowModal }) => {
     const statusColor = job.status === 'Active' ? '#5bbc80' : '#dc3545';
 
     const handleViewApplications = () => {
-        navigate(`/viewapplications/${job.job_id}`);
+        navigate(`/viewapplications/${job.job_id}/${job.jobTitle}`);
     };
 
     return (

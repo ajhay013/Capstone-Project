@@ -86,7 +86,7 @@ function EmployerSidebar() {
                     <button
                         className="btn btn-link nav-link"
                         style={isActive('/employer/employermessage') ? { ...buttonStyle, ...activeStyle } : buttonStyle}
-                        onClick={() => navigate('/employer/employermessage')}
+                        onClick={() => navigate('')}
                     >
                         <FaEnvelope className="me-2" style={{ color: isActive('/employer/employermessage') ? '#0A65CC' : '#838383' }} />
                         Messages

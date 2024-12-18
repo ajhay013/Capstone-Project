@@ -1,6 +1,6 @@
 import React from 'react';
-import AppliedJobsList from '../../../components/FavJobTable';
 import ApplicantsSidebar from '../../../components/applicantsidebar';
+import JobAlers from '../../../components/JobAlertTable';
 
 export default function JobsAlert() {
     return (
@@ -11,7 +11,7 @@ export default function JobsAlert() {
             <div className="content" style={{ width: '100vw' , marginTop: '60px', textAlign: 'left' }}>
                 <h2 style={{fontSize: '17px', color: '#333', fontWeight: '500', marginBottom: '20px', marginTop: '25px', textAlign: 'left' , marginLeft: '20px'}}>
                         Job Alerts <span style={{color: '#656565', fontSize: '14px'}}>(10)</span></h2>
-                <AppliedJobsList />
+                <JobAlers />
             </div>
         </div>
     );

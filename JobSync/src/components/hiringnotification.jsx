@@ -38,12 +38,13 @@ export default function HiringNotification({ onContinue, onCancel }) {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img
-            src="./src/assets/berns.jpg"
+            src="./src/assets/profes.jpg"
             alt="Profile"
             style={{
               borderRadius: '50%',
               height: '50px',
               width: '50px',
+              objectFit: 'cover'
             }}
           />
           <div>

@@ -1,34 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import EmployerSidebar from '../../../components/EmployerSidebar';
 import { FaSearch, FaArrowLeft } from 'react-icons/fa';
 import Pagination from '../../../components/Pagination';
+import { postToEndpoint } from '../../../components/apiService';
 
 export default function ViewApplications() {
-  const { jobId } = useParams();
-  const [applications, setApplications] = useState([
-    { id: 1, name: "Ajhay Ramos Arendayen", date: "September 25, 2024", status: "To Interview" },
-    { id: 2, name: "Christian Dave Bernal", date: "September 27, 2024", status: "Pending" },
-    { id: 3, name: "Desiree Galanaga", date: "June 13, 2024", status: "On hold" },
-    { id: 4, name: "Ricky James Molina", date: "December 13, 2024", status: "On hold" },
-    { id: 5, name: "Maria Clara Hidalgo", date: "October 5, 2024", status: "To Interview" },
-    { id: 6, name: "Juan Pablo Cruz", date: "August 23, 2024", status: "Rejected" },
-    { id: 7, name: "Sophia Evangeline Torres", date: "November 10, 2024", status: "Pending" },
-    { id: 8, name: "Daniela Francisco", date: "September 15, 2024", status: "To Interview" },
-    { id: 9, name: "Luis Alberto Garcia", date: "October 1, 2024", status: "On hold" },
-    { id: 10, name: "Benjamin Ortiz", date: "July 19, 2024", status: "Pending" },
-    { id: 11, name: "Ajhay Ramos Arendayen", date: "September 25, 2024", status: "To Interview" },
-    { id: 12, name: "Christian Dave Bernal", date: "September 27, 2024", status: "Pending" },
-    { id: 13, name: "Desiree Galanaga", date: "June 13, 2024", status: "On hold" },
-    { id: 14, name: "Ricky James Molina", date: "December 13, 2024", status: "On hold" },
-    { id: 15, name: "Maria Clara Hidalgo", date: "October 5, 2024", status: "To Interview" },
-    { id: 16, name: "Juan Pablo Cruz", date: "August 23, 2024", status: "Rejected" },
-    { id: 17, name: "Sophia Evangeline Torres", date: "November 10, 2024", status: "Pending" },
-    { id: 18, name: "Daniela Francisco", date: "September 15, 2024", status: "To Interview" },
-    { id: 19, name: "Luis Alberto Garcia", date: "October 1, 2024", status: "On hold" },
-    { id: 20, name: "Benjamin Ortiz", date: "July 19, 2024", status: "Pending" },
-  ]);
+  const { job_id, jobTitle } = useParams();
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    const fetchApplied = async () => {
+        try {
+            const response = await postToEndpoint('/getApplicantApplied.php', { job_id });
+            if (response.data?.jobs) {
+                setApplications(response.data.jobs);
+            } else {
+                console.error('No jobs found or an error occurred:', response.data.error);
+            }
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+        }
+    };
+
+    fetchApplied();
+}, [job_id]);
 
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
@@ -37,14 +34,14 @@ export default function ViewApplications() {
 
   const navigate = useNavigate();
 
-  // Filter logic
   const filteredApplications = applications.filter((app) => {
-    const matchesFilter = filter === "All" || app.status === filter;
-    const matchesSearch = app.name.toLowerCase().includes(search.toLowerCase());
+    const matchesFilter = filter === "All" || app.applied_status === filter;
+    const matchesSearch = [app.firstname, app.middlename, app.lastname]
+      .filter(Boolean)
+      .some((name) => name.toLowerCase().includes(search.toLowerCase()));
     return matchesFilter && matchesSearch;
   });
 
-  // Pagination Logic
   const indexOfLastApplication = currentPage * itemsPerPage;
   const indexOfFirstApplication = indexOfLastApplication - itemsPerPage;
   const currentApplications = filteredApplications.slice(indexOfFirstApplication, indexOfLastApplication);
@@ -78,9 +75,8 @@ export default function ViewApplications() {
           </button>
 
           <h2 className="mb-4 text-left" style={{ fontSize: '25px', color: 'black', fontWeight: '600', marginLeft: '20px' , textAlign: 'left' }}>
-            Applications for {jobId}
+              Applications for {jobTitle}
           </h2>
-
           <div className="input-group mb-4" style={{ width: '60%', marginLeft: '20px' }}>
             <span className="input-group-text" id="search-icon" style={{ borderRadius: '20px', marginRight: '10px', color: '#0A65CC' }}>
               <FaSearch />
@@ -103,7 +99,7 @@ export default function ViewApplications() {
               <p style={{ fontSize: '14px', color: 'gray', margin: '0', marginLeft: '20px' }}>Based on your preferences</p>
             </div>
             <div className="d-flex flex-wrap">
-              {["All", "Pending", "To Interview", "On hold", "Rejected"].map((status) => (
+              {["All", "Pending", "On hold", "To Interview", "Rejected"].map((status) => (
                 <button
                   key={status}
                   className={`btn btn-sm me-2 ${filter === status ? "btn-dark" : "btn-outline-secondary"}`}
@@ -127,48 +123,61 @@ export default function ViewApplications() {
             <table className="table table-striped" style={{ width: '100%', marginLeft: '20px', tableLayout: 'fixed', maxWidth: '970px' }}>
               <thead className="thead-light">
                 <tr>
-                  <th style={{ color: '#676767', background: '#ebebebc2', width: '80px' }}>ID</th>
-                  <th style={{ color: '#676767', background: '#ebebebc2' }}>Name</th>
-                  <th style={{ color: '#676767', background: '#ebebebc2' }}>Date Applied</th>
-                  <th style={{ color: '#676767', background: '#ebebebc2', width: '110px' }}>Contact</th>
-                  <th style={{ color: '#676767', background: '#ebebebc2' }}>Status</th>
-                  <th style={{ color: '#676767', background: '#ebebebc2' }}>Actions</th>
+                  <th style={{ color: '#8a8a8a', background: '#d4e0e9c2', width: '80px', fontWeight: '500' }}>ID</th>
+                  <th style={{ color: '#8a8a8a', background: '#d4e0e9c2', fontWeight: '500' }}>Name</th>
+                  <th style={{ color: '#8a8a8a', background: '#d4e0e9c2', fontWeight: '500' }}>Date Applied</th>
+                  <th style={{ color: '#8a8a8a', background: '#d4e0e9c2', width: '110px', fontWeight: '500' }}>Contact</th>
+                  <th style={{ color: '#8a8a8a', background: '#d4e0e9c2', fontWeight: '500' }}>Status</th>
+                  <th style={{ color: '#8a8a8a', background: '#d4e0e9c2', fontWeight: '500' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {currentApplications.length > 0 ? (
-                  currentApplications.map((app) => (
-                    <tr key={app.id}>
-                      <td>{app.id}</td>
-                      <td>
-                        <Link 
-                          to={`/applicantdetails/${app.id}`} 
-                          style={{ textDecoration: 'none', color: '#0A65CC' }}
+                  currentApplications.map((app, index) => (
+                    <tr key={app.application_id} style={{height: '70px'}}>
+                      <td style={{paddingTop: '20px'}}>{index + 1}</td>
+                      <td style={{ paddingTop: '20px' }}>
+                        <Link
+                          to={`/applicantdetails/${app.application_id}/${app.firstname}/${app.lastname}/${app.job_id}`}
+                          style={{
+                            textDecoration: 'none',
+                            color: '#007BFF',
+                            fontWeight: '400',
+                            transition: 'color 0.3s',
+                          }}
+                          onMouseEnter={(e) => (e.target.style.color = '#373839')}
+                          onMouseLeave={(e) => (e.target.style.color = '#007BFF')}
                         >
-                          {app.name}
+                          {app.firstname} {app.middlename || ''} {app.lastname}
                         </Link>
                       </td>
-                      <td>{app.date}</td>
-                      <td>
+                      <td style={{paddingTop: '20px', fontSize: '15px', color: '#373839'}}>
+                        {new Date(app.applied_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </td>
+                      <td style={{paddingTop: '18px'}}>
                         <button className="btn btn-sm btn-link">
-                          <i className="far fa-envelope" style={{ fontSize: '25px' }}></i>
+                          <i className="far fa-envelope" style={{ fontSize: '20px', color: '#ff5353' }}></i>
                         </button>
                         <button className="btn btn-sm btn-link">
-                          <i className="far fa-comment-dots" style={{ fontSize: '25px' }}></i>
+                          <i className="far fa-comment-dots" style={{ fontSize: '20px', color: '' }}></i>
                         </button>
                       </td>
-                      <td>
-                        <span className={`badge ${app.status === "To Interview"
+                      <td style={{paddingTop: '18px'}}>
+                        <span className={`badge ${app.applied_status === "Interview"
                           ? "bg-success"
-                          : app.status === "Pending"
+                          : app.applied_status === "Pending"
                             ? "bg-warning"
-                            : app.status === "On hold"
+                            : app.applied_status === "On hold"
                               ? "bg-info"
-                              : "bg-danger"}`}>
-                          {app.status}
+                              : "bg-danger"}`} style={{padding:'8px 38px', borderRadius: '50px'}}>
+                          {app.applied_status}
                         </span>
                       </td>
-                      <td>
+                      <td style={{paddingTop: '18px'}}>
                         <button className="btn btn-link btn-sm" style={{ textDecoration: 'none' }}>
                           Download CV/Resume <i className="fas fa-download"></i>
                         </button>

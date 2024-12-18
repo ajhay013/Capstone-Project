@@ -7,7 +7,7 @@ export default function PasswordSettings() {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   return (
-    <div style={{ padding: '0', marginTop: '35px', marginRight: '700px' }}>
+    <div style={{ padding: '0', marginTop: '35px', marginRight: '580px' }}>
 
       <div className="px-4">
         <Form style={{ marginTop: '30px' }}>
@@ -18,11 +18,12 @@ export default function PasswordSettings() {
               <Form.Group controlId="currentPassword" className="mb-3">
                 <Form.Label className="text-start w-100 mb-3">Current Password</Form.Label>
                 <Form.Control
+                  className='register1'
                   type="password"
                   placeholder="Enter current password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  style={{ width: '100%' }}
+                  style={{ width: '360px' }}
                 />
               </Form.Group>
             </Col>
@@ -33,11 +34,12 @@ export default function PasswordSettings() {
               <Form.Group controlId="newPassword" className="mb-3">
                 <Form.Label className="text-start w-100 mt-4 mb-3">New Password</Form.Label>
                 <Form.Control
+                  className='register1'
                   type="password"
                   placeholder="Enter new password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  style={{ width: '100%' }}
+                  style={{ width: '360px' }}
                 />
               </Form.Group>
             </Col>
@@ -48,18 +50,21 @@ export default function PasswordSettings() {
               <Form.Group controlId="confirmNewPassword" className="mb-3">
                 <Form.Label className="text-start w-100 mt-4 mb-3">Confirm New Password</Form.Label>
                 <Form.Control
+                  className='register1'
                   type="password"
                   placeholder="Confirm new password"
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  style={{ width: '100%' }}
+                  style={{ width: '360px' }}
                 />
               </Form.Group>
             </Col>
           </Row>
 
           <div className="text-start">
-            <Button variant="primary" type="submit" className="mt-5">
+            <Button type="submit" className="mt-5"
+            style={{width: '200px', height:'48px', background: '#0a65cc'}}
+            >
               Update Password
             </Button>
           </div>

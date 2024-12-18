@@ -37,7 +37,7 @@ const ViewProfileModal = ({ show, handleClose, applicant }) => {
                 }}
               >
                 <img
-                  src={applicant?.picture || '../../src/assets/berns.jpg'}
+                  src={applicant?.picture || '../../src/assets/profes.jpg'}
                   alt="Applicant"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
