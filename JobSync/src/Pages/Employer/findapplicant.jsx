@@ -49,7 +49,7 @@ export default function FindApplicant() {
           <div className="my-5 mx-auto" style={{ maxWidth: "1145px", width: "100%", position: 'absolute', right: '0', left: '0', top: '-10px'}}>
             <Row className="mb-5">
               <Col md={12}>
-                <form onSubmit={handleSearch} className="d-flex mb-4 mt-4">
+                <form onSubmit={handleSearch} className="d-flex mb-4" style={{marginTop: '28px'}}>
                   {/* Job Search Input */}
                   <div
                     className="input-group"
@@ -134,7 +134,7 @@ export default function FindApplicant() {
                       fontSize: "16px",
                       height: "47px",
                       width: "145px",
-                      marginTop: "28px",
+                      marginTop: "26px",
                       marginRight: '-4px',
                       background: '#0a65cc',
                       color: 'white',

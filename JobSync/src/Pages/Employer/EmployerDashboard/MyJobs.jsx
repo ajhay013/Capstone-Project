@@ -32,6 +32,13 @@ export default function MyJobs() {
                 <EmployerSidebar /> 
             </div>
             <div className="flex-grow-1 p-3" style={{ marginTop: '60px', marginRight: '194px', width: '120%' }}>
+            <nav aria-label="breadcrumb" style={{marginTop: '-28px'}}>
+                <ol className="breadcrumb">
+                <li className="breadcrumb-item">
+                    <a href="/employer/myjobs" style={{textDecoration: 'none', color: '#757575' }} >My Jobs</a>
+                </li>
+                </ol> 
+            </nav>
                 <h2 className="mb-3 text-left" style={{ fontSize: '20px', color: '#575757', fontWeight: '600', marginBottom: '20px', marginTop: '25px', textAlign: 'left', marginLeft: '15px' }}>
                     My Jobs {jobs.total_jobs > 0 ? `(${jobs.total_jobs})` : ''}
                 </h2>

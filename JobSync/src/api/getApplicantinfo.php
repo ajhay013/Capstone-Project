@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'barangay' => $row['barangay'] ?? null,
                     'email' => $row['email'] ?? null,
                     'postal' => $row['postal'] ?? null,
+                    'nationality' => $row['nationality'] ?? null,
                 ]);
             } else {
                 echo json_encode(['error' => 'No record found for this applicant.']);

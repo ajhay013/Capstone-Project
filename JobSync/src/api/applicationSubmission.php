@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $resumeQuery = "INSERT INTO js_applicant_application_resume (applicant_id, job_id, resumeName, resumePath, coverLetter) 
-                        VALUES (:applicant_id, :job_id, :resumeName, :resumePath, :coverLetter)";
+        $resumeQuery = "INSERT INTO js_applicant_application_resume (applicant_id, job_id, resumeName, resumePath, coverLetter, applied_status) 
+                        VALUES (:applicant_id, :job_id, :resumeName, :resumePath, :coverLetter, 'Pending')";
         $resumeStmt = $conn->prepare($resumeQuery);
         $resumeStmt->bindParam(':applicant_id', $applicant_id, PDO::PARAM_INT);
         $resumeStmt->bindParam(':job_id', $job_id, PDO::PARAM_INT);
@@ -42,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $application_id = $conn->lastInsertId();
 
-        // Insert the screening answers
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'screening_answer_') === 0) {
                 $question_id = str_replace('screening_answer_', '', $key);
@@ -57,6 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $answerStmt->execute();
             }
         }
+
+        $notifQuery = "INSERT INTO js_notification (application_id) VALUES (:application_id)";
+        $notifStmt = $conn->prepare($notifQuery);
+        $notifStmt->bindParam(':application_id', $application_id, PDO::PARAM_INT);
+        $notifStmt->execute();
 
         echo json_encode(['success' => true, 'message' => 'Your application has been successfully submitted.']);
     } catch (PDOException $e) {

@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $marital_status = $data['marital_status'];
     $experience = $data['experience'];
     $education = $data['education'];
+    $nationality = $data['nationality'];
 
     try {
         $conn->beginTransaction();
@@ -68,7 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 birthplace = :birthplace, 
                 status = :marital_status, 
                 experience = :experience, 
-                attainment = :education 
+                attainment = :education,
+                nationality = :nationality 
             WHERE applicant_id = :applicant_id
         ");
         
@@ -79,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':marital_status' => $marital_status,
             ':experience' => $experience,
             ':education' => $education,
+            ':nationality' => $nationality,
             ':applicant_id' => $applicant_id
         ]);
 

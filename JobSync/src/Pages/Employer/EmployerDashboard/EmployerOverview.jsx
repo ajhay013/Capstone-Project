@@ -1,10 +1,36 @@
-import React from 'react';
+import React, {useState, useEffect } from 'react';
 import EmployerSidebar from '../../../components/EmployerSidebar';
 import PostedJobTable from '../../../components/PostedJobTable';
 import { FaBriefcase, FaUser, FaEnvelope, FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../../AuthContext'
+import { postToEndpoint } from '../../../components/apiService';
 
 export default function EmployerOverview() {
+    const { user } = useAuth(); 
+    const [counts, setJobCounts] = useState([]);
+      
+    useEffect(() => {
+        const fetchCounts = async () => {
+            try {
+                const response = await postToEndpoint('/getCountJobs.php', { employer_id: user.id });
+                console.log(response.data.counts);
+                if (response.data.counts) {
+                    setJobCounts(response.data.counts);
+                } else {
+                    console.error('No jobs found or an error occurred:', response.data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+            }
+        };
+        const intervalId = setInterval(() => {
+            fetchCounts();
+        }, 100); 
+        fetchCounts();
+        return () => clearInterval(intervalId);
+    }, [user.id]);
+
     return (
         <>
             <div className="d-flex">
@@ -26,7 +52,7 @@ export default function EmployerOverview() {
                             >
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <p className="fs-3" style={{marginBottom: '18px'}}>10</p>
+                                        <p className="fs-3" style={{marginBottom: '18px'}}>{counts[0]?.job_post_count}</p>
                                         <h6 style={{fontSize: '16px', color: '#2d2d2d'}}>Open Jobs</h6>
                                     </div>
                                     <div

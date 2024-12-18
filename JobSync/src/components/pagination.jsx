@@ -35,15 +35,16 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
             borderRadius: '50%',
             margin: '0 5px',
             padding: '7px 15px',
-            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+            cursor: currentPage === 1 ? 'default' : 'pointer',
           }}
         >
           <button
             className="page-link"
             onClick={() => currentPage > 1 && paginate(currentPage - 1)}
             style={{
-              backgroundColor: '#ebebebc2',
-              color: '#0A65CC',
+              backgroundColor: currentPage === 1 ? 'transparent' : '#ebebebc2',
+              color: currentPage === 1 ? 'transparent' : '#0A65CC',
+              borderColor: currentPage === 1 ? 'transparent' : '#dee2e6',
               borderRadius: '50%',
               fontWeight: 'bold',
               padding: '10px 15px',
@@ -89,19 +90,20 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, paginate }) => {
             borderRadius: '50%',
             margin: '0 5px',
             padding: '7px 15px',
-            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+            cursor: currentPage === totalPages ? 'default' : 'pointer',
           }}
         >
           <button
             className="page-link"
             onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
             style={{
-              backgroundColor: '#ebebebc2',
-              color: '#0A65CC',
+              backgroundColor: currentPage === totalPages ? 'transparent' : '#ebebebc2',
+              color: currentPage === totalPages ? 'transparent' : '#0A65CC',
+              borderColor: currentPage === totalPages ? 'transparent' : '#dee2e6',
               borderRadius: '50%',
               fontWeight: 'bold',
               padding: '10px 15px',
-              transition: 'background-color 0.3s, color 0.3s',
+              transition: 'color 0.3s',
             }}
           >
             <FaArrowRight style={{ marginTop: '-3px' }} />

@@ -15,6 +15,8 @@ import githubIcon from '../../../assets/github.png';
 import redditIcon from '../../../assets/reddit1.png';
 import freelancerIcon from '../../../assets/freelancer1.png';
 import Swal from 'sweetalert2';
+import { FaArrowLeft } from 'react-icons/fa';
+
 
 const initialPlatformOptions = [
   { name: 'Facebook', icon: facebookIcon },
@@ -258,7 +260,13 @@ export default function Socmedlinks() {
         </Button>
 
         <Row className="mt-3" style={{ marginTop: 'auto' }}>
-          <Col md={12} className="d-flex justify-content-end">
+          <Col md={12} className="d-flex" style={{justifyContent: 'space-between'}}>
+            <Button variant="primary"  onClick={() => {
+                  window.history.back();
+                  window.scrollTo({ top: 0});
+              }} className="mt-3" style={{width: '185px', height: '55px', color: '#0d6efd', background: 'transparent'}}>
+            <FaArrowLeft style={{fontSize: '14px', marginRight: '12px'}}/> Back
+          </Button>
             <Button
               type="submit"
               variant="primary"

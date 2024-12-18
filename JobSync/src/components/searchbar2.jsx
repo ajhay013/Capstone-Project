@@ -22,7 +22,7 @@ export default function SearchBar2({ placeholder, onSearch }) {
                 style={{ borderRadius: '10px 0 0 10px' }} 
             />
             <div className="input-group-append">
-                <button className="btn btn-primary" type="button" onClick={() => onSearch(searchText)} style={{ borderRadius: '0 10px 10px 0' }}>
+                <button className="btn btn register1" type="button" onClick={() => onSearch(searchText)} style={{ borderRadius: '0 10px 10px 0', background: '#1f8ff1', width: '60px', border: 'none' }}>
                     <FaSearch style={{ color: '#fff' }} />
                 </button>
             </div>

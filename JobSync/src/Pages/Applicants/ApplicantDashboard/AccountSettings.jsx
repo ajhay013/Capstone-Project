@@ -24,44 +24,7 @@ const FileUpload = ({ label, required, onChange, imageSrc }) => (
   </Form.Group>
 );
 
-const JobAlerts = () => {
-  return (
-    <div className="job-alerts-container">
-      <h4>Job Alerts</h4>
-      <div className="d-flex">
-        {/* Role Input */}
-        <div className="form-group mr-3 mt-3">
-          <Form.Label>Role</Form.Label>
-          <InputGroup>
-            <InputGroup.Text>
-              <FaBriefcase style={{ color: '#0d6efd' }}/>
-            </InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Your job roles"
-              style={{ width: '700px' , paddingLeft: '45px'}}
-            />
-          </InputGroup>
-        </div>
 
-        {/* Location Input */}
-        <div className="form-group mt-3">
-          <Form.Label>Location</Form.Label>
-          <InputGroup>
-            <InputGroup.Text>
-              <FaMapMarkerAlt style={{ color: '#0d6efd' }}/>
-            </InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="City, state, country name"
-              style={{ width: '700px' , paddingLeft: '45px'}}
-            />
-          </InputGroup>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const AccountSettings = () => {
   const [logo, setLogo] = useState(null);
@@ -103,7 +66,7 @@ const AccountSettings = () => {
           paddingTop: '15px',
         }}
       >
-        <Form onSubmit={handleSubmit} style={{ padding: '20px', width: '100%' }}>
+        <Form onSubmit={handleSubmit} style={{ padding: '20px'}}>
 
           {/* Map Location, Contact Number, Email Address */}
           <Row className="mb-4">
@@ -208,10 +171,45 @@ const AccountSettings = () => {
           </Row>
 
           <hr className="my-4" />
-
+          <Row>
           {/* Job Alerts Section */}
-          <JobAlerts />
+          <div style={{width: ''}}>
+            <h4>Job Alerts</h4>
+            <div className="d-flex">
+              {/* Role Input */}
+              <div className="mt-3">
+                <Form.Label>Role</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <FaBriefcase style={{ color: '#0d6efd' }}/>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    className='register1'
+                    placeholder="Your job roles"
+                    style={{width: '500px', paddingLeft: '45px'}}
+                  />
+                </InputGroup>
+              </div>
 
+              {/* Location Input */}
+              <div className="mt-3">
+                <Form.Label>Location</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>
+                    <FaMapMarkerAlt style={{ color: '#0d6efd' }}/>
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    className='register1'
+                    placeholder="City, state, country name"
+                    style={{width: '500px', paddingLeft: '45px'}}
+                  />
+                </InputGroup>
+              </div>
+            </div>
+          </div>
+          </Row>
           <hr className="my-4" />
 
           {/* Profile Privacy Toggle */}

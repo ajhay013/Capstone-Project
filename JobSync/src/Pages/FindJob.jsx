@@ -125,8 +125,8 @@ export default function FindJob() {
   };
 
   const marginTop = 
-  currentJobs.length >= 1 && currentJobs.length <= 3 ? '-152px' : 
-  currentJobs.length >= 4 && currentJobs.length <= 6 ? '70px' : 
+  currentJobs.length >= 1 && currentJobs.length <= 3 ? '-122px' : 
+  currentJobs.length >= 4 && currentJobs.length <= 6 ? '100px' : 
   '109px';
   const height = jobs.length > 0 ? 'auto' : '380px';
 
@@ -135,7 +135,7 @@ export default function FindJob() {
       <Container style={{ width: '1209px' }}>
         <Row className="mb-3" style={{ marginTop }}>
           <Col md={12}>
-            <form onSubmit={handleSearch} className="d-flex mb-4">
+            <form onSubmit={handleSearch} className="d-flex">
               {/* Job Search Input */}
               <div className="input-group" style={{ maxWidth: '600px', flexGrow: '1' }}>
                 <div className="input-group-prepend">
@@ -239,6 +239,16 @@ export default function FindJob() {
         handleSalaryRangeChange={handleSalaryRangeChange}
         handlePresetSalarySelect={handlePresetSalarySelect}
       />
+      <Row>
+        <Col>
+          <span className="me-2">Popular searches:</span>
+          {["Front-end", "Back-end", "Development", "PHP", "Laravel", "Bootstrap", "Developer", "Team Lead", "Product Testing", "Javascript"].map((search) => (
+            <Button variant="outline-secondary" size="sm" className="me-2" key={search}>
+              {search}
+            </Button>
+          ))}
+        </Col>
+      </Row>
 
       {/* Job Listings */}
       <Container style={{ height }}>

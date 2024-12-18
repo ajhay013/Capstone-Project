@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../css/MyNavbar.css';
 import { useAuth } from '../AuthContext';
+import axios from 'axios';
 
 const USER_TYPES = {
     APPLICANT: 'applicant',
@@ -13,6 +14,29 @@ const MyNavbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, logout } = useAuth();
+
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        axios.get('http://localhost:80/capstone-project/jobsync/src/api/fetch_unread_count.php')
+            .then(response => {
+                if (response.data.success) {
+                    setUnreadCount(response.data.unread_count);
+                }
+            })
+            .catch(error => console.error('Error fetching unread count:', error));
+    }, []);
+
+    const handleJobAlertClick = () => {
+        axios.post('http://localhost:80/capstone-project/jobsync/src/api/mark_as_read.php')
+            .then(response => {
+                if (response.data.success) {
+                    setUnreadCount(0);
+                }
+            })
+            .catch(error => console.error('Error marking alerts as read:', error));
+    };
+
 
     const handleLogout = () => {
         logout();
@@ -54,8 +78,8 @@ const MyNavbar = () => {
                     <Nav.Link as={Link} to="/applicants/overview" className={location.pathname === '/applicants/overview' ? 'active-link' : ''}>
                         Dashboard
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/applicants/jobsalert" className={location.pathname === '/applicants/jobsalert' ? 'active-link' : ''}>
-                        Job Alerts
+                    <Nav.Link as={Link} onClick={handleJobAlertClick} to="/applicants/jobsalert" className={location.pathname === '/applicants/jobsalert' ? 'active-link' : ''}>
+                        Job Alerts {unreadCount > 0 && <span className="badge bg-primary" style={{borderRadius: '50px', fontSize: '10px', position: 'relative', top: '-5px', left: '-1px'}}>{unreadCount}</span>}
                     </Nav.Link>
                     <Nav.Link as={Link} to="/customersupport" className={location.pathname === '/customersupport' ? 'active-link' : ''}>
                     Customer Support
@@ -89,23 +113,7 @@ const MyNavbar = () => {
         }
     };
 
-    const renderName = () => {
-        if(user.userType === USER_TYPES.APPLICANT) {
-            return (
-                <>
-                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                    <Nav.Link>{user.firstname}</Nav.Link>
-                </>
-            );
-        }
-        else if (user.userType === USER_TYPES.EMPLOYER) {
-            return (
-                <>
-                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                </>
-            )
-        }
-    };
+
 
     return (
         <div>
@@ -117,12 +125,8 @@ const MyNavbar = () => {
                             {renderNavLinks()}
                         </Nav>
                         <Nav className="ms-auto">
-                            <Nav.Link href="#">jobsync@gmail.com</Nav.Link>
-                            {/* {user && (
-                                <>
-                                    {renderName()}
-                                </>
-                            )} */}
+                            <Nav.Link href="#">me.jobsync@gmail.com</Nav.Link>
+
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
